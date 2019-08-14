@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="Execute the new relationship wizard" access="global">
+
+	<aura:attribute name="runRelationshipWizard" type="Boolean"/> 
+
+</aura:event>

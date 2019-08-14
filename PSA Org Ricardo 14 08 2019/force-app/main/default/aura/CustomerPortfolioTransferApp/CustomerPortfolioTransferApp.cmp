@@ -1,0 +1,22 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+
+<lightning:layout multipleRows="true">
+  <lightning:layoutItem size="6" class="slds-p-right_x-small">
+    <c:AccountActivitySource/>
+  </lightning:layoutItem>
+
+  <lightning:layoutItem size="6" class="slds-p-left_x-small">
+    <c:AccountActivityDestination/>
+  </lightning:layoutItem>
+
+  <lightning:layoutItem size="12" class="slds-p-top_small">
+    <c:AccountActivityFilter/>
+  </lightning:layoutItem>
+
+  <lightning:layoutItem size="12" class="slds-p-top_small">
+    <c:AccountActivityResults/>
+  </lightning:layoutItem>
+
+</lightning:layout>
+
+</aura:component>

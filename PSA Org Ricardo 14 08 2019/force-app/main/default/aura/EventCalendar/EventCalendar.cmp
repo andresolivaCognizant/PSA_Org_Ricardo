@@ -1,0 +1,159 @@
+<aura:component controller="EventCalendarController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+	
+	<ltng:require styles="/resource/fullcalendar_style/fullcalendar.min.css" scripts="{!$Resource.jqueryfc}"/>	
+	
+	<aura:attribute name="date" type="Date" access="GLOBAL" default=""/>
+	<aura:attribute name="eventList" type="Object[]"/>
+	<aura:attribute name="eventListRender" type="Object[]"/>
+	<aura:attribute name="timeFormat" type="String" default="HH:mm"/>
+	
+	<aura:handler name="change" value="{!v.date}" action="{!c.updateRender}"/>
+	<aura:handler name="change" value="{!v.eventList}" action="{!c.updateRender}"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	
+	<div>
+		<div style="min-width: 100px;">
+			<ui:inputDate aura:id="dateField" disabled="" displayDatePicker="true" format="DD-MM-YYYY" select="{!c.updateDate}" value="{!v.date}"/>
+		</div>
+		<div class="slds-grid slds-wrap container-legend">
+			<!-- <div class="slds-size-*1-of-1"><div class="icon-legend color1"></div><span class="text-legend">New Event</span></div>  -->
+			<div class="slds-size--1-of-1"><div class="icon-legend color2"></div><span class="slds-text-heading_medium slds-text-title_bold">{!$Label.c.Overlapping_Events}</span></div>
+			<div class="slds-size--1-of-1"><div class="icon-legend"></div><span class="slds-text-heading_medium slds-text-title_bold">{!$Label.c.Events}</span></div>
+		</div>
+		<table class="container-calendario" ondragover="{!c.onDragOverEvent}" ondrop="{!c.onDropEvent}" onmouseup="{!c.removeResizable}" onmousemove="{!c.resize}" aura:id="droppable">
+			<tbody class="fc-body">
+		    <tr>
+		        <td class="fc-widget-content">
+		            <div class="fc-day-grid fc-unselectable">
+		                <div class="fc-row fc-week fc-widget-content" style="border-right-width: 1px; margin-right: 14px;">
+		                    <div class="fc-bg">
+		                        <table>
+		                            <tbody>
+		                                <tr>
+		                                    <!--<td class="fc-axis fc-widget-content" style="width: 49px;"><span>all-day</span>
+		                                    </td>
+		                                    <td class="fc-day fc-widget-content fc-thu fc-past" data-date="2014-06-12"></td>-->
+		                                </tr>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                    <div class="fc-content-skeleton">
+		                        <table>
+		                            <tbody>
+		                                <tr>
+		                                    <td class="fc-axis" style="width:49px"></td>
+		                                    <td></td>
+		                                </tr>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+		            </div>
+		
+		            <div class="fc-scroller fc-time-grid-container">
+		                <div class="fc-time-grid fc-unselectable">
+		                    <div class="fc-bg">
+		                        <table>
+		                            <tbody>
+		                                <tr>
+		                                    <td class="fc-axis fc-widget-content" style="width: 49px;"></td>
+		                                    <td class="fc-day fc-widget-content fc-thu fc-past" data-date="2014-06-12"></td>
+		                                </tr>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                    <div class="fc-slats">
+		                        <table>
+		                            <tbody>
+		                                <aura:iteration items="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24" var="hora" indexVar="i"> 
+		                                <!--<aura:iteration items="7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22" var="hora" indexVar="i"> -->
+				                                	<!-- <tr data-time="{!hora + ':00:00'}" class="container-time" onclick="{!c.newEvent}" title="{!hora + ':00:00'}">  -->
+				                                	<tr data-time="{!hora + ':00:00'}" class="container-time" title="{!hora + ':00:00'}">
+					                                    <td class="fc-axis fc-time fc-widget-content" style="width: 49px;">
+					                                    	<span><ui:outputText value="{!hora}"/>:00</span>
+
+					                                    </td>
+					                                    <td class="fc-widget-content"></td>
+				                                	</tr>
+		                                </aura:iteration>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                    <div class="fc-content-skeleton">
+		                        <table>
+		                            <tbody>
+		                                <tr>
+		                                    <td class="fc-axis" style="width: 49px;"></td>
+		                                    <td>
+		                                        <div class="fc-content-col">
+		                                            <div class="fc-event-container fc-helper-container"></div>
+		                                            <div class="fc-event-container">
+		                                                <aura:iteration items="{!v.eventListRender}" var="event" indexVar="iteration">
+			                                                <div tabindex="0" class="fc-wrapper fc-time-grid-event fc-v-event fc-event fc-start fc-end fc-draggable fc-resizable" 
+				                                                style="{!' 
+				                                                	 top:' + event.position.top + 'px;
+				                                                	 z-index:' + event.style.zindex + ';
+				                                                	 left:'+ event.style.left +'%;
+				                                                	 bottom: -' + event.position.bottom + 'px;
+				                                                	 background-color:'+ event.style.background +';
+				                                                '}" 
+				                                                draggable="{!event.draggable}" 
+				                                                ondragstart="{!c.dragStart}" 
+				                                                ondrag="{!c.drag}" 
+				                                                onclick="{!c.selectEvent}" 
+				                                                id="{!'id_event_render_'+iteration}"  
+				                                                data-id="{!event.id}" 
+				                                                data-dateTime="{!event.startTime}">
+				                                                
+			                                                    <aura:if isTrue="{!event.draggable eq true}">
+			                                                    	<div class="fc-resizer fc-start" data-position="top" onmousedown="{!c.doResizable}"></div>
+			                                                    </aura:if>
+			                                                    <div class="fc-content">
+			                                                        <div class="fc-time"><span><ui:outputDateTime aura:id="sDate" value="{!event.startTime}" format="{!v.timeFormat}" /> - <ui:outputDateTime aura:id="eDate" value="{!event.endTime}" format="{!v.timeFormat}"/></span>
+			                                                        </div>
+			                                                        <div class="fc-title">{!event.whatName}</div>
+			                                                        <div class="fc-desc">{!event.observaciones}</div>
+			                                                    </div>
+			                                                    <div class="fc-bg"></div>
+			                                                    <aura:if isTrue="{!event.draggable eq true}">
+			                                                    	<div class="fc-resizer fc-end" data-position="bottom" onmousedown="{!c.doResizable}"></div>
+			                                                    </aura:if>
+			                                                </div>
+				                                            <div class="event-tooltip" id="{!'id_event_render_'+iteration+'_tooltip'}" style="{! 'top:' + event.position.top + 'px; left:'+ event.style.left +'%;'}" onmousedown="{!c.preventEvent}">
+				                                                <div style="width:100%" class="slds-float--left">
+				                                                	<span class="slds-float--left">
+				                                                		<lightning:icon iconName="standard:event"/>
+				                                                	</span>
+			                                                		<span class="slds-float--right">
+			                                                			<lightning:buttonIcon iconName="utility:close" variant="bare" onclick="{! c.closeWindow }" class="slds-icon--x-small" alternativeText="Close window." />
+			                                                		</span>
+				                                                </div>
+				                                                <div class="slds-float--left slds-p-top--xx-small">
+				                                                	<div class="tooltip-text-link"  data-refid="recordId" onclick="{!c.navigate}" data-id="{!event.id}" draggable="{!event.draggable}" data-special-link="true" title="{!event.asunto}" data-aura-class="forceOutputLookup">{!event.asunto}</div>
+					                                                <div class="tooltip-text"><ui:outputDateTime aura:id="sDate" value="{!event.startTime}" format="{!v.timeFormat}" /> - <ui:outputDateTime aura:id="eDate" value="{!event.endTime}" format="{!v.timeFormat}"/></div>
+					                                                <div class="tooltip-text">{!event.whatName}</div>
+					                                                <div class="tooltip-text">{!event.observaciones}</div>
+				                                                </div>
+			                                                </div>
+		                                                </aura:iteration>
+	                                                	<div aura:id="message" class="slds-grid slds-grid--align-center  message">
+	                                                        <div><label>There are no Events for this day</label></div>
+		                                                </div>
+		                                            </div>        
+		                                            <div class="fc-highlight-container"></div>
+		                                            <div class="fc-bgevent-container"></div>
+		                                            <div class="fc-business-container"></div>
+		                                        </div>
+		                                    </td>
+		                                </tr>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+		            </div>
+		        </td>
+		    </tr>
+		</tbody>
+	</table>
+</div>
+</aura:component>

@@ -1,0 +1,23 @@
+.THIS .AP {
+    font-family: Peugeot;
+}
+.THIS .AC{
+    font-family: Citroen;
+}
+.THIS .DS{
+    font-family: DS;
+}
+
+
+@font-face {
+    font-family: 'Peugeot';
+    src: url('peugeot/s/sfsites/c/resource/PeugeotBranding/Fonts/Peugeot Normal v2') format('ttf');
+}
+@font-face {
+    font-family: 'Citroen';
+    src: url('citroen/s/sfsites/c/resource/CitroenBranding/Fonts/Citroen_Regular') format('ttf');
+}
+@font-face {
+    font-family: 'DS';
+    src: url('ds/s/sfsites/c/resource/DSBranding/Fonts/DSTitleOffice-Regular') format('ttf');
+}

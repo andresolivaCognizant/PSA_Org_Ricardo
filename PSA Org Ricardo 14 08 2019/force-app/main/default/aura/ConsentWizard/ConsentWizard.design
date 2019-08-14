@@ -1,0 +1,7 @@
+<design:component >
+	<design:attribute name="recordId" label="recordId" description=""/>
+	<design:attribute name="activity" label="Activity" description="Defines the activity type of the current operation (VN, VD, VO...)"/>
+	<design:attribute name="documentType" label="Document Type" description="" datasource="OrderForm,WebForm,EMailUnsubscription,RightToBeForgotten,DoNotContactMe,NationalOptOut,Init"/>
+	<design:attribute name="askForActivityDocType" label="Ask for Activity and Doc. Type?" description="If is checked user has to select Activity and Doc. Type."/>
+	<design:attribute name="enableCancelButton" label="Enable cancel button?" description="Enables cancel button."/>
+</design:component>

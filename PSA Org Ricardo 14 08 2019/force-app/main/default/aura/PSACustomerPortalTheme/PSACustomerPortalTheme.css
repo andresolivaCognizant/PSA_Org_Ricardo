@@ -1,0 +1,94 @@
+/* .THIS div {border: solid red 1px;} */
+
+.THIS .slds-list_vertical {
+	color:black;
+	background-color:white;
+}
+
+.THIS .slds-icon-utility-home,
+.THIS .header-container button  {
+ 	display:none;
+ 	width:0;
+}
+ 
+.THIS .forceCommunityGlobalNavigation {
+    margin-left:0;
+}
+.THIS .selfServiceProfileMenuTrigger {
+ 	  margin-right:5px;
+ 	  text-align:right;
+}
+
+.THIS .advanced-search-link {
+	font-size: 14px;
+	font-weight: 500;
+	text-align: left;
+}
+
+.THIS .advanced-search-link a {
+    color: white;
+  	text-decoration: none;
+}
+
+.THIS .advance-aftersales-link {
+    text-align: left;
+    color: white;
+    text-decoration: none;
+}
+ 
+.THIS .customer-search-icon {
+ 	margin-left: 30px;
+ 	width: 28px;
+ 	margin-right: 5px;
+ }
+ 
+.THIS .global-search-container .slds-global-header__icon {
+	color:white;
+}
+
+.THIS .slds-icon-standard-person-account {
+  background-color: transparent;
+}
+
+.THIS .forceCommunitySearchBox .search-button.uiButton, 
+.THIS .forceCommunitySearchBox .has-input .search-button.uiButton, 
+.THIS .forceCommunitySearchBox .search-button.uiButton.focus,
+.THIS .forceCommunitySearchBox .continue-post-wrapper {
+ 	display:none;
+ 	width:0;
+}
+
+.THIS .forceCommunitySearchBox .close-button.uiButton {
+   height: 32px;
+   /* background-color: */
+}
+
+.THIS .forceCommunitySearchBox .search-field {
+  	background-color: #fafafa;
+  	border: solid 1px #353e5f;
+  	border-radius: 4px;
+  	height: 32px;
+}
+
+.THIS .forceCommunitySearchBox .curtain-blur.enabled {
+    visibility: hidden;
+}
+.THIS ul.slds-grid.slds-page-header__detail-row,
+.THIS div.slds-grid.primaryFieldRow,
+.THIS div.slds-page-header,
+.THIS .forceCommunitySearchBox .search-wrapper {
+	z-index:1; 
+}
+
+.THIS .profile-icon {
+	padding-right:20px;
+}
+
+.THIS .forceChatterSearchInFeed svg.slds-input__icon.slds-input__icon_left.slds-icon-text-default {
+  z-index: 1;
+}
+
+/* Hide the Snap-In widget based on agent availability */
+.THIS .helpButtonDisabled{
+    display: none !important;
+}

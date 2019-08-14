@@ -1,0 +1,99 @@
+<aura:component controller="LookupAController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+	<!--declare attributes--> 
+	<aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+	<aura:attribute name="listOfSearchRecords" type="List" description="Use,for store the list of search records which returns from apex class"/>
+	<aura:attribute name="SearchKeyWord" type="string"/>
+	<aura:attribute name="whereSearch" type="string" default=""/>
+	<aura:attribute name="objectAPIName" type="string" default=""/>
+	<aura:attribute name="IconName" type="string" default=""/>
+	<aura:attribute name="label" type="string" default=""/>
+	<aura:attribute name="placeHolder" type="String" default="{! $Label.c.CustomerSearchLookupPlaceholderText + '...' }"/>
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-9601 - New logic to control fields to return and the records label - 06052019 -->
+	<aura:attribute name="fields" type="String" default=""/>
+	<aura:attribute name="fieldAsLabel" type="String" default="Name"/>
+	<!-- BEGIN - Manuel Medina - 06052019 -->
+
+	<aura:attribute name="dropdown" type="Boolean" default="false" />
+	<aura:attribute name="showMessage" type="Boolean" default="false" />
+	<aura:attribute name="fromCMPMethod" type="Boolean" default="false" />
+	<aura:attribute name="disabled" type="Boolean" default="false" />
+	
+	<aura:handler name="oLookupSelectedRecordEvent" event="c:LookupSelectedRecordsEvent" action="{!c.handleComponentEvent}"/>
+	<aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+	<aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+	<aura:attribute name="Message" type="String" default="{! $Label.c.CustomerSearchLookupMessage }"/>
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-5479 - Method to remove items from another component - 04222019 -->
+	<aura:method name="clear" action="{! c.clear }" description=""/>
+	<!-- END - Manuel Medina - 04222019 -->
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-9601 - Method to get default values as a search result - 07052019 -->
+	<aura:method name="getRecords" action="{! c.getRecords }" description="">
+		<aura:attribute name="fields" type="string" default=""/>
+		<aura:attribute name="fieldAsLabel" type="string" default=""/>
+		<aura:attribute name="whereSearch" type="string" default=""/>
+		<aura:attribute name="objectAPIName" type="string" default=""/>
+		<aura:attribute name="disabled" type="Boolean" default="false" />
+		<aura:attribute type="Function" name="callback" description="Result"/>
+	</aura:method>
+	<!-- END - Manuel Medina - 07052019 -->
+   
+	<div aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+		<label aura:id="searchLabel" class="slds-form-element__label" for="lookup-348">{!v.label}</label>  
+		<div class="slds-form-element__control">
+			<div class="slds-input-has-icon slds-input-has-icon--right">
+
+				<!-- BEGIN - Manuel Medina - C1STAGILE-5479 - aura:if was added as an improvement to remove search icon when a value is selected - 15042019 -->
+				<aura:if isTrue="{! empty( v.selectedRecord ) }">
+					<lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/>
+				</aura:if>
+				<!-- END - Manuel Medina - 15042019 -->
+
+				<div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+					<span class="slds-pill" style="width:100%">
+						<span class="slds-icon_container slds-combobox__input-entity-icon" title="record">
+							<lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+							<span class="slds-assistive-text"></span>
+						</span>  
+						<span class="slds-pill__label slds-p-left_x-large">
+							{!v.selectedRecord.Name}
+						</span>
+						<button class="slds-button slds-button--icon slds-pill__remove" onclick="{!c.clear}">
+							<lightning:icon class="slds-button__icon" iconName="utility:close" size="x-small" alternativeText="search"/>  
+							<span class="slds-assistive-text">Remove</span>
+						</button>
+					</span>
+				</div>
+				<div aura:id="lookupField" class="slds-show">
+					<span class="slds-icon_container slds-combobox__input-entity-icon" title="record">
+						<lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+						<span class="slds-assistive-text"></span>
+					</span>
+					<ui:inputText 
+						click="{!c.onfocus}" 
+						updateOn="keyup" 
+						keyup="{!c.keyPressController}" 
+						class="slds-lookup__search-input slds-input leftPaddingClass" 
+						value="{!v.SearchKeyWord}" 
+						placeholder="{! v.placeHolder }" 
+						blur="{!c.lostFocus}"
+						disabled="{! v.disabled }"
+					/>
+				</div>
+			</div>
+		</div>
+		<ul aura:id="listBox" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listBox" onmouseenter="{!c.handleMouseEnter}" onmouseleave="{!c.handleMouseLeave}" >
+			<center> <ui:spinner aura:id="spinner"/> </center>
+
+			<aura:if isTrue="{! v.showMessage  }">
+				<center> {!v.Message}</center>
+			</aura:if>
+
+			<aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+				<c:LookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+			</aura:iteration>
+		</ul>
+	</div>
+	
+</aura:component>

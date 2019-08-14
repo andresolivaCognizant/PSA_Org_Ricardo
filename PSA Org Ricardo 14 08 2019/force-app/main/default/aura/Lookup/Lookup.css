@@ -1,0 +1,11 @@
+.THIS .leftPaddingClass {
+    padding-left: 2rem;
+}
+
+.THIS .visible {
+	display:block;
+}
+
+.THIS .invisible {
+	display:none;
+}

@@ -1,0 +1,38 @@
+<aura:component controller="AfterSalesBoardController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+	<aura:attribute type="String" name="MyOAppMode" default="edit"/>
+	<aura:attribute type="WorkshopAppointment__c" name="wa"/>
+	<aura:attribute type="String" name="defaultTab"/>
+	
+	<force:recordData
+		aura:id="forceRecord"
+		recordId="{! v.recordId }"
+		fields="AppointmentType__c,Driver__c,Asset__c"
+		mode="VIEW"
+		recordUpdated="{! c.handleRecordUpdated }"
+		targetRecord="{! v.wa }"
+	/>
+	
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }" />
+	
+	<div class="card-container" >
+		<lightning:tabset selectedTabId="{! v.defaultTab }" onselect="{! c.changeTab }">
+		
+			<aura:if isTrue="{! v.wa.fields.AppointmentType__c.value ne '5' }">
+				<lightning:tab id="appointment" label="{! $Label.c.AfterSalesBodyTabName1 }">
+					<c:MyOEventsListener recordId="{! v.recordId }" HostType="Appointment" mode="{! v.MyOAppMode }"/>
+				</lightning:tab>
+			</aura:if>
+			
+			<lightning:tab id="interventions" label="{! $Label.c.AfterSalesBodyTabName3 }">
+				<c:AfterSalesVehicleInterventions recordId="{!v.recordId}"/>
+			</lightning:tab>
+			
+			<lightning:tab id="dms" label="{! $Label.c.AfterSalesBodyTabName4 }">
+				<c:DMSCustomerData recordId="{! v.recordId }"/>
+			</lightning:tab>
+			
+		</lightning:tabset>
+	</div>
+
+</aura:component>

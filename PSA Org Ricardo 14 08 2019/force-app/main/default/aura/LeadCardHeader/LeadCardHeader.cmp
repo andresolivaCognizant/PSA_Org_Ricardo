@@ -1,0 +1,100 @@
+<aura:component controller="LeadCardHeaderController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global">
+
+    <aura:attribute name="leadRecord" type="Lead" />
+    <aura:attribute name="leadActivityCount" type="Integer" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div class="slds-page-header card-header" style="border: solid 1px #d8dde6;border-radius: 4px;">
+        <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+                <div class="slds-media slds-no-space slds-grow">
+                    <div class="slds-media__figure">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="standard:lead" size="medium" alternativeText="icon" />
+                        </div>
+                    </div>
+                    <div class="slds-media__body">
+                        <nav>
+                            <ol class="slds-breadcrumb slds-line-height_reset">
+                                <li class="slds-breadcrumb__item">
+                                    <span>Lead</span>
+                                </li>
+                            </ol>
+                        </nav>
+                        <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate" title="">{! v.leadRecord.Name }</h1>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-col slds-no-flex slds-grid slds-align-top">
+                <button class="slds-button slds-button_neutral slds-hide">Test Drive</button>
+                <div class="slds-button-group" role="group">
+                    <button class="slds-button slds-button_neutral" onclick="{! c.handleEditClick }">Edit</button>
+                    <button class="slds-button slds-button_neutral" onclick="{! c.handleLeadConvertClick }">Manual Conversion</button>  
+                </div>
+            </div>
+        </div>
+        <div>
+            <table class="slds-table" >
+                <tbody>
+                    <tr>
+                        <td scope="col">
+                            <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Type">Type</p>
+                        </td>
+                        <td scope="col">
+                            <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Source">Source</p>
+                        </td>
+                        <td scope="col">
+                            <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Interest">Interest</p>
+                        </td>
+                        <td scope="col">
+                            <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Contact">Contact</p>
+                        </td>
+                        <td scope="col">
+                            <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Status">Status</p>
+                        </td>
+                        <td scope="col" style="border-left: solid 1px #d8dde6;">
+                            <p class="slds-text-title slds-truncate slds-m-bottom_xx-small" title="Priority">Priority</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-label="Type">
+                            <lightning:icon iconName="utility:setup_assistant_guide" class="leadIcon" alternativeText="icon" /> 
+                            &nbsp;&nbsp;<strong>{! v.leadRecord.LeadRequestType__c }</strong>
+                        </td>
+                        <td data-label="Source">
+                            <lightning:icon iconName="utility:questions_and_answers" class="leadIcon" alternativeText="icon" /> 
+                            &nbsp;&nbsp;<strong>{! v.leadRecord.LeadSource }</strong>
+                        </td>
+                        <td data-label="Interest">
+                            <lightning:icon iconName="utility:travel_and_places" class="leadIcon" alternativeText="icon" /> 
+                            &nbsp;&nbsp;<strong>{! v.leadRecord.ProductCustomerInterest__c }</strong>
+                        </td>
+                        <td data-label="Contact">
+                            <lightning:icon iconName="utility:comments" class="leadIcon" alternativeText="icon" /> 
+                            &nbsp;&nbsp;<strong>{! v.leadActivityCount }</strong>
+                        </td>
+                        <td data-label="Status">
+                            <lightning:icon iconName="utility:feed" class="leadIcon" alternativeText="icon" /> 
+                            &nbsp;&nbsp;<strong>{! v.leadRecord.Status }</strong>
+                        </td>
+                        <td data-label="Priority" style="border-left: solid 1px #d8dde6;">
+                        	<aura:if isTrue="{! v.leadRecord.TreatmentPriorityLabel__c == 'Overdue' }">
+	                  			<span class="traffic-light red-light"></span>
+	                  	    </aura:if>
+                        	<aura:if isTrue="{! v.leadRecord.TreatmentPriorityLabel__c == 'Urgent' }">
+	                  			<span class="traffic-light amber-light"></span>
+	                  	    </aura:if>
+                        	<aura:if isTrue="{! v.leadRecord.TreatmentPriorityLabel__c == 'On Time' }">
+	                  			<span class="traffic-light green-light"></span>
+	                  	    </aura:if>
+                            &nbsp;&nbsp;<strong>{! v.leadRecord.TreatmentPriorityLabel__c }</strong>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,27 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+
+	<aura:attribute type="double" name="leftCounter" default="0" />
+	<aura:attribute type="String" name="leftCounterText" default="leftCounterText" />
+
+	<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large slds-align_absolute-center counts-container slds-p-left_large slds-p-right_large">
+		
+		<lightning:layoutItem flexibility="no-flex" class="custom-box slds-align_absolute-center" size="6">
+		
+			<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large">
+				
+				<lightning:layoutItem flexibility="no-flex" class="custom-box slds-align_absolute-center counts_large" size="12">
+					<p style="line-height: 45px;">
+						{!if( empty( v.leftCounter ), 0, v.leftCounter )}
+					</p>
+					<p class="counts-left-heading slds-align_absolute-center">
+						{!if( empty( v.leftCounterText ), 'leftCounterText', v.leftCounterText )}
+					</p>
+				</lightning:layoutItem>
+			
+			</lightning:layout>
+		
+		</lightning:layoutItem>
+			
+	</lightning:layout>
+
+</aura:component>

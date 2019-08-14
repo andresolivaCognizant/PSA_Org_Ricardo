@@ -1,0 +1,3 @@
+<design:component >
+<design:attribute name="ObjectType" label="Customer Search Type" description="Type of customer search between B2B, B2C and ASSET. In case a different value of B2B, B2C and ASSET has been set, it will behave as if it were of the B2B type." />
+</design:component>

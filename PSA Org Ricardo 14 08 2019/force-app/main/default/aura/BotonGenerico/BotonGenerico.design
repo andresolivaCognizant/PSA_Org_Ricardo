@@ -1,0 +1,5 @@
+<design:component >
+	<design:attribute name="listaBotones" label="Botton List" description="If more than one button, please separate them with comma (btt1,btt2,btt3). All button must be defined in BotonGenerico__mdt custom metadata type"/> 
+	<design:attribute name="sRecordId" label="Record Id" description="Record Id" />
+	<design:attribute name="isCommunity" label="Community" description="" />
+</design:component>

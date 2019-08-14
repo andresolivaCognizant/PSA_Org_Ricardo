@@ -1,0 +1,30 @@
+<aura:component>
+
+    <div style="display:none">
+        //$Label.c.Consent_Wizard_Poland_Consent
+        //$Label.c.DMS
+        //$Label.c.DMFILTERDATE001
+        //$Label.c.DMFILTERDATE002
+        //$Label.c.DMFILTERDATE003
+        //$Label.c.DMFILTERDATE004
+        //$Label.c.DMFILTERDATE005
+        //$Label.c.DMFILTERDATE006
+        //$Label.c.DMFILTERDATE007
+        //$Label.c.DMFILTERDATE008
+        //$Label.c.DMFILTERDATE009
+        //$Label.c.DMFILTERDATE010
+        //$Label.c.DMFILTERDATE011
+        //$Label.c.DMFILTERDATE012
+        //$Label.c.DMFILTERDATE013
+        //$Label.c.DMFILTERDATE014
+        //$Label.c.DMFILTERDATE015
+        //$Label.c.DMFILTERFIELD001
+        //$Label.c.DMFILTERFIELD002
+        //$Label.c.DMFILTERFIELD003
+        //$Label.c.DMFILTERFIELD004
+        //$Label.c.DMFILTERFIELD005
+        //$Label.c.DMFILTERFIELD006
+        //$Label.c.OrderEdition
+    </div>
+
+</aura:component>

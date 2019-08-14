@@ -1,0 +1,122 @@
+<aura:component controller="CustomerSearchAController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="ObjectType" type="String" default="B2B"/>
+    <aura:attribute name="Select" type="String" default="Name"/>
+    <aura:attribute name="From" type="String" default="RecentlyViewed"/>
+    <aura:attribute name="Where" type="String" default="Type IN ('Account')"/>
+    <aura:attribute name="WhereSOSL" type="String" default=""/>
+    <aura:attribute name="Filter" type="boolean" default="false" />
+    <aura:attribute name="relobject" type="String"/>
+    <aura:attribute name="UserAccountId" type="String"/>
+
+    <aura:attribute name="AccountMap" type="Map"/>
+    <aura:attribute name="AssetMap" type="Map"/>
+    <aura:attribute name="AccountContactAssetRelationMap" type="Map"/>
+    <aura:attribute name="OrderMap" type="Map"/>
+    <aura:attribute name="ContactMap" type="Map"/>
+    
+    <aura:attribute name="selectedUsuario" type="sObject" default="{}" />
+    <aura:attribute name="selectedSalesman" type="sObject" default="{}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+
+    <lightning:card title="" iconName=""> 
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-contact" title="">
+                    <lightning:icon iconName="standard:forecasts" size="small" alternativeText="icon"/>
+                </span> 
+            </div>
+            <div class="slds-media__body">
+                <h2>
+                  <span class="slds-card__header-link slds-truncate" title="">
+                    <span class="slds-text-heading_small">
+                        {!concat($Label.c.Search,concat(' : ',v.ObjectType))}
+                    </span>
+                  </span>
+                </h2>
+            </div>
+            </header>
+            <div class="slds-no-flex">              
+                <lightning:buttonGroup >
+                    <lightning:button aura:id="btnB2B" variant="brand" label="B2B" onclick="{!c.handleClick}"/>
+                    <lightning:button aura:id="btnB2C" label="B2C" onclick="{!c.handleClick}"/>
+                    <lightning:button aura:id="btnAsset" label="ASSET" onclick="{!c.handleClick}"/>
+                </lightning:buttonGroup>
+               
+<!-- 
+                <lightning:radioGroup 
+                        aura:id="customsearchSelection"
+                        name="searchSelection"
+                        label=""
+                        options="{! v.options }"
+                        value="{! v.value }"
+                        onchange="{! c.handleChange }"
+                        required="true" /> -->
+
+
+            </div>
+        </div>
+
+
+    <!--<lightning:card title="{!concat($Label.c.Search,concat(' : ',v.ObjectType))}" iconName="standard:forecasts"> -->
+    <!--<div class="slds-page-header"></div>-->
+        <div class="slds-card__body">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-2">
+                    <aura:If isTrue="{!v.ObjectType != 'ASSET'}">
+                        <aura:If isTrue="{!v.ObjectType == 'B2C'}">
+                            <!--<lightning:input aura:id="Salesman__temporal" label="Salesman" />-->
+                            <c:Lookup objectAPIName="Contact" IconName="standard:contact" label="{!$Label.c.Salesman}" selectedRecord="{!v.selectedSalesman}" whereSearch=""/>
+                            <!--<c:Lookup objectAPIName="Contact" IconName="standard:contact" label="{!$Label.c.Salesman}" selectedRecord="{!v.selectedSalesman}" whereSearch="{!' and AccountId = \''+ v.UserAccountId +'\''}"/>-->
+
+                            <lightning:input aura:id="Phone" label="{!v.AccountMap.phone}" />
+                            <aura:set attribute="else">
+                               <!-- <lightning:input aura:id="Owner.Name" label="{!v.AccountMap.ownerid}" />-->
+                               
+                                <c:Lookup objectAPIName="User" IconName="standard:user" label="{!v.AccountMap.ownerid}" selectedRecord="{!v.selectedUsuario}" whereSearch=""/>
+                                
+                                <lightning:input aura:id="Account.Name" label="{!v.AccountMap.Name}" />
+                                <lightning:input aura:id="Account.Phone" label="{!v.AccountMap.phone}" />
+                            </aura:set>
+                        </aura:If>
+                        <lightning:input aura:id="FirstName" label="{!v.AccountMap.firstname}" />
+                        <lightning:input aura:id="LastName" label="{!v.AccountMap.lastname}" />
+                        <aura:set attribute="else">
+                            <lightning:input aura:id="AssetId__r.VIN__C" label="{!v.AssetMap.vin__c}" />
+                            <lightning:input aura:id="AssetId__r.VIS__c" label="{!v.AssetMap.vis__c}" />
+                            <!--<lightning:input aura:id="nCar__temporal" label="Nº CAR" />-->
+                        </aura:set>
+                    </aura:If>
+                </div>
+                <div class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-2">
+                    <aura:If isTrue="{!v.ObjectType != 'ASSET'}">
+                        <aura:If isTrue="{!v.ObjectType == 'B2C'}">
+                            <lightning:input aura:id="NationalId__pc" label="{!v.AccountMap.nationalid__pc}" />
+                            <lightning:input aura:id="PersonEmail" type="email" label="{!v.AccountMap.personemail}" />
+                            <lightning:input aura:id="BillingPostalCode" label="{!v.AccountMap.billingpostalcode}" />
+                            <lightning:input aura:id="BillingCountry" label="{!v.AccountMap.billingcountry}" />
+                            <aura:set attribute="else">
+                                <lightning:input aura:id="NationalId__c" label="{!v.ContactMap.nationalid__c}" />
+                                <lightning:input aura:id="Email" type="email" label="{!v.ContactMap.email}" />
+                                <lightning:input aura:id="Account.BillingPostalCode" label="{!v.AccountMap.billingpostalcode}" />
+                                <lightning:input aura:id="Account.BillingCountry" label="{!v.AccountMap.billingcountry}" />
+                            </aura:set>
+                        </aura:If>
+                        <aura:set attribute="else">
+                            <lightning:input aura:id="RegistrationNumber__c" label="{!v.AccountContactAssetRelationMap.registrationnumber__c}" />
+                            <!--<lightning:input aura:id="NpreOrder__temporal" label="Nº pre-order" />-->
+                            <lightning:input aura:id="AssetId__r.OrderId__r.OrderNumber" label="{!v.OrderMap.ordernumber}" />
+                        </aura:set>
+                    </aura:If>
+                </div>
+            </div>
+            <div class="slds-align_absolute-center">
+                <lightning:button aura:id="Search" label="{!$Label.c.Search}" variant="brand" iconName="utility:search" iconPosition="left" onclick="{!c.filter}"/>
+            </div>
+        </div>
+        <div aura:id="cmpResultBox" class="slds-card__footer slds-hide">
+           <c:CSResult aura:id="cmpResults" object="{!v.From}" relobject="{!v.relobject}" objecttype="{!v.ObjectType}" fields="{!v.Select}" whereclause="{!v.Where}" filter="{!v.Filter}" wheresosl="{!v.WhereSOSL}"/>
+        </div>
+    </lightning:card>
+</aura:component>

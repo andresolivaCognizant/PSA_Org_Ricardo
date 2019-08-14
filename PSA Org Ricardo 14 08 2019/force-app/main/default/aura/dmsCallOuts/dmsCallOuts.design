@@ -1,0 +1,3 @@
+<design:component>
+    <design:attribute name="sRecordId" label="Record Id" description="Account Record Id"/>
+</design:component>

@@ -1,0 +1,8 @@
+/* Hide the Snap-In widget based on agent availability */
+.THIS .slds-hidden{
+    display: none !important;
+}
+/* Start Chat button size adjusted */
+.THIS .start-button-psa{
+    width: 50%;
+}

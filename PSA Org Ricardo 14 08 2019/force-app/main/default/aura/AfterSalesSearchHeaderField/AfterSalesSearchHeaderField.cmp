@@ -1,0 +1,32 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <aura:attribute name="placeholderText" type="String" />
+	<aura:attribute name="searchField" type="String" description="Search account criteria"/>
+	<aura:attribute name="fieldvalue" type="String" default=""/>
+    <aura:attribute name="pills" type="List" default="[]" access="private"/>
+    <aura:attribute name="delimiter" type="String" default=" " description="Character used to split the input"/>
+    <aura:attribute name="delimiterInDatabase" type="String" default=";" description="Character used to split the input for database storage"/>
+    
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler name="change" value="{!v.pills}" action="{!c.handlePillsChanged}"/>
+    <aura:handler name="change" value="{!v.searchField}" action="{!c.handleValueChanged}"/>
+	
+	<aura:handler event="c:AfterSalesSearchHeaderFieldEvent" action="{!c.handlePillsEvent}" />
+
+	<div class="slds-form-element slds-lookup">
+		<div class="slds-form-element__control">
+			<div class="slds-input-has-icon slds-input-has-icon--right">
+		     	<lightning:buttonIcon iconName="utility:search" variant="bare" alternativeText="Search" class="slds-input__icon" />
+		        <ui:inputText aura:id="ObjectField" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.searchField}" placeholder="{!v.placeholderText}" keyup="{!c.onKeyUpInput}" updateOn="keyup"/>
+			</div>
+		    <div id="{!'listbox-selections-' + v.name}" role="listbox" aria-orientation="horizontal">
+		        <ul class="slds-listbox slds-listbox_inline slds-p-top_xxx-small" role="group" aria-label="Inputted Options:">
+		            <aura:iteration items="{!v.pills}" var="pill">
+		                <li role="presentation" class="slds-listbox__item">
+		                    <lightning:pill name="{!pill.id}" label="{!pill.label}" hasError="{!!pill.isValid}" onremove="{!c.onRemovePill}"/>
+		                </li>
+		            </aura:iteration>
+		        </ul>
+		    </div>
+		</div>           
+	</div>
+</aura:component>

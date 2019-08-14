@@ -1,0 +1,59 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes">
+
+	<aura:attribute name="objId" type="String" description="" required="true" default=""/>
+	<aura:attribute name="fieldsToShow" type="String[]" description="" required="true"/>
+	<aura:attribute name="sObjectName" type="String" description="" required="true"/>
+    <aura:attribute name="iconName" type="String" description="" required="true"/>
+	<aura:attribute name="obj" type="SObject" description="" />
+	
+	<force:recordData aura:id="forceRecord"
+		recordId="{!v.objId}"
+		fields="{!v.fieldsToShow}"
+		layoutType="FULL"
+		targetRecord="{!v.obj}"
+		mode="VIEW"
+	/>
+
+	<!-- <section aria-labelledby="panel-heading-id" class="slds-popover slds-popover_panel slds-nubbin_top-right slds-popover_large" role="dialog"> -->
+
+		<div class="slds-p-around_xx-small slds-text-align_left">
+		
+			<div class="slds-media slds-media_center slds-m-bottom_small">
+				<lightning:icon iconName="{!v.iconName}" size="large" class="slds-media__figure"/>
+				<div class="slds-media__body">
+                    <h2 class="slds-text-heading_medium slds-hyphenate" id="panel-heading-id"><a href="" onclick="{!c.redirect}">{!v.obj.fields.Name.value}</a></h2>
+				</div>
+			</div>
+			
+			<lightning:recordViewForm recordId="{!v.objId}" objectApiName="{!v.sObjectName}" class="slds-grid slds-grid--align-spread slds-grid--vertical-stretch slds-wrap x-large slds-truncate">
+				
+				<aura:if isTrue="{!and( v.sObjectName == 'Account', v.obj.fields.IsPersonAccount.value )}">
+					<lightning:layoutItem flexibility="auto" class="custom-box slds-form-element" size="6">
+						<span class="slds-form-element__label"><c:FieldLabel fieldName="Name" sObject="Account"/></span>
+						<div class="slds-form-element__control">
+							<div class="slds-form-element__static">
+                                <a href="" onclick="{!c.redirect}">{!v.obj.fields.Name.value}</a>
+							</div>
+						</div>
+					</lightning:layoutItem>
+					
+					<aura:set attribute="else">
+						<lightning:layoutItem flexibility="auto" class="custom-box" size="6">
+							<lightning:outputField fieldName="Name"/>
+						</lightning:layoutItem>
+					</aura:set>
+				</aura:if>
+				
+				<aura:iteration items="{!v.fieldsToShow}" var="field">
+					<lightning:layoutItem flexibility="auto" class="custom-box" size="6">
+						<lightning:outputField fieldName="{!field}"/>
+					</lightning:layoutItem>
+				</aura:iteration>
+				
+			</lightning:recordViewForm>
+			
+		</div>
+		
+	<!-- </section> -->
+	
+</aura:component>

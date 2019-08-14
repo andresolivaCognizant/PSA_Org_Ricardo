@@ -1,0 +1,6 @@
+<design:component>
+    
+    <design:attribute label="Record Id" name="recordId" description="Workshop Appointment Record Id"/>
+    <design:attribute label="¿Is from asset?" name="isFromAsset"/>
+    
+</design:component>

@@ -1,0 +1,7 @@
+.THIS .leftPaddingClass {
+     padding-left: 2rem;
+ }
+
+ .THIS .slds-input__icon{
+ 	 z-index: 1;
+ }

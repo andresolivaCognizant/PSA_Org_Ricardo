@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>41.0</apiVersion>
+    <description>A non-modal dialog showing contextual information in the form of text or markup on hover or on focus of an element</description>
+</AuraDefinitionBundle>

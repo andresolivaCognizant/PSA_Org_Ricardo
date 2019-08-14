@@ -1,0 +1,9 @@
+<aura:component access="GLOBAL" extensible="false">
+	
+	<aura:attribute access="GLOBAL" name="pdfData" type="String" description="PDF data in base64 encoded format"/>
+	<aura:attribute name="wHeight" type="String" description="Height"/>
+
+	<!--/PSADealer/resource/pdfjsok/pdfjs/web/viewer.html-->
+    <iframe aura:id="pdfFrame" src="{!$Resource.pdfjsLastBuild_V1 + '/pdfjs/web/viewer.html'}" class="pdfFrame" onload="{!c.loadpdf}" style="{! 'height:' + v.wHeight + 'px;'}"></iframe>
+
+</aura:component>

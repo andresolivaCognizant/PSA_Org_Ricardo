@@ -1,0 +1,117 @@
+<aura:component controller="EnhancedRecordHeader_Ctrl"
+                implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                access="global" >
+  
+  <ltng:require scripts="{!join(',',$Resource.LightningUtilsLib)}"
+                afterScriptsLoaded="{!c.doLibLoaded}" />
+
+  <!-- <aura:attribute name="recordId" type="String" default="{!v.recordId}"/> -->
+  <aura:attribute name="configName" type="String" access="global"/>
+  <aura:attribute name="config" type="Map" access="global"/>
+  <aura:attribute name="record" type="Object" access="private"/>
+
+  <aura:attribute name="customerId" type="String" access="global" />
+  <aura:attribute name="accountRecord" type="Object" access="private" />
+
+  <div class="slds-page-header slds-page-header_record-home">
+    <div class="slds-page-header__row">
+      <div class="slds-page-header__col-title">
+        <div class="slds-media">
+            <aura:if isTrue="{!v.record}">
+              <!-- TODO: Dynamically get icon depending on object type (or Custom Metadata?) -->
+              <lightning:icon iconName="standard:work_queue" size="small"/>
+              <div class="slds-media__body" style="padding:2px;padding-left:5px;">
+                <div class="slds-page-header__name">
+                  <div class="slds-page-header__name-title">
+                    <h1>
+                      <!-- TODO: Dynamically get translated object type and Name -->
+                      <span class="slds-page-header__title slds-truncate" title="{!v.record.Name}">
+                        <span></span>
+                        <a onclick="{!c.goToRecord}">
+                          {!v.record.Name ? v.record.Name : v.record.OrderNumber}
+                        </a>
+                      </span>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </aura:if>
+
+            <aura:if isTrue="{!notequals(v.record.Id,v.customerId)}">
+              <lightning:icon iconName="standard:account" size="small"/>
+              <div class="slds-media__body" style="padding:2px;padding-left:5px;">
+                <div class="slds-page-header__name">
+                  <div class="slds-page-header__name-title">
+                    <h1>
+                      <span class="slds-page-header__title slds-truncate" title="{!v.customerId}">
+                        <span></span>
+                        <a onclick="{!c.goToAccount}">
+                            {!v.accountRecord.Name ? v.accountRecord.Name : v.customerId}
+                        </a>
+                      </span>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </aura:if>
+
+        </div>
+      <div class="slds-page-header__col-actions">
+        <div class="slds-page-header__controls">
+          <!-- Button -->
+          <div class="slds-page-header__control">
+            <ul class="slds-button-group-list">
+              <!-- TODO: Dynamically add quick actions. Use quick action API or custom metadata? -->
+              <aura:if isTrue="{!!v.record}">
+                <li>
+                  <button class="slds-button slds-button_neutral" onclick="{!c.goBack}">
+                    {!$Label.c.Back}
+                  </button>
+                </li>
+              </aura:if>
+              <!-- <li>
+                <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                  <button class="slds-button slds-button_icon slds-button_icon-border-filled" aria-haspopup="true" title="More Actions">
+                    {MOREACTIONSICON}
+                  </button>
+                </div>
+              </li> -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="slds-page-header__row slds-page-header__row_gutters">
+      <!-- TODO: Dynamically get fields. Use recordform compactlayout fields or custom metadata? Translation MUST be taken into consideration  -->
+      <!-- <div class="slds-page-header__col-details">
+        <ul class="slds-page-header__detail-row">
+
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Field 1">Field 1</div>
+            <div class="slds-truncate" title="Description that demonstrates truncation with a long text field.">Description that demonstrates truncation with a long text field.</div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Field 2 (3)">Field 2 (3)
+              <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                <button class="slds-button slds-button_icon slds-button_icon" aria-haspopup="true" title="More Actions">
+                  {BUTTON ICON}
+                  <span class="slds-assistive-text">More Actions</span>
+                </button>
+              </div>
+            </div>
+            <div class="slds-truncate" title="Multiple Values">Multiple Values</div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Field 3">Field 3</div>
+            <div class="slds-truncate" title="Hyperlink"><a href="javascript:void(0);">Hyperlink</a></div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Field 4">Field 4</div>
+            <div class="slds-truncate" title="Description (2-line truncation—must use JS to truncate).">Description (2-line truncati...</div>
+          </li>
+        </ul>
+      </div> -->
+    </div>
+  </div>
+</aura:component>

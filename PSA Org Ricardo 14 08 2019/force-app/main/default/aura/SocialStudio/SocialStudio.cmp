@@ -1,0 +1,3 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+		<iframe aura:id="vfFrame" src="https://w.socialstudio.radian6.com/app/w" style="width: 100%; height: 600px" frameborder="0"></iframe>
+</aura:component>

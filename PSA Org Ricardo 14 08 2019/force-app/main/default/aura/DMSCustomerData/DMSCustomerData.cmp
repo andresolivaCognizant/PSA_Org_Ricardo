@@ -1,0 +1,106 @@
+<aura:component implements="flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:hasRecordId" controller="DMSCustomerDataController">
+	
+	<aura:attribute type="AccountExtRef__c" name="currentRecord"/>
+	
+	<aura:attribute type="String" name="externalAccountId" description="" />
+	<aura:attribute type="String[]" name="fields" default="[ExternalId__c,Balance__c,CustomerAccountNumber__c]" />
+	
+	<aura:attribute type="Boolean" name="loadFields" default="false" />
+	
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+	<aura:if isTrue="{! not( empty( v.externalAccountId ) ) }">
+		<force:recordData aura:id="forceRecord"
+			recordId="{! v.externalAccountId }"
+			fields="Account__c,ExternalId__c,Balance__c,CustomerAccountNumber__c"
+			targetRecord="{! v.currentRecord }"
+			mode="VIEW"
+		/>
+	</aura:if>
+	
+	<div class="card-container" >
+	
+		<article class="slds-card">
+			
+			<aura:if isTrue="{! and( not( empty( v.currentRecord ) ), v.loadFields ) }">
+			
+				<aura:if isTrue="{! not( empty( v.externalAccountId ) ) }">
+				
+					<lightning:recordviewform recordId="{!v.externalAccountId}" objectApiName="AccountExtRef__c" class="slds-grid slds-grid--align-spread slds-grid--vertical-stretch slds-wrap x-large slds-truncate slds-p-around_medium slds-p-top_none">
+						
+						<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-right_small slds-p-top_xx-small" size="6">
+							<aura:if isTrue="{! not( empty( v.currentRecord.fields.ExternalId__c.value ) ) }">
+								<lightning:outputField fieldName="ExternalId__c"/>
+								
+								<aura:set attribute="else">
+									<span class="slds-form-element__label"><c:FieldLabel fieldName="ExternalId__c" sObject="AccountExtRef__c"/></span>
+									<div class="slds-form-element__control">
+										<div class="slds-form-element__static">
+			                               &nbsp;
+										</div>
+									</div>
+								</aura:set>
+							</aura:if>
+						</lightning:layoutItem>
+						
+						<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-left_small slds-p-top_xx-small" size="6">
+							<aura:if isTrue="{! not( empty( v.currentRecord.fields.Balance__c.value ) ) }">
+								<lightning:outputField fieldName="Balance__c"/>
+								
+								<aura:set attribute="else">
+									<span class="slds-form-element__label"><c:FieldLabel fieldName="Balance__c" sObject="AccountExtRef__c"/></span>
+									<div class="slds-form-element__control">
+										<div class="slds-form-element__static">
+			                               &nbsp;
+										</div>
+									</div>
+								</aura:set>
+							</aura:if>
+						</lightning:layoutItem>
+						
+						<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-right_small slds-p-top_xx-small" size="6">
+							<aura:if isTrue="{! not( empty( v.currentRecord.fields.CustomerAccountNumber__c.value ) ) }">
+								<lightning:outputField fieldName="CustomerAccountNumber__c"/>
+								
+								<aura:set attribute="else">
+									<span class="slds-form-element__label"><c:FieldLabel fieldName="CustomerAccountNumber__c" sObject="AccountExtRef__c"/></span>
+									<div class="slds-form-element__control">
+										<div class="slds-form-element__static">
+			                               &nbsp;
+										</div>
+									</div>
+								</aura:set>
+							</aura:if>
+						</lightning:layoutItem>
+						
+					</lightning:recordviewform>
+					
+					<aura:set attribute="else">
+						
+						<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large slds-p-around_medium">
+							<lightning:layoutItem flexibility="auto, no-grow" class="custom-box slds-align_absolute-center" size="12">
+								{!$Label.c.AfterSalesDMSMessage}
+							</lightning:layoutItem>
+						</lightning:layout>
+						
+					</aura:set>
+				
+				</aura:if>
+
+				<aura:set attribute="else">
+						
+					<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large slds-p-around_medium">
+						<lightning:layoutItem flexibility="auto, no-grow" class="custom-box slds-align_absolute-center" size="12">
+							{!$Label.c.AfterSalesDMSMessage}
+						</lightning:layoutItem>
+					</lightning:layout>
+					
+				</aura:set>
+				
+			</aura:if>
+			
+		</article>
+		
+	</div>
+	
+</aura:component>

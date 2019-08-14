@@ -1,0 +1,18 @@
+<aura:component>
+  <aura:attribute type="Map" name="config_obj"/>
+
+  <div
+    style="{!'background-color:' + v.config_obj.unique_color + '; border-color:' + v.config_obj.unique_color}"
+    class="fc-day-grid-event fc-h-event fc-event fc-start fc-end"
+    >
+    <div class="fc-content">
+      <div class="fc-time">
+        {!v.config_obj.Name}
+      </div>
+      <div class="fc-title">
+        {!v.config_obj.Activity__c}
+      </div>
+    </div>
+  </div>
+
+</aura:component>

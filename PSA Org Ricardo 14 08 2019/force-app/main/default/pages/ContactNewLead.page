@@ -1,0 +1,8 @@
+<apex:page standardController="Contact" tabStyle="Contact" >
+    <flow:interview name="ManualLeadCreation" finishLocation="/{!Contact.Id}">
+        <apex:param name="InputID" value="{!Contact.Id}"/>
+    	<apex:param name="InputFirstName" value="{!Contact.FirstName}"/>
+        <apex:param name="InputLastName" value="{!Contact.LastName}"/>
+        <apex:param name="InputEmail" value="{!Contact.Email}"/>
+    </flow:interview>
+</apex:page>

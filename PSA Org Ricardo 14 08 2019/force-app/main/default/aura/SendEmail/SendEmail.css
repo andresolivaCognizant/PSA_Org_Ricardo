@@ -1,0 +1,30 @@
+.THIS .customRequired{
+	font-weight: 400;
+}
+
+.THIS .customRequired:before{
+	content: "*";
+	float: left;
+	padding-right: 2px;
+	color: rgb(194, 57, 52);
+	font-weight: 700;
+}
+
+.THIS .none{
+	display: none;
+}
+
+.THIS .slds-form-element__help{
+	color: rgb(194, 57, 52);
+}
+
+.THIS .slds-popover{
+	background-color: rgb(194, 57, 52);
+	border-radius: 5pt;
+	padding-left: 1.5rem;
+}
+
+.THIS .slds-popover__header{
+	border: none;
+	border-radius: 5pt;
+}

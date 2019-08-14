@@ -1,0 +1,16 @@
+<aura:component implements="force:lightningQuickAction,force:hasRecordId" controller="RESTInt97A">
+	
+	<aura:attribute name="recordId" type="String" default="" />
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="ServiceResponse" type="String" default=""/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+   
+    <aura:if isTrue="{!v.Spinner}">
+        <lightning:spinner aura:id="divSpinner" class="slds-spinner" variant="brand" alternativeText="loading"/>
+        <aura:set attribute="else">
+            {!v.ServiceResponse}
+        </aura:set>
+ 	</aura:if>
+    
+</aura:component>

@@ -1,0 +1,32 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
+
+  <aura:html tag="style">
+    .modal-body {
+      height      : unset !important;
+      max-height  : 900px !important;
+    }
+
+    .cuf-content {
+      padding     : 0 !important;
+    }
+
+    .slds-p-around--medium {
+      padding     : 0 !important;
+    }
+    
+    .slds-modal__container{
+      width       : 90% !important;
+      max-width   : 90% !important;
+    }
+
+    .slds-modal__content{
+      position    : relative !important;
+      overflow-y  : hidden !important;
+      overflow-x  : hidden !important;
+      max-height  : unset !important;
+    }
+  </aura:html>
+
+  <c:olbAppointment recordId="{!v.recordId}" onlwcevent="{!c.handleLwcEvent}"></c:olbAppointment>
+
+</aura:component>

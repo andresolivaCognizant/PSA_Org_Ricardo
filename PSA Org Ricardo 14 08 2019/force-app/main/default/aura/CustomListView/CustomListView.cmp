@@ -1,0 +1,109 @@
+<aura:component controller="CustomListViewController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    <!-- Component Attributes -->
+    <aura:attribute name="object" type="String" default="Opportunity" access="global"/>
+    <aura:attribute name="Newobject" type="String" default="Opportunity"/>
+    <aura:attribute name="title" type="String" default="Opportunities" access="global"/>
+    <aura:attribute name="isProduction" type="boolean" default="false"/> 
+    <!-- Lightning:datatable vars -->
+	<aura:attribute name="data" type="Object" default="[]"/>
+    <aura:attribute name="columns" type="List" default="[]"/>
+    <aura:attribute name="sortedBy" type="string" default="LastName" />
+    <aura:attribute name="sortedDirection" type="string" default="asc" />
+    <aura:attribute name="enableInfiniteLoading" type="Boolean" default="true"/>
+    <aura:attribute name="loadMoreStatus" type="String" default=""/>
+    <!-- Change Owner -->
+    <aura:attribute name="selectedUser" type="sObject" default="{}" />
+ 	<!-- <aura:attribute name="checkRows" type="String" default="opportunity"/> -->
+ 	<aura:attribute name="selectedRows" type="List" default="[]"/>
+    <!-- Header: Datatable Counters -->
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="0"/>
+    <aura:attribute name="numberRows" type="Integer" default="0"/>
+    <!-- Managing User List Views -->
+    <aura:attribute name="ObjectListViewList" type="ListView[]"/>
+    <aura:attribute name="viewselected" type="String"/>
+    <!-- Starting Loading Values -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:if isTrue="{! !empty(v.Newobject)}">
+        <c:CL002_CreateRecord aura:id="cmpCreateRecord" objectName="{!v.Newobject}"/>
+    </aura:if>
+    
+    <!--Start static Modal: Change Owner-->
+    <c:Modal aura:id="theStaticModal" title="{!$Label.c.LeadAssigmentModalTitle}" isDirectional="true" isLarge="false" hasCloseIcon="true">
+        <aura:set attribute="tagline">
+            {!$Label.c.LeadAssigmentModalTagLine}
+        </aura:set>
+        <div style="height:250px;">
+            <c:Lookup objectAPIName="User" IconName="standard:user" label="User" selectedRecord="{!v.selectedUser}" whereSearch=""/>
+            <!--whereSearch="{!' and AccountId IN \''+ v.listContacts +'\''}"/>-->
+            <br/>
+            <p class="slds-text-body_small">{!$Label.c.LeadAssignmentComponentBodyMessage}</p>
+            <p class="slds-text-body_small">{!$Label.c.LeadAssignmentComponentBodyMessageLine1}</p>
+            <p class="slds-text-body_small">{!$Label.c.LeadAssignmentComponentBodyMessageLine2}</p>
+        </div>
+        <aura:set attribute="footer">
+            <lightning:button label="{!$Label.c.LeadAssigmentButtonCancel}" onclick="{!c.onCancel}" />
+            <lightning:button variant="brand" label="{!$Label.c.LeadAssigmentButtonChangeOwner}" onclick="{!c.onConfirm}" />
+        </aura:set>
+    </c:Modal>
+    <!--End static Modal: Change Owner -->
+    <div class="slds-page-header" style="z-index:200">  <!--REMOVE STYLE: ONLY FOR TESTING -->
+      <div class="slds-grid">
+        <div class="slds-col slds-has-flexi-truncate">
+          <div class="slds-media slds-no-space slds-grow">
+            <div class="slds-media__figure">
+              <span class="{!'slds-icon_container slds-icon-standard-' + v.object + ' psaDarkBlue'}" title="{!v.title}">
+                    <lightning:icon iconName="{!'standard:' + v.object}" size="large" alternativeText="icon"/>
+              </span>
+            </div>
+            <div class="slds-media__body">
+              <nav>
+                <ol class="slds-breadcrumb slds-line-height_reset">
+                  <li class="slds-breadcrumb__item">
+                    <span>{!v.title}</span>
+                  </li>
+                </ol>
+              </nav>
+              <h1 class="slds-page-header__title slds-p-right_x-small">
+                <button class="slds-button slds-button_reset slds-type-focus slds-truncate" aria-haspopup="true" title="">
+                  <span class="slds-grid slds-has-flexi-truncate slds-grid_vertical-align-center">
+                        <lightning:select name="select1"  label="" required="false" value="{!v.viewselected}" onchange="{!c.getFilteredRecord}">
+                        <!-- <ui:inputSelect class="slds-select slds-select-back" aura:id="selectedViewId" label="" value="{!v.viewselected}" change="{!c.getFilteredRecord}"> -->
+                            <aura:iteration items="{!v.ObjectListViewList}" var="listview">
+                                <!-- <ui:inputSelectOption text="{!listview.Id}" label="{!listview.Name}"/> -->
+                                <option value="{!listview.Id}" text="{!listview.Name}"/>
+                            </aura:iteration>
+                        <!-- </ui:inputSelect> -->
+                    </lightning:select>
+                  </span>
+                </button>
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="slds-col slds-no-flex slds-grid slds-align-top slds-p-bottom_xx-small">
+          <div class="slds-button-group" role="group">
+                <lightning:button aura:id="NewRecord" label="{!$Label.c.LeadAssigmentButtonNew}" variant="neutral" onclick="{!c.onCreateRecord}"/>
+                <!-- <lightning:button aura:id="TransferLead" label="{!$Label.c.LeadAssigmentButtonChangeOwner}" variant="neutral" onclick="{!c.onOpenStaticModal}"/> -->
+           </div>
+        </div>
+      </div>
+      <div class="slds-grid">
+        <div class="slds-col slds-align-middle">
+          <p class="slds-text-body_small">{!v.totalNumberOfRows}&nbsp;{!$Label.c.cListViewResumeItems}<aura:If isTrue="{!v.numberRows > 0}">&nbsp;• {!v.numberRows} &nbsp;{!$Label.c.cListViewResumeRows} </aura:If></p>
+        </div>
+      </div>
+    </div>
+
+    <lightning:datatable showRowNumberColumn="false"
+    	data="{!v.data}" 
+    	columns="{!v.columns}"  
+    	enableInfiniteLoading="true"
+    	keyField="Id"
+    	sortedBy="{!v.sortedBy}" 
+        sortedDirection="{!v.sortedDirection}"
+        onsort="{!c.updateColumnSorting}" 
+        onrowselection="{!c.getSelectedName}" 
+        onrowaction="{!c.navigateToSObject}" />
+    	{! v.loadMoreStatus }
+</aura:component>

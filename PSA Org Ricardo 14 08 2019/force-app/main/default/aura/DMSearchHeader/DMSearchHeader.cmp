@@ -1,0 +1,76 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    
+    <aura:attribute name="searchByAccount" type="String" description="Search account criteria"/>
+    <aura:attribute name="searchByAsset" type="String" description="Search asset criteria"/>
+    <aura:attribute name="searchBySales" type="String" description="Search sales criteria"/>
+    <aura:attribute name="searchByAfterSales" type="String" description="Search aftersales criteria"/>
+    <aura:attribute name="isDoneRendering" type="Boolean" default="false"/>
+    <aura:attribute name="filterrows" type="Boolean" default="false" description="Extended filter"/>
+    <aura:attribute name="filtersDates" type="List" default="{}"/>
+    <aura:attribute name="filtersField" type="List" default="{}"/>
+    <aura:attribute name="filterDate" type="String" default=""/>
+    <aura:attribute name="filterField" type="String" default=""/>
+    <aura:attribute name="filterDateLabel" type="String" default=""/>
+    <aura:attribute name="filterFieldLabel" type="String" default=""/>
+    <aura:attribute name="FilterPillsField" type="List" default="[]" access="private"/>
+    <aura:attribute name="FilterPillsDates" type="List" default="[]" access="private"/>
+    <aura:attribute name="AuxField" type="String" default=""/>
+    
+    <aura:registerEvent name="searchEvent" type="c:DMSearchEvent" />
+  
+   
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-grid slds-wrap slds-grid--align-center slds-grid--align-space">
+            <div class="slds-col slds-size_1-of-4">
+                <c:DMSearchHeaderField placeholderText="Client..." searchField="{!v.searchByAccount}" />
+            </div>
+            <div class="slds-col slds-size_1-of-4">
+                <c:DMSearchHeaderField placeholderText="Vehicle..." searchField="{!v.searchByAsset}" />
+            </div>
+            <div class="slds-col slds-size_1-of-4">
+                <lightning:buttonMenu aura:id="filterMenu" iconName="utility:filterList" alternativeText="Show filters" onselect="{! c.handleFilterSelection }" label="">
+                    <aura:iteration items="{!v.filtersField}" var="filter">
+                        <lightning:menuItem aura:id="mItemsFld" label="{!filter.Field}" value="{!filter.Value}" checked="false"/>
+                    </aura:iteration>
+                </lightning:buttonMenu>
+                <aura:iteration items="{!v.FilterPillsField}" var="pill">
+                    <lightning:pill name="{!pill.id}" label="{!pill.label}" hasError="{!!pill.isValid}" onremove="{!c.onRemovePillField}"/>
+                </aura:iteration>
+            </div>
+            <div class="slds-col slds-size_1-of-4 ">
+               <div class="slds-float_center">    
+                    <label class="slds-checkbox_toggle slds-grid labelCheckbox">{!$Label.c.AfterSalesRestrictedSearch} 
+                        <ui:inputCheckbox value="{!v.filterrows}" change="{!c.handleonclick}"/>
+                        <span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
+                            <span class="slds-checkbox_faux"/>
+                            <span class="slds-checkbox_on"/>
+                            <span class="slds-checkbox_off"/>
+                        </span>
+                    </label>
+                </div>
+            </div>
+     <!--    </div> 
+        <div class="slds-grid slds-wrap slds-grid- -align-center slds-grid- -align-space"> -->
+            <div class="slds-col slds-size_1-of-4">
+                <c:DMSearchHeaderField placeholderText="Sales..." searchField="{!v.searchBySales}" />
+            </div>
+            <div class="slds-col slds-size_1-of-4">
+                <c:DMSearchHeaderField placeholderText="AfterSales..." searchField="{!v.searchByAfterSales}" />
+            </div>
+            <div class="slds-col slds-size_1-of-4">
+                <lightning:buttonMenu aura:id="filterMenuAdvance" iconName="utility:filterList" alternativeText="Show filters" onselect="{! c.handleFilterSelection }" label="">
+                    <aura:iteration items="{!v.filtersDates}" var="filter">
+                        <lightning:menuItem aura:id="mItemsDtd" label="{!filter.Field}" value="{!filter.Value}" checked="false" />
+                    </aura:iteration>
+                </lightning:buttonMenu>
+                <aura:iteration items="{!v.FilterPillsDates}" var="pill">
+                    <lightning:pill name="{!pill.id}" label="{!pill.label}" hasError="{!!pill.isValid}" onremove="{!c.onRemovePillDates}"/>
+                </aura:iteration>            </div>
+            <div class="slds-col slds-size_1-of-4">
+                 <div class="slds-float_center">
+                    <lightning:button aura:id="button1" label="{!$Label.c.DMSSearchButton}" variant="brand" onclick="{! c.handleonclick }" value="Search" iconName="utility:right" />
+                </div>
+            </div>
+        </div> 
+    </div>
+</aura:component>

@@ -1,0 +1,17 @@
+<aura:component controller="UpdateOptOutCreateConsentController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride,force:hasSObjectName" access="global">
+
+	<!-- Attributes -->
+	<aura:attribute name="informativeMessage" type="String" default=""/>
+
+	<!-- Handler -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+	<!-- Toast component-->
+	<lightning:notificationsLibrary aura:id="notifLib"/>
+
+	<!-- Show informative message -->
+	<div class="slds-m-top_xx-large slds-p-top_xx-large">
+		<lightning:formattedText value="{!v.informativeMessage}" />
+	</div>
+
+</aura:component>

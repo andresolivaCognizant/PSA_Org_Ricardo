@@ -1,0 +1,50 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens,lightning:isUrlAddressable" access="global">
+	
+	<aura:attribute name="pageReference" type="Object"/>
+	<lightning:navigation aura:id="navService"/> 
+	
+	<!-- Global Access Attributes area -->
+	<aura:attribute name="navigateTo" type="String" access="global"/>
+	<aura:attribute name="recId" type="String" access="global"/>
+	
+	<aura:attribute name="mUpName" type="string" default="" access="global"/> 
+	<aura:attribute name="isCommunity" type="Boolean" default ="false" access="global"/> 
+	<aura:attribute name="isFlow" type="Boolean" default ="false" access="global"/> 
+	<aura:attribute name="country" type="String" access="global"/>
+	
+	<aura:attribute name="dealerId" type="String" access="global"/>
+	<aura:attribute name="salesAgentId" type="String" access="global"/>
+	<aura:attribute name="localeId" type="String" access="global"/>
+	<aura:attribute name="brand" type="String" access="global"/>
+	<aura:attribute name="slCustomerId" type="String" access="global"/>
+	<aura:attribute name="slDriverId" type="String" access="global"/>
+	<aura:attribute name="slLessorId" type="String" access="global"/>
+	<aura:attribute name="slContactPersonId" type="String" access="global"/>
+	<aura:attribute name="slOpportunityId" type="String" access="global"/>
+	<aura:attribute name="slQuoteId" type="String" access="global"/>
+	<aura:attribute name="slContractId" type="String" access="global"/>
+	<aura:attribute name="slOrderId" type="String" access="global"/>
+	<aura:attribute name="slCustomerType" type="String" access="global"/>
+	<!-- US 7183 BEGIN -->
+	<aura:attribute name="slLeaserContactPersonId" type="String" access="global"/>
+	<!-- US 7183 END -->
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-207 - 05042019 -->
+	<aura:attribute name="sdhCustomerId" type="String" access="global"/>
+	<aura:attribute name="sdhContactPersonId" type="String" access="global"/>
+	<aura:attribute name="sdhDriverId" type="String" access="global"/>
+	<!-- END - Manuel Medina - 05042019 -->
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-8027 - 08042019 -->
+	<aura:attribute name="sdhLessorId" type="String" access="global"/>
+	<aura:attribute name="sdhLeaserContactPersonId" type="String" access="global"/>
+	<aura:attribute name="sdhQuoteId" type="String" access="global"/>
+	<aura:attribute name="sdhContractId" type="String" access="global"/>
+	<aura:attribute name="sdhOrderId" type="String" access="global"/>
+	<aura:attribute name="sdhVpoId" type="String" access="global"/>
+	<!-- END - Manuel Medina - 08042019 -->
+	
+	<!-- Retrieve your data using an Apex Controller -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	
+</aura:component>

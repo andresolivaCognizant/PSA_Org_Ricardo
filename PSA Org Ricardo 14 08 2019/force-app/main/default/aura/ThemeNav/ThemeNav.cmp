@@ -1,0 +1,41 @@
+<aura:component extends="forceCommunity:navigationMenuBase" implements="forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="showMenu" type="Boolean" default="false"/>
+    
+    <div class="slds">
+        <span class="menu-label">Menu</span>
+        <lightning:button iconName="utility:down" 
+                          variant="bare" 
+                          class="icon-down" 
+                          onclick="{! c.showHideMenu }"/>
+                     	  <!-- GAS onblur fires before onclick so can't use this close when clicking outside it
+						  onblur="{! c.showHideMenu }"/>  
+                          -->
+                        
+    </div>
+    <aura:if isTrue="{! v.showMenu }">
+        <div >
+            <table class="slds-table">
+                <tbody onclick="{! c.onClick }"
+                       class="menu-drop" >
+                    <aura:iteration items="{!v.menuItems}" var="item" >
+                        <aura:if isTrue="{!item.subMenu}">
+                            <tr class="menu-row">
+                                <td class="menu-row-item">{!item.label}</td>
+                            </tr>
+                            <aura:iteration items="{!item.subMenu}" var="subItem">
+                                <tr class="menu-row">
+                                    <td class="menu-row-item"><a data-menu-item-id="{!subItem.id}" href="">{!subItem.label}</a></td>
+                                </tr>
+                            </aura:iteration>
+                            <aura:set attribute="else">
+                                <tr class="menu-row">
+                                    <td scope="row" class="menu-row-item"><a data-menu-item-id="{!item.id}" href="">{!item.label}</a></td>
+                                </tr>
+                            </aura:set>
+                        </aura:if>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </aura:if>
+</aura:component>

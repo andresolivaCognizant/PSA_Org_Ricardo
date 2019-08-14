@@ -1,0 +1,91 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+
+  <aura:attribute type="Map" name="user_input_obj" default="{}"/>
+  <aura:attribute type="Map" name="config_obj" default="{}"/>
+
+  <!-- handlers-->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  <aura:handler event="c:CustomerPortfolioTransferDestination" action="{!c.handleEvent}"/>
+
+  <aura:registerEvent name="evt" type="c:CustomerPortfolioTransferDestination"/>
+
+  <lightning:card title="Activity Filters" iconName="utility:filterList">
+
+    <div style="position: relative;">
+
+      <div style="z-index:902;">
+        <lightning:layout multipleRows="true" horizontalAlign="space" verticalAlign="center">
+          <lightning:layoutItem>
+            <div class="slds-form-element">
+              <label class="slds-checkbox_toggle slds-grid">
+                <span class="slds-form-element__label slds-m-bottom_none">Mass transfer</span>
+                <input name="checkbox-toggle"
+                        type="checkbox"
+                        value="{!v.user_input_obj.isMassTransfer}"
+                        onclick="{!c.handleToggleClick}"/>
+                <span class="slds-checkbox_faux_container" aria-live="assertive">
+                  <span class="slds-checkbox_faux"></span>
+                  <span class="slds-checkbox_on">Enabled</span>
+                  <span class="slds-checkbox_off">Disabled</span>
+                </span>
+              </label>
+            </div>
+          </lightning:layoutItem>
+
+          <lightning:layoutItem>
+            <lightning:layout>
+              <lightning:layoutItem size="3" class="slds-p-around_x-small">
+                <lightning:input name="_city"
+                                 label="City"
+                                 value="{!v.user_input_obj.filter.city}"/>
+              </lightning:layoutItem>
+              <lightning:layoutItem size="3" class="slds-p-around_x-small">
+                <lightning:input name="_postal_code"
+                                 label="Postal Code"
+                                 value="{!v.user_input_obj.filter.postal_code}"/>
+              </lightning:layoutItem>
+              <lightning:layoutItem size="3" class="slds-p-around_x-small">
+                <lightning:select name="_filter_customer_type" 
+                                  label="Customer Type"
+                                  value="{!v.user_input_obj.filter.customer_type}">
+                  <option value="0">All</option>
+                  <option value="1">B2C</option>
+                  <option value="2">B2B</option>
+                </lightning:select>
+              </lightning:layoutItem>
+              <lightning:layoutItem size="3" class="slds-p-around_x-small">
+                <lightning:select name="_filter_customer_status" 
+                                  label="Customer Status"
+                                  value="{!v.user_input_obj.filter.customer_status}">
+                  <option value="0">All</option>
+                  <option value="1">Customer</option>
+                  <option value="2">Prospect</option>
+                </lightning:select>
+              </lightning:layoutItem>
+            </lightning:layout>
+          </lightning:layoutItem>
+
+          <lightning:layoutItem>
+            <div class="slds-p-vertical_xx-small">
+              <lightning:button label="Search Activity" iconName="utility:search" iconPosition="right" variant="brand" class="wide_btn" disabled="{!v.config_obj.search_btn.disabled}" onclick="{!c.handleClick}"/>
+            </div>
+
+            <div class="slds-p-vertical_xx-small">
+              <lightning:button label="Transfer Activity" iconName="utility:change_owner" iconPosition="right" variant="{! v.config_obj.transfer_btn.variant ? v.config_obj.transfer_btn.variant : 'brand'}" class="wide_btn" disabled="{!v.config_obj.transfer_btn.disabled}" onclick="{!c.handleClick}"/>
+            </div>
+          </lightning:layoutItem>
+
+        </lightning:layout>
+      </div>
+
+      <aura:if isTrue="{! and(!v.config_obj.source, !v.config_obj.destination)}">
+        <div style="position: absolute; z-index:10000; left: 0; top: 0; right:0; bottom:0; background: white;"
+            class="slds-align_absolute-center">
+          No Destination Selected
+        </div>
+      </aura:if>
+    </div>
+
+  </lightning:card>
+
+</aura:component>

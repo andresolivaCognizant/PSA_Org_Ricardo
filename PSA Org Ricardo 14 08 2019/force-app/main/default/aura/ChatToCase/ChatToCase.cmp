@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride,force:hasSObjectName,forceCommunity:availableForAllPageTypes" controller ="AsignCaseToSelfController" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+
+</aura:component>

@@ -1,0 +1,61 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
+
+  <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+  <aura:attribute type="Map" name="ui_obj" default="{'isLoading' : true}"/>
+  <aura:attribute type="Lead" name="lds_record"/>
+
+  <aura:html tag="style">
+    .modal-body {
+      height      : unset !important;
+      max-height  : 900px !important;
+    }
+
+    .cuf-content {
+      padding     :0 !important;
+    }
+
+    .slds-p-around--medium {
+      padding     :0 !important;
+    }
+    
+    .slds-modal__container {
+      width       : 90% !important;
+      max-width   : 90% !important;
+    }
+
+    .slds-modal__content {
+      position    : relative !important;
+      overflow-y  : scroll !important;
+      overflow-x  : hidden !important;
+      max-height  : unset !important;
+    }
+  </aura:html>
+
+  <force:recordData aura:id="lds_cmp"
+    recordId="{!v.recordId}"
+    fields="CalculatedPOS__c, CalculatedPOS__r.Name"
+    targetRecord="{!v.lds_record}"
+    mode="VIEW"
+    recordUpdated="{!c.handleRecordUpdate}"/>
+
+  <aura:if isTrue="{!v.ui_obj.isLoading}">
+      <div class="slds-is-relative" style="height: 33vh;">
+          <lightning:spinner alternativeText="Loading" size="medium" variant="brand"/>
+        </div>
+    <aura:set attribute="else">
+
+      <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+          Dealer Calendar: {!v.lds_record.fields.CalculatedPOS__r.value.fields.Name.value}
+        </h2>
+      </header>
+
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+        <div aura:id="body_container"/>
+      </div>
+
+    </aura:set>
+
+  </aura:if>
+
+</aura:component>

@@ -1,0 +1,14 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global"  controller="FieldLabelsController">
+	
+	<aura:attribute name="fieldNames" type="String[]" description="List of field's API names based on SObject.Field notation." required="true"/>
+	<aura:attribute name="fieldLabels" type="Object" description="Return variable to allow get component result from main components." required="true"/>
+	<aura:attribute type="Boolean" name="runInit" description="" default="true"/>
+	
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+	
+	<aura:method name="getFieldLabels" action="{! c.getFieldLabels }" description="">
+		<aura:attribute name="fieldNames" type="String[]" description="List of field's API names based on SObject.Field notation." required="true"/>
+		<aura:attribute type="Function" name="callback" description="Result"/>
+	</aura:method>
+	
+</aura:component>

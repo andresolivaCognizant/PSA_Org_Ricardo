@@ -1,0 +1,59 @@
+.THIS .warning-green svg{
+	fill: green;
+	
+	background: #eee;
+	border: 1px solid #ccc;
+	width: 9pt;
+	height: 9pt;
+	border-radius: 50%;
+}
+
+.THIS .warning-red svg{
+	fill: red;
+	
+	background: #eee;
+	border: 1px solid #ccc;
+	width: 9pt;
+	height: 9pt;
+	border-radius: 50%;
+}
+
+.THIS .warning-blue svg{
+	fill: blue;
+	
+	background: #eee;
+	border: 1px solid #ccc;
+	width: 9pt;
+	height: 9pt;
+	border-radius: 50%;
+}
+
+.THIS .warning-violet svg{
+	fill: purple;
+	
+	background: #eee;
+	border: 1px solid #ccc;
+	width: 9pt;
+	height: 9pt;
+	border-radius: 50%;
+}
+
+.THIS .warning-orange svg{
+	fill: rgb(255, 183, 93);
+	
+	background: #eee;
+	border: 1px solid #ccc;
+	width: 9pt;
+	height: 9pt;
+	border-radius: 50%;
+}
+
+.THIS .warning-default svg{
+	fill: rgb(236, 235, 234);
+	
+	background: #eee;
+	border: 1px #ccc;
+	width: 9pt;
+	height: 9pt;
+	border-radius: 50%;
+}

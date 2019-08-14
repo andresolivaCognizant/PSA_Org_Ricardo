@@ -1,0 +1,34 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" 
+                access="global"
+                >
+
+  <aura:attribute type="String" name="error"/>
+  <aura:attribute type="Boolean" name="isDisabled" default="true"/>
+  <aura:attribute type="SBQQ__Quote__c" name="record"/>
+
+  <force:recordData aura:id="lds_cmp"
+                    recordId="{!v.recordId}"
+                    fields="Name, RecordType.DeveloperName, SBQQ__Opportunity2__r.StageName"
+                    mode="VIEW"
+                    targetRecord="{!v.record}"
+                    targetError="{!v.error}"
+                    recordUpdated="{!c.handlerRecordUpdate}"/>
+
+  <aura:if isTrue="{!v.isDisabled}">
+    <lightning:layout>
+      <lightning:layoutItem alignmentBump="left">
+        <lightning:button label="{!$Label.c.GenericButtonEditQuote}" 
+                          variant="brand"
+                          disabled="true"/>
+      </lightning:layoutItem>
+    </lightning:layout>
+
+    <aura:set attribute="else">
+      <c:GenericButton name1="{!$Label.c.GenericButtonEditQuote}"
+                       mUpName1="Quote Edition"
+                       recordId="{!v.recordId}"
+                       isCommunity="true"/>
+    </aura:set>
+  </aura:if>
+
+</aura:component>

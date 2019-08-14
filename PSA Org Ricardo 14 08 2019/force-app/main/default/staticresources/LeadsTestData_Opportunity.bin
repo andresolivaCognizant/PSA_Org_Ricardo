@@ -1,0 +1,11 @@
+ID,NAME,AccountId,CURRENCYISOCODE,CloseDate,StageName, Country__c
+006A,New Opportunity,001I,EUR,2020-01-01,6,ES
+006B,New Opportunity,001I,EUR,2020-01-02,7,ES
+006C,New Opportunity,001I,EUR,2020-01-03,6,ES
+006D,New Opportunity,001I,EUR,2020-01-04,7,ES
+006E,New Opportunity,001I,EUR,2020-01-05,6,ES
+006F,New Opportunity,001I,EUR,2020-01-06,7,ES
+006G,New Opportunity,001I,EUR,2020-01-07,6,ES
+006H,New Opportunity,001I,EUR,2020-01-08,7,ES
+006I,New Opportunity,001I,EUR,2020-01-09,6,ES
+006J,New Opportunity,001I,EUR,2020-01-10,7,ES

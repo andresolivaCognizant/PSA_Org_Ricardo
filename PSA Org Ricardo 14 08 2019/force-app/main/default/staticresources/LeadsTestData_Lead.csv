@@ -1,0 +1,11 @@
+LastName,FirstName,Customer__c,LeadCountry__c,Email
+Account A,Alexander,001A,US,person.a@test.com
+Account B,Becky,001B,US,person.b@test.com
+Account C,Chloe,001C,US,person.c@test.com
+Account D,Diana,001D,US,person.d@test.com
+Account E,Emily,001E,US,person.e@test.com
+Account F,Fiona,001F,US,person.f@test.com
+Account G,George,001G,US,person.g@test.com
+Account H,Hailey,001H,US,person.h@test.com
+Account I,Ilsa,001I,US,person.i@test.com
+Account J,Jacob,001J,US,person.j@test.com

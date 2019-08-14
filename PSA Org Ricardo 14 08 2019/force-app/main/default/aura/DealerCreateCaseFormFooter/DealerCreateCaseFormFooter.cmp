@@ -1,0 +1,7 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+	<aura:registerEvent name="formSubmit" type="c:DealerCreateCaseEvent"/>
+
+    <lightning:button name="cancel" label="{!$Label.c.CreateCase_Cancel}" title="{!$Label.c.CreateCase_Cancel}" onclick="{!c.handleCancel}"/>
+    <lightning:button name="Save" label="{!$Label.c.CreateCase_Save}" title="{!$Label.c.CreateCase_Save}" variant="brand" onclick="{!c.handleSave}"/>
+</aura:component>

@@ -1,0 +1,5 @@
+<design:component>
+   <design:attribute name="brand" label="Brand" />
+   <design:attribute name="sRId" label="Service Resource Id" />
+   <design:attribute name="selectedValue" label="Selected Family - Out" />
+</design:component>

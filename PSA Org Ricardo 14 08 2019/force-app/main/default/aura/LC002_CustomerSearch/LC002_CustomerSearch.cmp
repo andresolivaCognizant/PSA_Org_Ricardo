@@ -1,0 +1,210 @@
+<aura:component controller="CustomerSearchAController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+	<!--- component configuration  -->
+	<aura:attribute name="ObjectType" type="String" default="B2C"/>
+	<aura:attribute name="Select" type="String" default="Name"/>
+	<aura:attribute name="From" type="String" default=""/>
+	<aura:attribute name="Where" type="String" default="Type IN ('Account')"/>
+	<aura:attribute name="WhereSOSL" type="String" default=""/>
+	<aura:attribute name="Filter" type="boolean" default="false" />
+	<aura:attribute name="relobject" type="String"/>
+	<aura:attribute name="UserAccountId" type="String"/>
+	<aura:attribute name="errors" type="Object"/>
+	<!--- sObjectsMaps  -->
+	<aura:attribute name="AccountMap" type="Map"/>
+	<aura:attribute name="AssetMap" type="Map"/>
+	<aura:attribute name="AccountContactAssetRelationMap" type="Map"/>
+	<aura:attribute name="OrderMap" type="Map"/>
+	<aura:attribute name="ContactMap" type="Map"/>
+	<!--- enableSorting  -->
+	<aura:attribute name="selectedUsuario" type="sObject" default="{}" />
+	<aura:attribute name="selectedSalesman" type="sObject" default="{}" />
+	<aura:attribute name="data" type="Map" default=""/>
+	<aura:attribute name="columns" type="List" default=""/>
+	<!--- enableInfiniteLoading  -->
+	<aura:attribute name="enableInfiniteLoading" type="Boolean" default="false"/>
+	<aura:attribute name="initialRows" type="Integer" default="30"/>
+	<aura:attribute name="rowsToLoad" type="Integer" default="10"/>
+	<aura:attribute name="totalNumberOfRows" type="Integer" default="-1"/>
+	<aura:attribute name="loadMoreStatus" type="String" default="Loading .... "/>
+	<aura:attribute name="showRowNumberColumn" type="Boolean" default="false"/>
+	<aura:attribute name="rowNumberOffset" type="Integer" default="0"/>
+	<aura:attribute name="rowsToAdd" type="Integer" default="10"/>
+	<aura:attribute name="currentCount" type="Integer" default="10"/>
+	<!--- enableSorting  -->
+	<aura:attribute name="sortedBy" type="string" default="LastName" />
+	<aura:attribute name="sortedDirection" type="string" default="asc" />
+	<!--- secretQuestionOptions  -->
+	<aura:attribute name="secretvalue" type="String"/>
+	<aura:attribute name="selectedrecord" type="String"/>
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+	<!-- Begin static Modal-->
+	<c:Modal aura:id="theStaticModal" title="Secret Question" isDirectional="true" isLarge="false" hasCloseIcon="true">
+		<aura:set attribute="tagline">
+			{!$Label.c.SecretQuestionMessage}
+		</aura:set>
+		<lightning:input aura:id="FieldSecret" label="" />
+		<aura:set attribute="footer">
+			<lightning:button label="{!$Label.c.CustomerSearchButtonCancel}" onclick="{!c.onCancel}" />
+			<lightning:button variant="brand" label="{!$Label.c.CustomerSearchButtonConfirm}" onclick="{!c.onConfirm}" />
+		</aura:set>
+	</c:Modal>
+	<c:CL002_CreateRecord aura:id="cmpCreateRecord" objectName="Account"/>
+	<div class="slds-page-header slds-box divCard">
+		<div class="slds-card__header slds-grid" style="padding-top: 0% !important;">
+			<header class="slds-media slds-media_center slds-has-flexi-truncate">
+				<div class="slds-media__figure">   
+					<lightning:icon class="psaDarkBlue" iconName="standard:dashboard" size="medium" alternativeText="icon"/>
+				</div>
+				<div class="slds-media__body">
+					<div class="slds-media__body">
+						<nav>
+							<ol class="slds-breadcrumb slds-line-height_reset">
+								<li class="slds-breadcrumb__item">
+									<span>{!$Label.c.CustomerSearchTitle}</span>
+								</li>
+							</ol>
+						</nav>
+						<h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate" title="Advance Search">{!$Label.c.CustomerSearchAdvanceSearch}</h1>
+					</div>
+				</div>
+
+				<!-- BEGIN - Nanuel Medina - C1STAGILE-10027 - New button to allow create a new customer when search results are less and equal than 10 records - 10062019 -->
+				<aura:if isTrue="{! and( !empty( v.data ), v.data.length le 10 ) }" >
+					<div class="slds-no-flex">
+						<lightning:button aura:id="NewClient_header" label="{! $Label.c.CustomerSearchButtonNew }" onclick="{! c.onCreateRecord }"/>
+					</div>
+				</aura:if>
+				<!-- END - Manuel Medina - 10062019 -->
+
+			</header>
+		</div>
+		<ul class="slds-grid slds-border_top slds-page-header__detail-row">
+			<div class="slds-col slds-size_1-of-4">
+				<div class="slds-card__header slds-grid">
+					<div class="slds-align_absolute-center">
+						<lightning:buttonGroup >
+							<lightning:button aura:id="btnB2B" name="B2B" label="{!$Label.c.CustomerSearchTypeB2B}" onclick="{!c.handleClick}" />
+							<lightning:button aura:id="btnB2C" name="B2C" label="{!$Label.c.CustomerSearchTypeB2C}" onclick="{!c.handleClick}" class="slds-button--brand" />
+							<lightning:button aura:id="btnAsset" name="Asset" label="{!$Label.c.CustomerSearchTypeASSET}" onclick="{!c.handleClick}"/>
+
+							<!-- BEGIN - Manuel Medina - C1STAGILE-6349 - Button re-located to the top - 21012018 -->
+							<lightning:button aura:id="Search" label="{!$Label.c.Search}" variant="brand" iconName="utility:search" iconPosition="left" onclick="{!c.filter}"/>
+							<!-- END - Manuel Medina - 21012018 -->
+
+						</lightning:buttonGroup>
+					</div>
+				</div>
+				<div class="slds-border_right">
+					<div class="slds-grid">
+						<div class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1">
+							<aura:If isTrue="{!v.ObjectType != 'Asset'}">
+								<lightning:input aura:id="FirstName" label="{!v.AccountMap.firstname}" />
+								<lightning:input aura:id="LastName" label="{!v.AccountMap.lastname}" />
+
+								<aura:If isTrue="{!v.ObjectType == 'B2C'}">
+									<!--<lightning:input aura:id="Salesman__temporal" label="Salesman" />-->
+
+									<!--<c:Lookup objectAPIName="Contact" IconName="standard:contact" label="{!$Label.c.Salesman}" selectedRecord="{!v.selectedSalesman}" whereSearch="{!' and AccountId = \''+ v.UserAccountId +'\''}"/>-->
+									<lightning:input aura:id="PersonEmail" type="email" label="{!v.AccountMap.personemail}" />
+									
+									<!-- BEGIN - Manuel Medina - objectAPIName change from Contact to User to look for dealers - 12092018 -->
+									<!-- <c:Lookup objectAPIName="Contact" IconName="standard:contact" label="{!$Label.c.Salesman}" selectedRecord="{!v.selectedSalesman}" whereSearch=""/> -->
+									<c:Lookup objectAPIName="User" IconName="standard:contact" label="{!$Label.c.Salesman}" selectedRecord="{!v.selectedSalesman}" whereSearch=""/>
+									<!-- END - Manuel Medina - 12092018 -->
+									
+									<lightning:input aura:id="Phone" label="{!v.AccountMap.phone}" />
+									<lightning:input aura:id="NationalId__pc" label="{!v.AccountMap.nationalid__pc}" />
+									<lightning:input aura:id="BillingPostalCode" label="{!v.AccountMap.billingpostalcode}" />
+									<lightning:input aura:id="BillingCountry" label="{!v.AccountMap.billingcountry}" />
+									<lightning:input aura:id="DriverLicenceNumber__pc" label="{!v.AccountMap.driverlicencenumber__pc}" />                                    
+									<aura:set attribute="else">
+										<!-- <lightning:input aura:id="Owner.Name" label="{!v.AccountMap.ownerid}" />-->
+
+										<!-- BEGIN - Manuel Medina - aura:id Email changed to Account.Email__c to allow search by this field and avoid error when searching by from Contact object - 05092018 -->
+										<!-- <lightning:input aura:id="Email" type="email" label="{!v.ContactMap.email}" /> -->
+										<lightning:input aura:id="Account.Email__c" type="email" label="{!v.ContactMap.email}" />
+										<!-- END - Manuel Medina - 05092018 -->
+
+										<c:Lookup objectAPIName="User" IconName="standard:user" label="{!v.AccountMap.ownerid}" selectedRecord="{!v.selectedUsuario}" whereSearch=""/>
+										<lightning:input aura:id="Account.Name" label="{!v.AccountMap.name}" />
+										<lightning:input aura:id="Account.Phone" label="{!v.AccountMap.phone}" />
+										<lightning:input aura:id="Account.FiscalId__c" label="{!v.AccountMap.fiscalid__c}" />
+										<lightning:input aura:id="Account.BillingPostalCode" label="{!v.AccountMap.billingpostalcode}" />
+										<lightning:input aura:id="Account.BillingCountry" label="{!v.AccountMap.billingcountry}" />
+										<lightning:input aura:id="Account.CommercialRegistrationNumber__c" label="{!v.AccountMap.commercialregistrationnumber__c}" />
+									</aura:set>
+
+								</aura:If>
+
+								<aura:set attribute="else">
+									<lightning:input aura:id="Asset.VIN__C" label="{!v.AssetMap.vin__c}" />
+									<lightning:input aura:id="Asset.VIS__c" label="{!v.AssetMap.vis__c}" />
+									<!--<lightning:input aura:id="nCar__temporal" label="Nº CAR" />-->
+									<lightning:input aura:id="RegistrationNumber__c" label="{!v.AccountContactAssetRelationMap.registrationnumber__c}" />
+									<!--<lightning:input aura:id="NpreOrder__temporal" label="Nº pre-order" />-->
+									<lightning:input aura:id="Asset.OrderId__r.OrderNumber" label="{!v.OrderMap.ordernumber}" />
+								</aura:set>
+							</aura:If>
+						</div>
+					</div>
+
+					<!-- BEGIN - Manuel Medina - C1STAGILE-6349 - Button re-located to the top - 21012018 -->
+					<!-- <div class="slds-align_absolute-center">
+						<lightning:button aura:id="Search" label="{!$Label.c.Search}" variant="brand" iconName="utility:search" iconPosition="left" onclick="{!c.filter}"/>
+					</div> -->
+					<!-- END - Manuel Medina - 21012018 -->
+
+				</div>
+				<div aura:id="cmpResultBox" class="slds-card__footer slds-hide"/> 
+			</div>
+			<div class="{! !empty(v.data)?'slds-col slds-size_3-of-4':'slds-col slds-size_3-of-4 slds-align_absolute-center'}">
+				<aura:If isTrue="{! !empty(v.data)}">
+					<div class="slds-p-left_small"  style="height:100%;">
+						<lightning:datatable showRowNumberColumn="false"
+							data="{!v.data}" 
+							columns="{!v.columns}"  
+							enableInfiniteLoading="true"
+							keyField="Id"
+							sortedBy="{!v.sortedBy}" 
+							sortedDirection="{!v.sortedDirection}"
+							onsort="{!c.updateColumnSorting}" 
+							onrowselection="{!c.getSelectedName}" 
+							onrowaction="{!c.navigateToSObject}"
+							hideCheckboxColumn="true"
+						/>
+					</div>
+					<aura:set attribute="else">                        
+						<aura:If isTrue="{!lessthan(v.totalNumberOfRows,0)}">
+							<div class="slds-grid">
+								<div class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1">
+									<span class="slds-align_absolute-center">
+										<img src="{!$Resource.STR001_UX_SearchImage}" style="width:40%;" alt="" />
+									</span>
+								</div>
+							</div>
+							<aura:set attribute="else">
+								<div class="slds-grid">
+									<div class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1">
+										<span class="slds-align_absolute-center">{!$Label.c.CustomerSearchNoSearchResults}</span>
+										<br/>
+										<span class="slds-align_absolute-center">
+											<lightning:button aura:id="NewClient" label="{!$Label.c.CustomerSearchButtonNew}" variant="brand" onclick="{!c.onCreateRecord}"/>
+										</span>
+										<br/>
+										<span class="slds-align_absolute-center">
+											<img src="{!$Resource.STR001_UX_SearchImage}" style="width:40%;" alt="" />
+										</span>
+									</div>
+								</div>
+							</aura:set>
+						</aura:If>
+					</aura:set>
+				</aura:If>
+				<lightning:spinner aura:id="divSpinner" class="slds-hide" variant="brand" size="large"/>
+			</div>
+		</ul>
+		<div aura:id="cmpResultBox" class="slds-card__footer"/>
+	</div> 
+</aura:component>

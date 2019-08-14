@@ -1,0 +1,68 @@
+<aura:component implements="force:lightningQuickAction,flexipage:availableForRecordHome,force:hasRecordId" controller="GeneratePostalLetterController">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name = "country" type = "String" />
+	<aura:attribute name = "brand" type = "String" />
+	<aura:attribute name = "templates" type = "List" default="[]" />
+    <aura:attribute name = "selectedTemplate" type = "String" default= "" />
+    <aura:attribute name = "body" type = "String" default = "" />
+
+    <aura:html tag="style">
+        @media print{
+            .noPrint {
+                visibility : hidden !important;
+                display : none !important;
+            }
+            body * {
+                visibility : hidden !important;
+            }
+            .divPrint,.divPosition, .divPrint * {
+                visibility : visible !important;
+            }
+            .divPrint{ 
+                position: fixed; 
+                top: 0px; 
+                left: 0px;
+            }
+            .main-body {
+            }
+            .banner-background, .header-container, .region-header,.left-col,.slds-context-bar,.tab-bar,.tabs__nav,.slds-button *{
+                display: none !important;
+            }
+            .slds-global-header,.branding-header,.oneLeftContentWrapper,.bBottom, .oneHeader,.oneSystemMessage,.slds-global-header__item_search,.slds-grid_align-spread *{
+                display: none !important;
+            }
+            header * {
+                display : none !important;
+            }
+            a[href]:after{
+                content: none !important;
+            }
+
+            a{
+                text-decoration: none !important;
+            }
+            img[src]:after{
+                content: none !important;
+            }
+        }
+    </aura:html>
+
+    <div class="noPrint">
+        <lightning:combobox name = "templatesPick" options="{!v.templates}" label="{!$Label.c.CaseEmailLetterFieldLabelSelection}" value="none" placeholder = "-" onchange = "{!c.loadTemplate}"/>
+        <lightning:inputRichText value="{!v.body}" placeholder="">
+            <lightning:insertImageButton/>
+        </lightning:inputRichText>
+        <br />
+        <lightning:button aura:id="buttonPreview" variant="brand" label="{!$Label.c.CaseEmailLetterPopUpPreview}" onclick="{!c.onPreview}"  />            
+    </div>
+    <c:Modal aura:id="theStaticModalPreview" title="{!$Label.c.CaseEmailLetterPopUpPreview}" isDirectional="true" isLarge="true" hasCloseIcon="true">
+        <div class="divPrint">        
+            <lightning:formattedRichText value="{!v.body}" />
+        </div>
+        <aura:set attribute="footer">
+                <lightning:button aura:id="buttonCancel" variant="neutral" label="{!$Label.c.CaseEmailLetterPopUpCancel}" onclick="{!c.onCancel}" />
+                <lightning:button aura:id="buttonPrint" variant="brand" label="{!$Label.c.CaseEmailLetterPopUpPrint}" onclick="{!c.onPrint}"  />
+        </aura:set>
+    </c:Modal>
+</aura:component>

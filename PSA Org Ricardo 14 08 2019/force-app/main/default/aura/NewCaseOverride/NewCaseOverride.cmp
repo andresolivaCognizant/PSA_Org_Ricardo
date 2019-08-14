@@ -1,0 +1,108 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable,force:lightningQuickAction,lightning:actionOverride,force:hasSObjectName,forceCommunity:availableForAllPageTypes" access="global" controller="NewCaseOverrideController">
+
+	<!-- Public Attributes -->
+	<aura:attribute name="idCase" type="String" />
+	<aura:attribute name="isCallCenter" type="Boolean" default="false" />
+	<aura:attribute name="isDisabled" type="Boolean" default="false" />
+	<aura:attribute name="currentUserInfo" type="Map"/>
+	<aura:attribute name="oCase" type="Case" default="{ 'sobjectType': 'Case'}"/>
+
+	<!-- Handler -->
+	<aura:handler name="init" value="{!this}" action="{!c.init}"/>
+
+	<lightning:workspaceAPI aura:id="workspace" />
+	<div style="float: center">
+		<div style="background-color: white;width : 600px;">
+
+			<!-- ###### MODAL BOX HEADER Start ######-->
+			<header class="slds-modal__header">
+				<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!$Label.c.CreateCase_NewCase}
+				</h2>
+			</header>
+			<!--###### MODAL BOX BODY Part Start######-->
+
+			<div  style="margin: 10px;">
+
+				<!-- the messages component is for error messages -->
+				<lightning:recordEditForm aura:id="case" onsuccess="{!c.handleSuccess}" objectApiName="Case" recordId="{!v.idCase}">
+					
+					<lightning:messages />
+
+					<h3 class="slds-section-title_divider">{!$Label.c.CreateCase_CaseInfo}</h3>
+
+					<lightning:inputField aura:id="Status" fieldName="Status" class="slds-hide"/>
+
+					<lightning:inputField aura:id="Subject" fieldName="Subject" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+					<div class="slds-form-element__help slds-hide" aura:id="Subject_help">{! $Label.c.CaseRequiredFields }</div>
+
+					<lightning:inputField fieldName="Description" />
+
+					<h3 class="slds-section-title_divider">{!$Label.c.CreateCase_AdditionalInfo}</h3>
+
+					<lightning:layout multipleRows="true">
+
+						<lightning:layoutItem flexibility="auto" padding="horizontal-medium">
+							<lightning:inputField fieldName="Origin" />
+
+							<lightning:inputField aura:id="Brand__c" fieldName="Brand__c" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+							<div class="slds-form-element__help slds-hide" aura:id="Brand__c_help">{! $Label.c.CaseRequiredFields }</div>
+
+							<lightning:inputField aura:id="Priority" fieldName="Priority" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+							<div class="slds-form-element__help slds-hide" aura:id="Priority_help">{! $Label.c.CaseRequiredFields }</div>
+
+							<lightning:inputField aura:id="Reason" fieldName="Reason" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+							<div class="slds-form-element__help slds-hide" aura:id="Reason_help">{! $Label.c.CaseRequiredFields }</div>
+
+						</lightning:layoutItem>
+
+						<lightning:layoutItem flexibility="auto" padding="horizontal-medium">
+							<lightning:inputField aura:id="Country__c" fieldName="Country__c" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+							<div class="slds-form-element__help slds-hide" aura:id="Country__c_help">{! $Label.c.CaseRequiredFields }</div>
+
+							<lightning:inputField aura:id="CategoryL1__c" fieldName="CategoryL1__c" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+							<div class="slds-form-element__help slds-hide" aura:id="CategoryL1__c_help">{! $Label.c.CaseRequiredFields }</div>
+
+							<lightning:inputField fieldName="CategoryL2__c" />
+							<lightning:inputField fieldName="CategoryL3__c" />
+							<lightning:inputField fieldName="CategoryL4__c" />
+						</lightning:layoutItem>
+
+					</lightning:layout>
+
+					<br />
+
+					<h3 class="slds-section-title_divider">{!$Label.c.CreateCase_VehicleInfo}</h3>
+
+					<lightning:helptext content="You can use the VIN to search the Asset" />
+					<lightning:inputField aura:id="AssetId" fieldName="AssetId" label="test" class="noneLookUp" />
+					<force:inputField aura:id="AuxAssetId" value="{!v.oCase.AssetId}"  />
+					<br />
+
+					<h3 class="slds-section-title_divider">{!$Label.c.CreateCase_AccountInfo}</h3>
+
+					<lightning:helptext content="You can use the Name to search the Account" />
+					<lightning:inputField aura:id="AccountId" fieldName="AccountId" class="noneLookUp" onchange="{! c.removeRequiredStyles }"/>
+					<force:inputField aura:id="AuxAccountId" value="{!v.oCase.AccountId}" required="true"  />
+					<div class="slds-form-element__help slds-hide" aura:id="AccountId_help">{! $Label.c.CaseRequiredFields }</div>
+
+					<br />
+
+					<!--###### MODAL BOX FOOTER Part Start ######-->
+					<footer class="slds-modal__footer">
+						<lightning:button variant="neutral" 
+							label="{!$Label.c.CreateCase_Cancel}"
+							title="Cancel"
+							onclick="{!c.closeTab}"
+						/>
+						<lightning:button variant="brand"
+							label="{!$Label.c.CreateCase_Save}"
+							title="Save"
+							onclick="{!c.validateRequiredFields}"
+							disabled="{!v.isDisabled}"
+						/>
+					</footer>
+				</lightning:recordEditForm>
+			</div>
+		</div>
+	</div>
+</aura:component>

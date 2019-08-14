@@ -1,0 +1,52 @@
+.THIS .select-auto-width > .slds-form-element__control > .slds-select_container{
+    display: inline-block;
+    float:right;
+}
+
+.THIS table tr th:hover {
+    background-color: #eeeeea;
+    cursor: pointer;
+}
+
+.THIS table tr th:hover div .slds-button {
+    display:inline-block;
+}
+
+.THIS .arrow {
+	display:none;
+}
+
+.THIS table tr th:hover .arrow {
+    display:inline-block;
+}
+
+.THIS .arrow {
+	display:none;
+}
+
+.THIS .arrowvisible {
+	display:inline-block;
+}
+
+.THIS .arrow, .THIS .arrowvisible {
+	pointer-events: none; 
+}
+
+.THIS .arrow svg, .THIS .arrowvisible svg {
+	fill:#0070d2;
+}
+
+
+.THIS .AuxDiv {
+    width :10%;
+    
+}
+
+.THIS .col-header {
+	
+}
+
+.THIS .no-results-container {
+	height:243px;
+	margin:0 auto;
+}

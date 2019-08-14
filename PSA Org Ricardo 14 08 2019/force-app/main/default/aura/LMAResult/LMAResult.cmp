@@ -1,0 +1,173 @@
+<aura:component controller="LMAResultController" implements="force:hasRecordId" access="global">
+    <!-- This component has the following attributes
+        object - Specify the API name of the object from where you need to retrieve the records
+        fields - Specify the list of columns you wants to display in the table. You have to mention the API name of the object fields
+        pageSize - Specify the number of records you wants to display per page 
+        order - Specify a field to sort records by 
+        paginate - If false, paginator is not shown and infinite scroll is activated
+    -->
+    <aura:attribute name="object" type="String" default="Lead" access="global" />
+    <aura:attribute name="relobject" type="String" default="RecordType" access="global" />
+    <aura:attribute name="objecttype" type="String" default="Lead" access="global" />
+    <aura:attribute name="latestRecords" type="sObject[]" />
+    <aura:attribute name="latestRecordsAccess" type="Map" />
+    <aura:attribute name="fields" type="String" default="Id" access="global" />
+    <aura:attribute name="labelFields" type="String" default="" access="global" />
+    <aura:attribute name="order" type="String" default="Id" />
+    <aura:attribute name="filter" type="boolean" default="false" access="global" />
+    <aura:attribute name="title" type="String" />
+    <aura:attribute name="whereClause" type="String" default="" />
+    <aura:attribute name="selectedUser" type="sObject" default="{}" />
+
+    <aura:attribute name="filterByStatus" type="String" default="" />
+    <aura:attribute name="filterByPriority" type="String" default="" />
+    <aura:attribute name="filterByActivity" type="String" default="" />
+    <aura:attribute name="filterByActivityIsList" type="Boolean" default="false" />
+    <aura:attribute name="filterByCurrentUser" type="Boolean" default="true" />
+    <aura:attribute name="CheckIntervalId" type="String" default="" />
+
+    
+    <aura:attribute name="modalUp" type="Boolean" default="false"/>
+     
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:handler event="c:CSResultEvent" name="PageChange" action="{!c.pageChange}" />
+    <aura:handler event="c:onOpenStaticModal" name="ModalShow" action="{!c.onOpenStaticModal}" />
+    <aura:method name="dataFilter" action="{!c.doInit}" access="global" />
+
+    <aura:handler event="c:LeadManualAssignmentTabEvent" action="{!c.handleTabEvent}" />
+    <aura:handler event="c:LMAToggleFilterByUserEvent" action="{!c.handleToggleEvent}" />
+
+    <!-- Infinite Scroll -->
+    <aura:attribute name="paginate" type="boolean" default="true" />
+    <aura:attribute name="recordsShown" type="Integer" default="-1" />
+    <aura:attribute name="scrollCheckIntervalId" type="integer" />
+    <aura:attribute name="recordsPerPage" type="List" default="10" />
+
+    <aura:attribute name="labelList" type="String[]" />
+    <aura:attribute name="fieldList" type="String[]" />
+    <aura:attribute name="fieldLabelList" type="Object[]" default="[]" />
+    <aura:attribute name="page" type="integer" default="1" />
+    <aura:attribute name="pages" type="integer" default="1" />
+    <aura:attribute name="total" type="integer" default="100" />
+    <aura:attribute name="pageSize" type="String" default="5" />
+    <aura:attribute name="pageEnd" type="integer" default="1" />
+
+    <aura:attribute name="Spinner" type="boolean" default="false" />
+    <aura:attribute name="message" type="String" />
+    <aura:attribute name="secretvalue" type="String" />
+    <aura:attribute name="selectedrecord" type="String" />
+    <aura:attribute name="selectedIds" type="String[]" default="[]" />
+    <aura:attribute name="userMetrics" type="Map" />
+
+    <aura:attribute name="allowSelection" type="boolean" default="false" />
+    <aura:attribute name="checkFieldValue" type="boolean" />
+
+
+    <aura:handler name="oLookupSelectedRecordEvent" event="c:LookupSelectedRecordsEvent" action="{!c.handleComponentEvent}" />
+
+    <!-- Begin static Modal-->
+    <c:Modal aura:id="theStaticModal" title="{!$Label.c.LeadAssigmentModalTitle}" isDirectional="true" isLarge="false" hasCloseIcon="true">
+        <!-- $Label -->
+        <aura:set attribute="tagline">
+            <p>{!$Label.c.LeadAssigmentModalTagLine}</p>
+        </aura:set>
+        <div style="height:250px;">
+            <c:LookupUser objectAPIName="User" IconName="standard:user" label="User" userMetrics="{! v.userMetrics }" whereSearch="AND IsActive = true"/>
+            <!--
+                      selectedRecord="{! v.selectedRecord }"
+                      listOfSearchRecords="{! v.listOfSearchRecords }"/>
+                      -->
+        </div>
+        <aura:set attribute="footer">
+            <lightning:button label="{!$Label.c.LeadAssigmentButtonCancel}" onclick="{!c.onCancel}" />
+            <lightning:button variant="brand" label="{!$Label.c.LeadAssigmentButtonChangeOwner}" onclick="{!c.onConfirm}" />
+        </aura:set>
+    </c:Modal>
+    <!--End static Modal -->
+
+    <c:CL002_CreateRecord aura:id="cmpCreateRecord" objectName="Lead" />
+
+    <div aura:id="cmpResultBox" title="">
+        <div class="slds-card__body slds-scrollable--y" style="overflow-x:auto;">
+
+            <table class="slds-table slds-table--bordered slds-table-cell-buffer slds-max-medium-table_stacked-horizontal" aura:id="tableresult">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <aura:if isTrue="{!v.allowSelection}">
+                            <th class="slds-truncate" aura:id="theaderCheck">
+                                <ui:inputCheckbox aura:id="checkField" value="{!v.checkFieldValue}" change="{!c.checkChange}" label="" />
+                            </th>
+                        </aura:if>
+                        <aura:iteration items="{!v.fieldLabelList}" var="field" indexVar="varindex">
+                            <th class="slds-is-sortable slds-truncate col-header" scope="col" id="{!field.label}" onclick="{!c.order}" aura:id="theader">{!field.label}
+                                <lightning:icon class="arrow" aura:id="arrow" iconName="utility:arrowdown" size="xx-small" />
+                            </th>
+                        </aura:iteration>
+                    </tr>
+                </thead>
+                <aura:if isTrue="{!v.recordsShown>0}">
+                    <tbody>
+                        <aura:iteration items="{!v.latestRecords}" var="record">
+                            <tr>
+                                <aura:if isTrue="{!v.allowSelection}">
+                                    <td class="slds-cell-wrap">
+                                        <ui:inputCheckbox aura:id="checkFieldRow" text="{!record.Id}" value="" change="{!c.checkRowChange}" label="" />
+                                    </td>
+                                </aura:if>
+
+                                <aura:iteration items="{!v.fieldLabelList}" var="field" indexVar="index">
+                                    <td data-label="{!field.label}" class="slds-cell-wrap">
+                                        <c:CSResultField record="{!record}" fieldName="{!field.name}" latestRecordsAccess="{!v.latestRecordsAccess}" />
+                                    </td>
+                                </aura:iteration>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+            	</aura:if>
+            </table>
+            <br/>
+            <aura:if isTrue="{!v.recordsShown==0}">
+                <div class="slds-align--absolute-center no-results-container">{!$Label.c.NoResults}</div>
+            </aura:if>
+        </div>
+        <div class="slds-card__footer">
+            <aura:if isTrue="{!and(v.recordsShown>0,v.paginate)}">
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_2-of-3">
+                        <aura:if isTrue="{!v.total>v.pageSize}"> 
+                            <c:CSPaginator page="{!v.page}" pages="{!v.pages}" total="{!v.total}" pagesize="{!v.pageSize}" pageEnd="{!v.pageEnd}"/>
+                            <aura:set attribute="else">
+                                <c:CSPaginator page="{!v.page}" pages="{!v.pages}" total="{!v.total}" pagesize="{!v.total}" pageEnd="{!v.pageEnd}" />
+                            </aura:set>
+                       </aura:if>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3 slds-text-align_right" style="padding-right: 1rem;">
+                        <lightning:select aura:id="selectRecordsPerPage" value="{!v.pageSize}" class="select-auto-width" onchange="{!c.changeRecordsPerPage}" variant="label-hidden" label="">
+                            <aura:iteration items="{!v.recordsPerPage}" var="var">
+                                <ui:inputSelectOption text="{!var.value}" label="{!var.label}" />
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--medium slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">{!$Label.c.Loading}</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+        <footer class="slds-card__footer">
+            <div class="slds-no-flex">
+                <lightning:button aura:id="NewLead" label="{!$Label.c.LeadAssigmentButtonNew}" variant="neutral" onclick="{!c.onCreateRecord}" />
+                <aura:if isTrue="{!v.recordsShown !=0 }">
+                	<lightning:button aura:id="TransferLead" label="{!$Label.c.LeadAssigmentButtonChangeOwner}" variant="neutral" onclick="{!c.onOpenStaticModal}" />
+                </aura:if>
+            </div>
+        </footer>
+    </div>
+</aura:component>

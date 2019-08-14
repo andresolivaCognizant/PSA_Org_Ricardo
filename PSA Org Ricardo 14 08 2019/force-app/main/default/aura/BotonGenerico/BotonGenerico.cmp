@@ -1,0 +1,67 @@
+<aura:component controller="BotonGenericoController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens" access="global">
+
+	<!-- Attribute definition -->
+	<aura:attribute name="sRecordId" type="String" default="" description="Record Id" access="global" />
+	<aura:attribute name="listaBotones" type="String" default="" access="global"/> 
+	<aura:attribute name="bttList" type="Object[]" />
+	<aura:attribute name="isCommunity" type="Boolean" default ="false" access="global"/>
+	<aura:attribute name="isHeader" type="Boolean" default="false" access="global" />
+	<aura:attribute name="tempLabelAttr" type="String" />
+	
+	<!-- Retrieve your data using an Apex Controller -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+	<!-- C1STAGILE-8442 - Began -->
+	<c:LabelComponent/>
+	<!-- C1STAGILE-8442 - End -->
+
+    <!-- REQUIRED SLDS WRAPPER -->
+    <!-- <div class="slds slds-p-bottom-*medium slds-tabs_card">  -->
+    <div class="slds slds-p-bottom--medium round-border">
+    	<div id="actFrm slds-p-around--small" style="background-color: gainsboro;" aria-labelledby="listform">
+	         <!-- BOXED AREA -->
+	         <!-- <div style="position: relative; padding: 1rem !important;" class="slds-theme-*default slds-container-*fluid"> -->
+	         <div style="position: relative;" class="slds-theme--default slds-container--fluid">
+             	<form class="slds-form--stacked">
+	                <!-- START GRID ROW -->
+	                <div class="slds-grid slds-wrap slds-grid_align-end">
+						<aura:if isTrue="{!v.isHeader}">
+							<lightning:buttonGroup>
+								<aura:iteration items="{!v.bttList}" var="bttItem" indexVar="index0">
+									<aura:if isTrue="{!index0 lt 2}">
+										<lightning:button aura:id="button" name="{!bttItem.id}" label="{!bttItem.label}" title=""
+											onclick="{!c.handleClick}" />
+										<aura:set attribute="else">
+											<lightning:buttonMenu alternativeText="" class="slds-button_last">
+												<lightning:menuItem label="{!bttItem.label}" value="{!bttItem.label}" />
+											</lightning:buttonMenu>
+										</aura:set>
+									</aura:if>
+								</aura:iteration>
+							</lightning:buttonGroup>
+							<aura:set attribute="else">
+								<aura:iteration items="{!v.bttList}" var="bttItem">
+									<div class="slds-p-right--small"
+										style="position: relative; padding-top: 2px; padding-bottom: 2px; padding-right: 1px;">
+										<!--SUBMIT BUTTON-->
+										<div class="slds-form-element">
+											<div class="slds-form-element__control">
+												<!-- Brand variant: Identifies the primary action in a group of buttons -->
+												<lightning:button aura:id="button brand" variant="brand" name="{!bttItem.id}"
+													label="{!bttItem.label}" onclick="{!c.handleClick}" />
+											</div>
+										</div>
+									</div>
+								</aura:iteration>
+							</aura:set>
+						</aura:if>
+	                </div>
+	                <!-- END GRID -->
+              	</form>
+         	</div>
+    		<!-- / BOXED AREA -->
+        </div>
+	</div>
+    <!-- /REQUIRED SLDS WRAPPER -->
+	
+</aura:component>

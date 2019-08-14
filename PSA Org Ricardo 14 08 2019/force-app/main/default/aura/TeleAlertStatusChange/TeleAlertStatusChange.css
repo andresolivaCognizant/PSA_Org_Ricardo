@@ -1,0 +1,7 @@
+.THIS .slds-button.slds-button_icon.slds-button_icon.slds-progress__marker.slds-progress__marker_icon svg {
+  fill: #5eb4ff;
+}
+
+.THIS .label-hidden > label {
+  display: none;
+}

@@ -1,0 +1,4 @@
+<design:component>
+    
+    <design:attribute name="recordId" label="Record Id" description="Workshop Appointment Record Id"/>
+</design:component>

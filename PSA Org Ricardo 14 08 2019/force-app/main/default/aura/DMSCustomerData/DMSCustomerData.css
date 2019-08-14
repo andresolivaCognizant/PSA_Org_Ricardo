@@ -1,0 +1,13 @@
+.THIS .item{
+	
+}
+
+.THIS .item:after{
+	content: "";
+	display: block;
+	border-bottom: 1px solid rgb(216, 221, 230);
+}
+
+.THIS .slds-form-element__static {
+	display: contents;
+}

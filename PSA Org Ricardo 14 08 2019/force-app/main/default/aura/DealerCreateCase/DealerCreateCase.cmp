@@ -1,0 +1,10 @@
+<aura:component access="GLOBAL" implements="force:appHostable,forceCommunity:availableForAllPageTypes">
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <lightning:layout>
+        <lightning:layoutItem alignmentBump="left">
+            <lightning:button label="{!$Label.c.CreateCase_NewCase}" 
+                              title="{!$Label.c.CreateCase_NewCase}"
+                              onclick="{!c.openModal}" />
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

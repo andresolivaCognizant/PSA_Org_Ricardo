@@ -1,0 +1,7 @@
+<design:component>
+   <design:attribute name="brand" label="Brand" />
+   <design:attribute name="sRId" label="Service Resource Id" />
+   <design:attribute name="family" label="Family" />
+   <design:attribute name="shape" label="Shape" />
+   <design:attribute name="selectedValue" label="Selected Energy - Out" />
+</design:component>

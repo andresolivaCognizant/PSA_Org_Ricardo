@@ -1,0 +1,41 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" controller="MyOEventsListenerController" access="global">
+	
+	<!-- INT33A -->
+	<!--
+	idWorkshop (Code RRDI)
+	brand (AP / AC / DS)
+	idUser (LDAPid)
+	Locale (FR_fr / CL_es / ...)
+	URL: https://newagenda.mpsa.com/planning-->
+
+	<!-- INT33B -->
+	<!--
+	idWorkshop (Code RRDI)
+	brand  (AP / AC / DS)
+	appointmentId
+	idUser (LDAPid)
+	Locale (FR_fr / CL_es / ...)
+	idCustomerSF
+	idVehicleSF
+
+	https://newagenda.mpsa.com/planning"
+	URL: https://newagenda.mpsa.com/appointment	-->
+	<aura:attribute name="HostType" type="String" default="Agenda" access="global" />
+	<aura:attribute name="recordId" type="String" default="" />
+	<aura:attribute name="SFDCHost" type="String" default=""/>
+	<aura:attribute name="SFDCmessage" type="String" default=""/>
+	<aura:attribute name="MyOHost" type="String" default=""/>
+	<aura:attribute name="MyOMessages" type="String" default=""/>
+	<aura:attribute name="MyOPayLoad" type="Object" default="{}"/>
+	<aura:attribute name="mode" type="String" default="edit"/>
+	<aura:attribute name="record" type="SObject"/>
+
+	<aura:handler name="init" value="{!this}" action="{!c.handleEvent}"/>
+
+	<aura:registerEvent name="MyOEvent" type="c:AfterSalesMyOEvents"/>
+	
+	<c:MyOEventsHandler aura:id="MyOEventCMP"/>
+
+	<iframe aura:id="MyOiFrame" src="{!v.MyOHost}" style="width: 100%; height: 550px;" frameborder="0" id="vfFrame"></iframe>
+	
+</aura:component>

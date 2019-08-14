@@ -1,0 +1,51 @@
+<aura:component controller="LMAContainerController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+	<aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+	<aura:attribute name="selectedRows" type="List" default="[]"/>
+	<aura:attribute name="filterByCurrentUser" type="Boolean" default="true"/>
+    <aura:attribute name="filterByPriority"	type="String" default="" />
+	<aura:attribute name="userPortalRole" type="String" default="" />
+	<aura:attribute name="showPriorityTabs" type="Boolean" default="false" />
+	<aura:attribute name="showActivityTabs" type="Boolean" default="true" />
+	<aura:attribute name="listOfSearchRecords" type="List" default="[]" />
+	<aura:attribute name="currentTab" type="String" default="" />
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:handler event="c:LeadManualAssignmentTabEvent" action="{!c.handleTabEvent}" includeFacets="true" phase="capture" />
+	<aura:handler event="c:LMAToggleFilterByUserEvent" action="{!c.handleToggleEvent}" includeFacets="true" phase="capture" />
+
+	<div class="card-container" >
+		<article class="slds-card">
+			<aura:if isTrue="{! or(v.userPortalRole == 'Manager', v.userPortalRole == 'RMCD')}">
+				<c:DynamicCardHeader headerLine1="{!$Label.c.LeadAssignmentDailyBoardHeader1}"
+					headerLine2="{!$Label.c.LeadAssignmentDailyBoardHeader2}"
+					buttonLabel1="{!$Label.c.LeadAssignmentMyLeads}"
+					buttonValue1="My Leads"
+					customHandler1="true"
+					iconName="standard:lead"
+					calledFrom="LMAContainer"
+				/>
+				<aura:set attribute="else">
+					<c:DynamicCardHeader headerLine1="{!$Label.c.LeadAssignmentDailyBoardHeader1}"
+						headerLine2="{! $Label.c.LeadAssignmentDailyBoardHeader2}"
+						buttonLabel1=""
+						buttonValue1=""
+						buttonVariant1=""
+						customHandler1="false"
+					/>
+				</aura:set>
+			</aura:if>
+			<c:LeadMetricsHeader filterByStatus="('New','On Going')" filterByCurrentUser="{!v.filterByCurrentUser}"/>
+			<lightning:layout>
+				<lightning:layoutItem class="slds-show_x-small" size="12">
+					<aura:if isTrue="{!v.showPriorityTabs}">
+						<c:LeadManualAssignmentByPriority />
+					</aura:if>
+					<aura:if isTrue="{!v.showActivityTabs}">
+						<c:LeadManualAssignmentByActivity filterByCurrentUser="{! v.filterByCurrentUser }" filterByPriority ="{! v.filterByPriority }"/>
+					</aura:if>
+				</lightning:layoutItem>	
+			</lightning:layout>
+		</article>
+	</div>
+</aura:component>

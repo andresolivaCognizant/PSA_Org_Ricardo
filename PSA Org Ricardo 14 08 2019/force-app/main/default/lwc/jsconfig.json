@@ -2,7 +2,14 @@
     "compilerOptions": {
         "experimentalDecorators": true,
         "baseUrl": ".",
-        "paths": {}
+        "paths": {
+            "c/cometd": [
+                "../staticresources/cometd/cometd.js"
+            ],
+            "c/olbAppointment": [
+                "olbAppointment/olbAppointment.js"
+            ]
+        }
     },
     "include": [
         "**/*",

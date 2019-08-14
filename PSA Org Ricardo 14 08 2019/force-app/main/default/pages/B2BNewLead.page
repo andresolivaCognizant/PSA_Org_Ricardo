@@ -1,0 +1,7 @@
+<apex:page standardController="Account" tabStyle="Account" >
+    <flow:interview name="ManualLeadCreation" finishLocation="/{!Account.Id}">
+        <apex:param name="InputID" value="{!Account.Id}"/>
+    	<apex:param name="InputName" value="{!Account.Name}"/>
+        <apex:param name="FlowType" value="B2B"/>
+    </flow:interview>
+</apex:page>

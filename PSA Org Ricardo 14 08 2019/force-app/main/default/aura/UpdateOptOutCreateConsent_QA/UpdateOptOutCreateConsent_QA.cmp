@@ -1,0 +1,22 @@
+<aura:component controller="UpdateOptOutCreateConsentController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global">
+
+	<!-- Attributes -->
+	<aura:attribute name="informativeMessage" type="String" default="" />
+	<aura:attribute name="showConfirmButton" type="Boolean" default="false"/>
+
+	<!-- Handler -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <lightning:notificationsLibrary aura:id="notifLib"/>	
+
+	<aura:if isTrue="{!v.showConfirmButton}">
+		<!-- Available button to execute Opt-Out -->
+		<lightning:button variant="brand" label="Confirm" title="Confirm" onclick="{!c.doSave}"/>	
+
+		<!-- Show an informative message -->
+		<aura:set attribute="else">
+				<lightning:formattedText value="{!v.informativeMessage}" />
+		</aura:set>
+	</aura:if>
+
+</aura:component>

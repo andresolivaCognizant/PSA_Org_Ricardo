@@ -1,0 +1,9 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+	<aura:registerEvent name="searchEvent" type="c:AfterSalesSearchEvent" />
+	
+	
+	<aura:method name="handleMyOEvent" description="Hanle the Application Event">
+		<aura:attribute name="myoRecord" type="Object"  />
+		<aura:attribute name="doSearch"  type="Boolean" />
+	</aura:method>
+ </aura:component>

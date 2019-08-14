@@ -1,0 +1,5 @@
+<design:component >
+	<design:attribute name="ActionName" label="Action Name" description="Action Name" 
+                      datasource="OrderForm.Order,OrderFormVO.Order,OrderFormVO.Delivery,Order.Delivery,Quote.Order,Opportunity.Quote,Account.OrderForm,Account.Quote" />
+    <design:attribute name="FlowName" label="Flow Name" description="Flow Name" datasource="New_Order_Form,NewQuote,NewDelivery,NewOrder" />
+</design:component>

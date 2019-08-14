@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Reloads opportunity counter on AfterSalesHeaderAppointment">
+	<aura:attribute type="Boolean" name="reloadOpps" default="false"/>
+	<aura:attribute type="String" name="assetId"/>
+</aura:event>

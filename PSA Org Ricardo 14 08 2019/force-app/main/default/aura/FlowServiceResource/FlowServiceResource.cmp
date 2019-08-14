@@ -1,0 +1,39 @@
+<aura:component controller="FlowServiceResourceController" implements="lightning:availableForFlowScreens" access="global">
+    <aura:attribute name="brand" type="String" access="global" />
+    <aura:attribute name="sRId" type="String[]" access="global" />
+    <aura:attribute name="family" type="String" access="global" />
+    <aura:attribute name="shape" type="String" access="global" />
+    <aura:attribute name="energy" type="String" access="global" />
+    <aura:attribute name="options" type="List" default="[]" />
+    <aura:attribute name="selectedValue" type="String" access="global" />
+
+    <!-- Determine which actions are available -->
+    <aura:attribute name="canPause" type="Boolean" />
+    <aura:attribute name="canBack" type="Boolean" />
+    <aura:attribute name="canNext" type="Boolean" />
+    <aura:attribute name="canFinish" type="Boolean" />
+
+    <!-- Events -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div style="box">
+        <lightning:combobox class="slds-size_x-large" name="sresources" label="{!$Label.c.ResourceSelect}" value="" required="true" options="{! v.options }" onchange="{! c.handleChange }" />
+    </div>
+
+    <div aura:id="actionButtonBar" class="slds-clearfix slds-p-top_medium">
+        <div class="slds-float_right"> 
+            <aura:if isTrue="{!v.canBack}">
+                <lightning:button aura:id="BACK" label="Previous" variant="neutral" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+            <aura:if isTrue="{!v.canPause}">
+                <lightning:button aura:id="PAUSE" label="Pause" variant="neutral" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+            <aura:if isTrue="{!v.canNext}">
+                <lightning:button aura:id="NEXT" label="Next" variant="brand" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+            <aura:if isTrue="{!v.canFinish}">
+                <lightning:button aura:id="FINISH" label="Done" variant="brand" onclick="{!c.onButtonPressed}" />
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

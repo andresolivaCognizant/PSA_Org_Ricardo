@@ -1,0 +1,58 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId"
+                controller="ReportUtils">
+
+  <aura:html tag="style">
+    .modal-body {
+      height      : unset !important;
+      max-height  : 900px !important;
+    }
+
+    .cuf-content {
+      padding     :0 !important;
+    }
+
+    .slds-p-around--medium {
+      padding     :0 !important;
+    }
+    
+    .slds-modal__container {
+      width       : 90% !important;
+      max-width   : 90% !important;
+    }
+
+    .slds-modal__content {
+      position    : relative !important;
+      overflow-y  : scroll !important;
+      overflow-x  : hidden !important;
+      max-height  : unset !important;
+    }
+  </aura:html>
+
+  <!-- attributes-->
+  <aura:attribute type="Map" name="data" default="{}"/>
+  <aura:attribute type="Map" name="ui_obj" default="{'isLoading' : true}"/>
+
+  <!-- handlers-->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+  <aura:if isTrue="{!v.ui_obj.isLoading}">
+      <div class="slds-is-relative" style="height: 33vh;">
+          <lightning:spinner alternativeText="Loading" size="medium" variant="brand"/>
+        </div>
+    <aura:set attribute="else">
+
+      <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+        {!v.data.reportMetadata.name}
+        </h2>
+      </header>
+
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+        <div aura:id="_body_container"/>
+      </div>
+
+    </aura:set>
+
+  </aura:if>
+
+</aura:component>

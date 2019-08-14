@@ -1,0 +1,59 @@
+<template>
+  <header class="slds-modal__header">
+      <h2 class="slds-text-heading_medium slds-hyphenate">
+        OLB Appointment
+      </h2>
+    </header>
+
+  <div class="slds-modal__content slds-p-around_medium">
+    <div if:true={ui_object.spinner.render} class="slds-is-relative" style="height: 15vh;">
+      <lightning-spinner alternative-text="Loading" size="medium" variant="brand">
+      </lightning-spinner>
+    </div>
+
+    <div if:false={ui_object.spinner.render}>
+      <!-- page 0 - begin -->
+      <div if:true={ui_object.step.p0}>
+        <lightning-record-edit-form record-id={recordId}
+                                    object-api-name="TeleAlert__c">
+          <lightning-messages>
+          </lightning-messages>
+
+          <lightning-input-field field-name="APVDealer__c"
+                                  value={apvDealerId}
+                                  onchange={handleChange}>
+          </lightning-input-field>
+        </lightning-record-edit-form>
+      </div>
+      <!-- page 0 - end -->
+
+      <!-- page 20 - begin -->
+      <div if:true={ui_object.step.p20}>
+        <iframe src={iframe_src}
+                style="overflow: scroll"
+                width="100%"
+                height="500vh">
+        </iframe>
+      </div>
+      <!-- page 20 - end -->
+
+      <!-- page 30 - begin -->
+      <div if:true={ui_object.step.p30}>
+        <div class="slds-box slds-theme_shade slds-theme_alert-texture slds-align_absolute-center">
+          {label.error_msg}
+        </div>
+      </div>
+      <!-- page 30 - end -->
+    </div>
+  </div>
+
+  <footer class="slds-modal__footer slds-m-top_small">
+    <lightning-button class="slds-m-top_small"
+      variant="brand"
+      name="update"
+      label={ui_object.button.label}
+      onclick={handleClick}
+      disabled={ui_object.button.disabled}>
+    </lightning-button>
+  </footer>
+</template>

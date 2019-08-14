@@ -1,0 +1,71 @@
+<aura:component controller="DealerPortalThemeController" implements="forceCommunity:themeLayout" access="global" description="Dealer Portal Theme">
+    <aura:attribute name="search" type="Aura.Component[]" required="false" />
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false" />
+    <aura:attribute name="navBar" type="Aura.Component[]" required="false" />
+    <aura:attribute name="newHeader" type="Aura.Component[]" required="false" />
+
+    <aura:attribute name="userRecord" type="User" />
+    <aura:attribute name="userPortalRole" type="String" />
+    <aura:attribute name="brandLogoSource" type="String" />
+    
+    <aura:registerEvent name="userControlEvent" type="c:LMAUserPortalControlEvent" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <!-- <div class="banner-background" style="position: fixed;top: 0;width: 100%;z-index:99"></div>
+    <div class="header-container home-sticky" style="position: fixed;top: 0;width: 100%;z-index:100">
+ -->
+    <div class="banner-background"></div>
+    <div class="header-container">
+        <div class="slds-grid slds-grid_vertical-align-center">
+            
+            <div class="slds-size--1-of-10 slds-large-size--1-of-12 slds-order_2 slds-large-order_1 logo-container"
+            	 onclick="{! c.goToHomePage }">
+	            <a href="javascript:void(0);">
+	                <img alt="PSA Groupe" src="{! $Resource.PSA_Logo_white }" title="PSA Dealer" class="logo_psa_white" />
+	            </a>
+            </div>
+            
+            <div class="slds-col slds-size--1-of-10 slds-large-size--1-of-12 slds-order_3 slds-large-order_2 brand-logo-single">
+                <c:PSABrandLogo userBrand="{! v.userRecord.Brand__c }"/>
+            </div>
+
+            <div class="slds-col slds-size--1-of-10 slds-large-size--2-of-12 slds-order_1 slds-large-order_3">
+                {! v.navBar }
+            </div>
+            <div class="slds-col slds-size--1-of-10 slds-large-size--4-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container">
+                {! v.search }
+            </div>
+
+            <div class="slds-col slds-size--0-of-10 slds-large-size--1-of-12 slds-order_7 slds-large-order_5 slds-max-medium-hide customer-search-icon">
+                <lightning:icon iconName="standard:person_account" size="medium" variant="inverse" />
+            </div>
+            <aura:if isTrue="{!or(v.userRecord.Profile.Name =='Aftersales_Manager',v.userRecord.Profile.Name =='Receptionist')}">
+                <div class="slds-col slds-size--0-of-10 slds-large-size--1-of-12 slds-order_8 slds-large-order_6 slds-max-medium-hide slds-dropdown_xx-small">
+                     <span class="advance-aftersales-link"> {! $Label.c.AfterSalesAdvancedSearch }</span>
+                    <lightning:buttonMenu alternativeText="Search Menu" title="Search" iconName="utility:down" class="slds-m-around--xx-small" iconSize="x-small" onselect="{!c.handleMenuSelect}">
+                            <lightning:menuItem label="{! $Label.c.LeadAssignmentAdvancedSearch }" value="{! $Label.c.LeadAssignmentAdvancedSearch }" iconName="utility:table" />
+                            <lightning:menuItem label="{! $Label.c.AfterSalesVehicleAdvancedSearch }" value="{! $Label.c.AfterSalesVehicleAdvancedSearch }" iconName="utility:side_list" />
+                    </lightning:buttonMenu>
+                </div>
+                <aura:set attribute="else">
+                    <div class="slds-col slds-size--0-of-10 slds-large-size--1-of-12 slds-order_8 slds-large-order_6 slds-max-medium-hide advanced-search-link" onclick="{! c.goToSearchPage }">
+                        <a href="javascript:void(0);"> {! $Label.c.LeadAssignmentAdvancedSearch }</a>
+                    </div>
+                </aura:set>
+            </aura:if>
+            <!--<div class="notifications">
+                <forceCommunity:notifications/>
+            </div>-->
+            <div class="slds-col slds-size--1-of-10 slds-large-size--2-of-12 slds-order_5 slds-large-order_7 profile-container">
+                {! v.profileMenu }
+            </div>
+            <div class="slds-col slds-size--1-of-10 slds-large-size--1-of-12 slds-order_6 slds-large-order_8 slds-x-small-show-only profile-icon">
+                <lightning:icon iconName="utility:down" size="xx-small" variant="inverse" />
+            </div>
+        </div>
+    </div>
+    <!-- <div class="main-body" style="top: 100px;width: 100%;z-index:2"> -->
+    <div class="main-body">
+        {! v.body }
+    </div>
+</aura:component>

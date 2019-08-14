@@ -1,0 +1,45 @@
+<aura:component >
+    <!-- This component has three attributes
+  page - Specify the page we're in
+  pages - Specify the total number of pages
+  total - Specify the number of total records -->
+    <aura:attribute name="page" type="integer" />
+    <aura:attribute name="pages" type="integer" />
+    <aura:attribute name="total" type="integer" />
+    <aura:attribute name="pagesize" type="integer" default="10" />
+    <aura:attribute name="pageEnd" type="integer" />
+    
+    <aura:registerEvent name="PageChange" type="c:CSResultEvent" />
+
+    <div class="slds-form-element">
+    	<div class="slds-grid slds-grid_vertical-align-center slds-grid--align-spread slds-gutters_xx-small">
+            <div class="slds-col slds-large-order_1 slds-order_2 slds-large-size_2-of-8 slds-small-show">
+	          <div class="slds-text-body_small slds-text-align_left" >
+	           <!-- 13Jan2019 {!$Label.c.ShowingRecords} {!add(sub(mult(v.pagesize,v.page),v.pagesize),1)} to {!mult(v.pagesize,v.page)} of {!v.total}  13Jan2019 -->
+                 <span class="slds-text-body_small"> {!$Label.c.ShowingRecords} &nbsp;
+                     {!add(sub(mult(v.pagesize,v.page),v.pagesize),1)} &nbsp;{!$Label.c.ShowTo} &nbsp;{!v.pageEnd} &nbsp;{!$Label.c.ShowOf}&nbsp; {!v.total}
+                  </span>
+	            </div>  
+                
+            </div>
+            
+           	<div class="slds-col slds-large-order_2 slds-order_3 slds-large-size_1-of-8 slds-small-show" style="width:100px;">
+               
+                <lightning:button class="slds-text-align_center slds-button slds-button--neutral" onclick="{!c.firstPage}" disabled="{!v.page &lt;= 1}" label="{!$Label.c.First}" />
+                
+            </div>
+           	<div class="slds-col slds-large-order_3 slds-order_1 slds-large-size_1-of-8 slds-small-size_1-of-2 ">	    
+               	<lightning:button class="slds-button slds-button--neutral" onclick="{!c.previousPage}" disabled="{!v.page &lt;= 1}" label="{!$Label.c.Previous}" />
+           	</div>
+           	<div class="slds-col slds-large-order_4 slds-order_4 slds-large-size_1-of-8 slds-truncate slds-small-show" style="width:100px;">
+               	<span class="slds-text-body_small">{!$Label.c.Page} &nbsp;&nbsp; {!v.page} / {!v.pages}</span>
+           	</div>
+           	<div class="slds-col slds-large-order_5 slds-order_6 slds-large-size_1-of-8 slds-small-size_1-of-2" style="width:100px;">
+             	<lightning:button class="slds-button slds-button--neutral" onclick="{!c.nextPage}" disabled="{!v.page >= v.pages}" label="{!$Label.c.Next}" />
+           	</div>
+           	<div class="slds-col slds-large-order_6 slds-order_5 slds-large-size_1-of-8 slds-small-show">
+             	<lightning:button class="slds-button slds-button--neutral slds-text-body_small" onclick="{!c.lastPage}" disabled="{!v.page >= v.pages}" label="{!$Label.c.Last}" />
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION" description="Show tab for leads with this priority">
+    <aura:attribute name="filterByPriority" type="String"/>
+    <aura:attribute name="filterByActivity" type="String"/> 
+    <aura:attribute name="tabsToShow" type="String" default="leadsByPriority"/> 
+    <aura:attribute name="refreshData" type="Boolean" default="true"/> 
+</aura:event>

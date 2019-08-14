@@ -1,0 +1,67 @@
+<apex:page showHeader="false"
+           sidebar="false"
+           cache="false" 
+           contentType="text/xml"
+           controller="QuoteExpensesController">
+
+  <block text-align="center">
+
+    <table table-layout="fixed" width="100%">
+      <table-column column-width="30%"/>
+      <table-column column-width="40%"/>
+      <table-column column-width="30%"/>
+
+      <table-body>
+
+        <!-- table header - begin -->
+        <table-row>
+         <table-cell display-align="center" padding="3">
+            <block>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center" 
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.OrderFormLine__c.Fields.ProductName__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" >
+            <block>
+            </block>
+          </table-cell>
+        </table-row>
+        <!-- table header - end -->
+
+        <apex:repeat var="s" value="{!lstServices}">
+          <table-row>
+            <table-cell display-align="center" padding="3">
+              <block>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block
+                text-align="center" 
+                font-family="Helvetica" 
+                font-size="8">
+                  <apex:outputText value="{!s.obj.ProductName__c}">
+                  </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3">
+              <block>
+              </block>
+            </table-cell>
+          </table-row>
+        </apex:repeat>
+
+      </table-body>
+    </table>
+  </block>
+</apex:page>

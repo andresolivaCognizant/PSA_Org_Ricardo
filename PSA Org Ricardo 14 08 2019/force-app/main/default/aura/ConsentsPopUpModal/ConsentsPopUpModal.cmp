@@ -1,0 +1,17 @@
+<aura:component controller="ConsentsPopUpModalController">
+
+  <aura:attribute name="accountId" type="Id" default=""/>
+
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+ 
+  
+
+  <!-- annotation to enable dynamic client-side components creation -->
+  <aura:dependency resource="markup://c:ConsentWizard"/>
+  <aura:dependency resource="markup://aura:html"/>
+  <aura:dependency resource="markup://c:Modal"/>
+
+  <div aura:id="dynamic_container">
+  </div>
+
+</aura:component>

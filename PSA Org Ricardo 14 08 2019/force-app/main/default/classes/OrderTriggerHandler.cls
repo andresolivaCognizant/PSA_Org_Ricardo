@@ -12,6 +12,7 @@ public with sharing class OrderTriggerHandler {
 *   ----------------------------------------------------------------------------------------------------------------------------
 *      Developer            Date                     Description
 *      Ruben Fernandez      26 Jul 2018              Creation.
+*      Andrés Oiva          18 Aug 2019              C1STDEPLOY-231 ==> Call method OrderUtils.updateOrderFormToActiveStatus() in order to update quote status if fullfill requirements
 *   ----------------------------------------------------------------------------------------------------------------------------
 */
     private static boolean runtrigger = true;
@@ -62,6 +63,8 @@ public with sharing class OrderTriggerHandler {
             // Call single methods only
             OrderUtils.callBUSingleOrderMethods(lNewOrders[0], mapOldOrders.get(lNewOrders[0].Id));
         }
+        OrderUtils.updateOrderFormToActiveStatus(  lNewOrders,  mapOldOrders );//Andrés Oliva JIRA C1STDEPLOY-231  18/08/2019
+
     }
 
     /*

@@ -9,6 +9,7 @@
 -- -----------  -----   		-------		---------------------------------------
 -- 21/02/2019	RPR				1.0			Initial version
 -- 09/07/2019	C1STRUN-2252	1.1			In case new funcionality for a matching Order-Asset with same VIN. 
+-- 18/08/2019   Andrés Oliva    1.2         Included apex method  updateOrderFormToActiveStatus in order to fulfill JIRA  user story  C1STDEPLOY-231
 */
 public with sharing class OrderUtils{
     
@@ -18,7 +19,7 @@ public with sharing class OrderUtils{
      * @Method          :   updateOrderFormToActiveStatus
      * @Author          :   Andrés Oliva <andres.oliva@cognizant.com>
      * @Created         :   14 agust 2019
-     * @Description     :   If order is canceled, the related list Order Form must be update status to active.  
+     * @Description     :   This method make apex solution for JIRA C1STDEPLOY-231. If order is canceled, the related list Order Form must be update status to active.  
      * @Params          :   List<Order > records after the changes, Map<Id, Order > record before the changes    
      */		
     public static void updateOrderFormToActiveStatus( List<Order > listNewOrder, Map<Id, Order > mapOldOrder )

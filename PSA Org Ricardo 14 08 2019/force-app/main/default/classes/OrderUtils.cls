@@ -29,20 +29,20 @@ public with sharing class OrderUtils{
             for( Order  varOrder: listNewOrder  ) 
             {
                 if(         varOrder.OrderFormId__c != null && 
-                    (       varOrder.Status.isEqualIgnoreCase ( system.label.SBQQ_cancellStatus_lbl ) 
-                        &&  mapOldOrder.get( varOrder.id ).Status.isEqualIgnoreCase( system.label.SBQQ_cancellStatus_lbl  )
+                    (       varOrder.Status.equalsIgnoreCase ( system.label.SBQQ_cancellStatus_lbl ) 
+                        &&  mapOldOrder.get( varOrder.id ).Status.equalsIgnoreCase( system.label.SBQQ_cancellStatus_lbl  )
                     ) 
                   )
                 {
                     setIdCancellQuotes.add( varOrder.OrderFormId__c );
                 }
             }
-            list< SBQQ__Quote__c > lstOrderForm = [SELECT id FROM SBQQ__Quote__c WHERE  id IN: setIdCancellQuotes ];
+            list< SBQQ__Quote__c > lstOrderForm = [SELECT id,SBQQ__Status__c FROM SBQQ__Quote__c WHERE  id IN: setIdCancellQuotes ];
             if( !lstOrderForm.isEmpty())
             {
                 for( SBQQ__Quote__c varForm: lstOrderForm  )
                 {
-                    varForm.status  =   system.label.SBQQ_activeStatus_lbl;
+                    varForm.SBQQ__Status__c  =   system.label.SBQQ_activeStatus_lbl;
                 }
                 update lstOrderForm ;
             }

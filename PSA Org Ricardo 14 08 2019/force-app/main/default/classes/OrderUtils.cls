@@ -14,7 +14,45 @@ public with sharing class OrderUtils{
     
     private static final Map<String,Schema.RecordTypeInfo> MAP_ASSET_RT =  Schema.SObjectType.Asset.getRecordTypeInfosByDeveloperName();
     
-    
+    /*
+     * @Method          :   updateOrderFormToActiveStatus
+     * @Author          :   Andrés Oliva <andres.oliva@cognizant.com>
+     * @Created         :   14 agust 2019
+     * @Description     :   If order is canceled, the related list Order Form must be update status to active.  
+     * @Params          :   List<Order > records after the changes, Map<Id, Order > record before the changes    
+     */		
+    public static void updateOrderFormToActiveStatus( List<Order > listNewOrder, Map<Id, Order > mapOldOrder )
+    {
+        try 
+        {
+            set< id > setIdCancellQuotes = new set< id >();
+            for( Order  varOrder: listNewOrder  ) 
+            {
+                if(         varOrder.OrderFormId__c != null && 
+                    (       varOrder.Status.isEqualIgnoreCase ( system.label.SBQQ_cancellStatus_lbl ) 
+                        &&  mapOldOrder.get( varOrder.id ).Status.isEqualIgnoreCase( system.label.SBQQ_cancellStatus_lbl  )
+                    ) 
+                  )
+                {
+                    setIdCancellQuotes.add( varOrder.OrderFormId__c );
+                }
+            }
+            list< SBQQ__Quote__c > lstOrderForm = [SELECT id FROM SBQQ__Quote__c WHERE  id IN: setIdCancellQuotes ];
+            if( !lstOrderForm.isEmpty())
+            {
+                for( SBQQ__Quote__c varForm: lstOrderForm  )
+                {
+                    varForm.status  =   system.label.SBQQ_activeStatus_lbl;
+                }
+                update lstOrderForm ;
+            }
+        } 
+        catch (Exception e ) 
+        {
+            system.debug('\n error with C1STDEPLOY-231 @@@' + e.getMessage() );
+            throw e;
+        }        
+    }      
     /*
 * @Method          :   callBUSingleOrderMethods
 * @Description     :   This method processes methods for a single Order on before update (the order might be modified). 

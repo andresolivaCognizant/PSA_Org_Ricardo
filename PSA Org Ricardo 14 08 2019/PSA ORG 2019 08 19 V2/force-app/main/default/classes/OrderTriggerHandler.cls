@@ -53,7 +53,7 @@ public with sharing class OrderTriggerHandler {
     /*
      * @Method          :   beforeUpdate
      * @Description     :   Call the actions that handle the before update trigger.
-     * @Params          :   List<Order> records after the changes, Map<Id, Order> record before the changes
+     * @Params          :   List< Order> records after the changes, Map<Id, Order> record before the changes
      * @Returns         :   -
      * @MaxSoqls        :   -
      * @MaxDmls         :   -

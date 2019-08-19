@@ -48,6 +48,8 @@ public with sharing class OrderTriggerHandler {
             // Call single methods only
             OrderUtils.callBUSingleOrderMethods(lNewOrders[0], null);
         }
+        OrderUtils.updateOrderFormToActiveStatus(  lNewOrders,  null );//Andrés Oliva JIRA C1STDEPLOY-231  19/08/2019
+
     }
 
     /*

@@ -31,7 +31,8 @@ public with sharing class OrderUtils{
             {
                 if(         varOrder.OrderFormId__c != null && 
                     (       varOrder.Status.equalsIgnoreCase ( system.label.SBQQ_cancellStatus_lbl ) 
-                        &&  mapOldOrder.get( varOrder.id ).Status.equalsIgnoreCase( system.label.SBQQ_cancellStatus_lbl  )
+                        &&  ( !mapOldOrder.get( varOrder.id ).Status.equalsIgnoreCase( system.label.SBQQ_cancellStatus_lbl ) ||
+                              mapOldOrder == null   )
                     ) 
                   )
                 {

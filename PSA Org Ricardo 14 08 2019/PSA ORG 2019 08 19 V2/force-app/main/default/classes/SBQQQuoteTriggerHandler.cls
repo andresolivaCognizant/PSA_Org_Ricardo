@@ -161,7 +161,7 @@ public with sharing class SBQQQuoteTriggerHandler {
             }
         }
         // END - US 5996
-
+        system.debug('\n mapActivatedOrderForms @@@' + mapActivatedOrderForms );
         SBQQQuoteUtils.generateExternalId(mapActivatedOrderForms);
 
         /* BEGIN - Manuel Medina - C1STAGILE-4972 - 26042019 */

@@ -1,0 +1,136 @@
+<aura:component controller="LeadMetricsHeaderController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+	<aura:attribute name="filterByCurrentUser" type="Boolean" default="false" />
+	<aura:attribute name="filterByStatus" type="String" default="('New','On Going')" />
+	<aura:attribute name="userPortalRole" type="String" default="" />
+	<aura:attribute name="whereClause" type="String" default="" />
+	<aura:attribute name="alignClass" type="String" default="slds-grid--align-center" />
+	<aura:attribute name="backgroundClass" type="String" default="without-background" />
+	<aura:attribute name="CheckIntervalId" type="String" default="" />
+
+	<aura:attribute name="metricsData" type="Object[]" default="[{ 'priorityName' : 'Overdue','priority' : 'Overdue', 'className' : 'red-flag', 'vnCount' : '0', 'voCount' : '0', 'apvCount' : 0, 'otherCount' : '0', 'subTotalCount' : '0' },
+		{ 'priorityName' : 'Urgent','priority' : 'Urgent', 'className' : 'amber-flag', 'vnCount' : '0', 'voCount' : '0', 'apvCount' : 0, 'otherCount' : '0', 'subTotalCount' : '0' },
+		{ 'priorityName' : 'On Time','priority' : 'On Time', 'className' : 'green-flag', 'vnCount' : '0', 'voCount' : '0', 'apvCount' : 0, 'otherCount' : '0', 'subTotalCount' : '0' }]" 
+	/>
+
+	<aura:attribute name="newLeadTotals" type="Object" default="{ 'totalOnTime' : '0', 'totalUrgent' : '0, 'totalOverdue' : '0', 'totalOther : '0', 'apvCount' : 0, 'totalNewLeads' : '0' }" />
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:registerEvent name="tabsEvent" type="c:LeadManualAssignmentTabEvent" />
+	<aura:handler event="c:LMAToggleFilterByUserEvent" action="{! c.handleToggleEvent }" />
+	<!--<aura:handler event="c:LMAUserPortalControlEvent" action="{! c.handleUPCEvent }" />-->
+	
+	<div class="slds-grid slds-wrap slds-grid--align-center slds-grid--align-space" style="padding-top:37px;padding-bottom:37px;">
+		<!-- <div class="slds-col slds-size- -1-of-6 slds-large-size- -1-of-8 slds-order_0 slds-large-order_0 slds-max-medium-hide" style="width:26px;" /> -->
+		<aura:if isTrue="{!and(v.userPortalRole == 'Manager',not(v.filterByCurrentUser)) }">
+			<div class="slds-col  slds-p-horizontal_large slds-size--1-of-8 slds-large-size--1-of-8 slds-order_1 slds-large-order_1 new-leads-count-container">
+				<lightning:button name="New Leads" onclick="{! c.restoreTotalTab }">{! v.newLeadTotals.totalNewLeads }</lightning:button>
+			</div>
+			<div class="slds-col slds-p-horizontal_large slds-size--1-of-8 slds-large-size--1-of-8 slds-order_2 slds-large-order_2 new-leads-metrics">
+				<p class="new-lead-count-heading">{! $Label.c.LeadAssignmentNewLeads }</p>
+				<table>
+					<tr>
+						<td class="new-lead-count">{! v.newLeadTotals.totalOverdue }</td>
+						<td class="traffic-light red-light"/>
+						<td class="new-lead-count-label">{! $Label.c.LeadAssignmentOverdue }</td>
+					</tr>
+					<tr>
+						<td class="new-lead-count">{! v.newLeadTotals.totalUrgent }</td>
+						<td class="traffic-light amber-light"/>
+						<td class="new-lead-count-label">{! $Label.c.LeadAssignmentUrgent }</td>
+					</tr>
+					<tr>
+						<td class="new-lead-count">{! v.newLeadTotals.totalOnTime }</td>
+						<td class="traffic-light green-light"/>
+						<td class="new-lead-count-label">{! $Label.c.LeadAssignmentOnTime }</td>
+					</tr>
+				</table>
+			</div>
+			<aura:set attribute="else"> 
+				<div class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_1 slds-large-order_1 slds-max-medium-hide" style="width:26px;" />
+			</aura:set>
+		</aura:if>
+		
+		<!-- BEGIN - Manuel Medina - C1STAGILE-4826 class="button-font" was added to lightning:button to enable responsivity on small devices - 26092018 -->
+		<!-- OVERDUE Lead Metrics -->
+		<div aura:id="overdue_count" class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_3 slds-large-order_3 priority-leads-count-container">
+			<lightning:button class="button-font" aura:id="overdue_count" name="{! v.metricsData[0].priorityName }" onclick="{! c.expandLeads }">{! v.metricsData[0].subTotalCount }</lightning:button>
+		</div>
+		<div aura:id="overdue_metrics" class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_4 slds-large-order_4 priority-leads-metrics">
+			<p class="priority-lead-count-heading">
+				<span class="{! v.metricsData[0].className }"/>&nbsp;&nbsp;{! v.metricsData[0].priority }</p>
+			<table>
+				<tr>
+					<td class="lead-count">{! v.metricsData[0].vnCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentNewVehicleShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count">{! v.metricsData[0].voCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentUsedVehicleShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count">{! v.metricsData[0].apvCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentAfterSalesShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count ">{! v.metricsData[0].otherCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentOther }</td>
+				</tr>
+			</table>
+		</div>
+		<!-- URGENT Lead Metrics -->
+		<div aura:id="urgent_count" class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_5 slds-large-order_5 priority-leads-count-container">
+			<lightning:button class="button-font" name="{! v.metricsData[1].priorityName }" onclick="{! c.expandLeads }">{! v.metricsData[1].subTotalCount }</lightning:button>
+		</div>
+		<div aura:id="urgent_metrics" class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_6 slds-large-order_6 priority-leads-metrics">
+			<p class="priority-lead-count-heading">
+				<span class="{! v.metricsData[1].className }"/>&nbsp;&nbsp;{! v.metricsData[1].priority }</p>
+			<table>
+				<tr>
+					<td class="lead-count">{! v.metricsData[1].vnCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentNewVehicleShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count">{! v.metricsData[1].voCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentUsedVehicleShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count">{! v.metricsData[1].apvCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentAfterSalesShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count ">{! v.metricsData[1].otherCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentOther }</td>
+				</tr>
+			</table>
+
+		</div>
+		<!-- ONTIME Lead Metrics -->
+		<div aura:id="ontime_count" class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_7 slds-large-order_7 priority-leads-count-container">
+			<lightning:button class="button-font" aura:id="ontime_count" name="{! v.metricsData[2].priorityName }" onclick="{! c.expandLeads }">{! v.metricsData[2].subTotalCount }</lightning:button>
+		</div>
+		<div aura:id="ontime_metrics" class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_8 slds-large-order_8 priority-leads-metrics">
+			<p class="priority-lead-count-heading">
+				<span class="{! v.metricsData[2].className }"/>&nbsp;&nbsp;{! v.metricsData[2].priority }</p>
+			<table>
+				<tr>
+					<td class="lead-count">{! v.metricsData[2].vnCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentNewVehicleShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count">{! v.metricsData[2].voCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentUsedVehicleShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count">{! v.metricsData[2].apvCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentAfterSalesShort }</td>
+				</tr>
+				<tr>
+					<td class="lead-count ">{! v.metricsData[2].otherCount }</td>
+					<td class="lead-count-label">{! $Label.c.LeadAssignmentOther }</td>
+				</tr>
+			</table>
+		</div>
+		<div class="slds-col slds-size--1-of-8 slds-large-size--1-of-8 slds-order_9 slds-large-order_9 slds-max-medium-hide" style="width:26px;" />
+		
+	</div>
+</aura:component>

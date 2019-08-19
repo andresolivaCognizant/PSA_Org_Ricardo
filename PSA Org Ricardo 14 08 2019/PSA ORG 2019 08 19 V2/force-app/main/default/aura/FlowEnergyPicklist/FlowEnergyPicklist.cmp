@@ -1,0 +1,15 @@
+<aura:component controller="FlowEnergyPicklistController" implements="lightning:availableForFlowScreens" access="global">
+    <aura:attribute name="brand" type="String" access="global" />
+    <aura:attribute name="sRId" type="String[]" access="global" /> 
+    <aura:attribute name="family" type="String" access="global" />
+    <aura:attribute name="shape" type="String" access="global" />
+    <aura:attribute name="options" type="List" default="[]"/>
+    <aura:attribute name="selectedValue" type="String" access="global" />
+    
+    <!-- Events -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div style="box">
+        <lightning:combobox class="slds-size_x-large" name="energy" label="{!$Label.c.Energy}" value="" placeholder="Select Energy" options="{! v.options }" onchange="{! c.handleChange }" />
+    </div>
+</aura:component>

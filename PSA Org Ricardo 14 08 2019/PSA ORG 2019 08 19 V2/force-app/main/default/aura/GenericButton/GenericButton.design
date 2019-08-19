@@ -1,0 +1,11 @@
+<design:component >
+    <design:attribute name="name1" label="Btt Name One" description=""/>
+    <design:attribute name="mUpName1" label="Mash Up Name One" description=""/> 
+    <design:attribute name="name2" label="Btt Name Two" description=""/>
+    <design:attribute name="mUpName2" label="Mash Up Name Two" description=""/>
+    <design:attribute name="name3" label="Btt Name Three" description=""/>
+    <design:attribute name="mUpName3" label="Mash Up Name Three" description=""/>
+    <design:attribute name="name4" label="Btt Name Four" description=""/>
+    <design:attribute name="mUpName4" label="Mash Up Name Four" description=""/>
+    <design:attribute name="isCommunity" label="Community" description=""/>
+</design:component>

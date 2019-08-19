@@ -1,0 +1,39 @@
+<aura:component implements="lightningsnapin:prechatUI,lightning:isUrlAddressable" description="Custom PSA Prechat component for Snapins. Implemented using Aura.">
+    <!--{!v.pageReference.state.testAttribute}-->
+    <aura:attribute name="isExternal" type="Boolean" default="false" description="A boolean to indicate if the snapin is setup in a external website" />
+    <!-- Prechat field components to render. -->
+    <aura:attribute name="prechatFieldComponents" type="List" description="An array of objects representing the prechat fields specified in prechat setup." />
+    <aura:attribute name="prechatFieldComponentsCopy" type="List" description="An array of objects representing the prechat fields specified in prechat setup." />
+    <!-- Handler for when this component is initialized. -->
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+    <!-- For Aura performance. -->
+    <aura:locator target="startButton" description="Prechat form submit button." />
+    <!-- Contains methods for getting prechat fields, starting a chat, and validating fields. -->
+    <lightningsnapin:prechatAPI aura:id="prechatAPI" />
+    <lightningsnapin:settingsAPI aura:id="settingsAPI"/>
+    <aura:if isTrue="{!!v.isExternal}">
+        <lightning:layout horizontalAlign="center" multipleRows="true">
+            <aura:iteration  items="{!v.prechatFieldComponents}" var="item">
+                <lightning:layoutItem padding="around-small" size="12">
+                    {!item}
+                </lightning:layoutItem>
+            </aura:iteration >
+            <lightning:layoutItem padding="around-small" size="12">
+                <lightning:button variant="brand" label="{!$Label.LiveAgentPrechat.StartChat}" title="Brand action"
+                    onclick="{! c.handleStartButtonClick }" />
+            </lightning:layoutItem>
+        </lightning:layout>
+        <aura:set attribute="else">
+            <div class="prechatUI">
+                <div class="prechatContent">
+                    <ul class="fieldsList">
+                        {!v.prechatFieldComponents}
+                    </ul>
+                </div>
+                <div class="startButtonWrapper">
+                    <ui:button aura:id="startButton" class="dialogButton uiButton embeddedServiceSidebarButton start-button-psa" label="{!$Label.LiveAgentPrechat.StartChat}" press="{!c.handleStartButtonClick}"/>
+                </div>
+            </div>
+        </aura:set>
+    </aura:if>
+</aura:component>

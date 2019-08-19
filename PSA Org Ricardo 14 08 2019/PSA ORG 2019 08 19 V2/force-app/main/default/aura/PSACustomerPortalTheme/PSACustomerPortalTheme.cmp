@@ -1,0 +1,261 @@
+<aura:component controller="CustomerPortalThemeController" implements="forceCommunity:themeLayout" access="global" description="Dealer Portal Theme">
+    <aura:attribute name="countryAtrib" type="String"/>
+    <aura:attribute name="languageAtrib" type="String"/>
+    <aura:attribute name="brandAtrib" type="String"/>
+    
+    <aura:attribute name="search" type="Aura.Component[]" required="false" />
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false" />
+    <aura:attribute name="navBar" type="Aura.Component[]" required="false" />
+    <aura:attribute name="newHeader" type="Aura.Component[]" required="false" />
+
+    <aura:attribute name="userRecord" type="User" />
+    <aura:attribute name="userPortalRole" type="String" />
+    <aura:attribute name="brandLogoSource" type="String" />
+    <aura:attribute name="backgroundColor" type="String" default="#1E2336"/>
+    <aura:html tag="style">
+        .forceCommunityEmbeddedServiceHelpButton .flatButton,
+        .embeddedServiceSidebarHeader .shortHeaderContent,
+        .embeddedServiceLiveAgentStateWaitingHeader .content,
+        .embeddedServiceLiveAgentStateChatHeader .content,
+        .embeddedServiceSidebarExtendedHeader,
+        .EmbeddedServiceHelpButton .EmbeddedServiceHelpButton:hover,
+        .embeddedServiceSidebarHeader .shortHeaderContent,
+        .embeddedServiceSidebarMinimizedDefaultUI,
+        .embeddedServiceSidebarMinimizedDefaultUI.minimizedContainer,
+        .embeddedServiceSidebarMinimizedDefaultUI.minimizedContainer:focus,
+        .embeddedServiceSidebarMinimizedDefaultUI.minimizedContainer:hover
+        {
+            background-color: {!v.backgroundColor} !important;
+        }
+        .embeddedServiceSidebarMinimizedDefaultUI {
+            border-width: 0px;
+        }
+
+    </aura:html>
+    <aura:attribute name="device" type="String" />
+    
+    <aura:registerEvent name="userControlEvent" type="c:LMAUserPortalControlEvent" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:PSACustomerCommunityIsAlgeria" action="{!c.handleIsAlgeria}" />
+
+    <!-- <div class="banner-background" style="position: fixed;top: 0;width: 100%;z-index:99"></div>
+    <div class="header-container home-sticky" style="position: fixed;top: 0;width: 100%;z-index:100">
+ --><aura:if isTrue="{!v.brandAtrib == 'AP'}">
+    <aura:if isTrue="{!$Browser.isPhone}">
+    <div class="banner-background" style="height : 60px;"></div>
+    <div class="header-container" style="height : 60px;">
+        <div class="slds-grid slds-grid_vertical-align-center">
+                        <div class="slds-size--3-of-5 slds-large-size--4-of-12 slds-order_2 slds-large-order_1 logo-container"
+                 onclick="{! c.goToHomePage }">
+                <aura:if isTrue="{!v.countryAtrib == 'PT'}">
+                <a href="https://www.peugeot.pt/">
+                         <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/LogoPeugeot_H_RVB2b-01.png" title="Peugeot" style="width : 116px; height :28px;margin-bottom : 10px;margin-top : 33px;margin-left : 35px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'CL'}">
+                <a href="https://www.peugeot.cl/">
+                    <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'AR'}">
+                <a href="https://www.peugeot.com.ar/">
+                    <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'DZ'}">
+                <a href="https://www.peugeot.dz/">
+                    <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px;" class="logo_psa_white" />
+                </a>
+                </aura:if>
+
+            </div>
+            <div class="slds-col slds-size--1-of-5 slds-large-size--4-of-12 slds-order_1 slds-large-order_3" style="margin-top : 20px;">
+                {! v.navBar }
+                
+            </div>
+
+            <div class="slds-col slds-size--3-of-7 slds-large-size--3-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container" style="margin-left : 50px;">
+
+            </div>
+            <div class="slds-col slds-size--1-of-7 slds-large-size--1-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container">
+            </div>
+        </div>
+</div>
+<div class="main-body">
+        {! v.search }
+
+        {! v.body }
+    </div>
+</aura:if>
+    <aura:if isTrue="{!!$Browser.isPhone}">
+    <div class="banner-background"></div>
+    <div class="header-container" >
+        <div class="slds-grid slds-grid_vertical-align-center">
+                        <div class="slds-size--3-of-5 slds-large-size--4-of-12 slds-order_2 slds-large-order_1 logo-container"
+                 onclick="{! c.goToHomePage }">
+                <aura:if isTrue="{!v.countryAtrib == 'PT'}">
+                <a href="https://www.peugeot.pt/">
+                          <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'CL'}">
+                <a href="https://www.peugeot.cl/">
+                    <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'AR'}">
+                <a href="https://www.peugeot.com.ar/">
+                    <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'DZ'}">
+                <a href="https://www.peugeot.dz/">
+                    <img alt="PSA Groupe" src="/peugeot/s/sfsites/c/resource/PeugeotBranding/Images/Peugeot_logo_white.png" title="Peugeot" style="width : 82px; height : 57px;margin-bottom : 10px" class="logo_psa_white" />
+                </a>
+                </aura:if>
+
+            </div>
+            <div class="slds-col slds-size--1-of-5 slds-large-size--4-of-12 slds-order_1 slds-large-order_3" style="margin-top : 35px;color : white;">
+                {! v.navBar }
+            </div>
+
+            <div class="slds-col slds-size--3-of-7 slds-large-size--3-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container" style="margin-left : 50px;">
+
+            </div>
+            <div class="slds-col slds-size--1-of-7 slds-large-size--1-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container">
+            </div>
+        </div>
+</div>
+<div class="main-body">
+        {! v.search }
+        {! v.body }
+    </div>
+</aura:if>
+</aura:if>
+<aura:if isTrue="{!v.brandAtrib == 'AC'}">
+    <div class="banner-background"></div>
+    <div class="header-container">
+        <div class="slds-grid slds-grid_vertical-align-center">
+        </div>
+        <div class="slds-grid slds-grid_vertical-align-center">
+            <div class="slds-col slds-size--1-of-10 slds-large-size--5-of-6 slds-order_1 slds-large-order_1"
+                style="align : center;">
+                <aura:if isTrue="{!v.countryAtrib == 'PT'}">
+                    <p style="font-size : 16pt;margin-left : 20px;margin-top:10px;"><b>CITROËN <b
+                                style="color : #B48F6D">PORTUGAL</b></b></p><br />
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'AR'}">
+                    <p style="font-size : 16pt;margin-left : 20px;margin-top:10px;"><b>CITROËN <b
+                                style="color : #B48F6D">ARGENTINA</b></b></p><br />
+                </aura:if>
+                {! v.navBar }
+            </div>
+            <div class="slds-size--3-of-8 slds-large-size--1-of-6 slds-order_6 slds-large-order_2 logo-container"
+                onclick="{! c.goToHomePage }">
+                <aura:if isTrue="{!v.countryAtrib == 'PT'}">
+                    <a href="https://www.citroen.pt/home-page.html">
+                        <img alt="PSA Groupe" src="/citroen/s/sfsites/c/resource/CitroenBranding/Images/Citroen_blk-01.png"
+                            title="Citroen" style="width : 94px; height : 74px;margin-bottom : 10px"
+                            class="logo_psa_white" />
+                    </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'AR'}">
+                    <a href="https://www.citroen.com.ar/">
+                        <img alt="PSA Groupe" src="/citroen/s/sfsites/c/resource/CitroenBranding/Images/Citroen_blk-01.png"
+                            title="Citroen" style="width : 94px; height : 74px;margin-bottom : 10px"
+                            class="logo_psa_white" />
+                    </a>
+                </aura:if>
+
+            </div>
+        </div>
+    </div>
+    <div class="main-body">
+        {! v.search }
+        {! v.body }
+    </div>
+</aura:if>
+<aura:if isTrue="{!v.brandAtrib == 'DS'}">
+    <aura:if isTrue="{!!$Browser.isPhone}">
+    <div class="banner-background"></div>
+        <div class="header-container">
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <div class="slds-size--2-of-7 slds-large-size--4-of-12 slds-order_1 slds-large-order_2 logo-container" style = "text-align : center;"
+                     onclick="{!c.goToHomePage}">
+                    <aura:if isTrue="{!v.countryAtrib == 'PT'}">
+                        <a href="http://dsautomobiles.pt/">
+                            <img alt="PSA Groupe" src="/dsautomobiles/s/sfsites/c/resource/DSBranding/Images/DSAutomobiles_logo_white.png" title="DSAutomobiles" style="width : 105.2px; height : 80px;margin-bottom : 10px;margin-right:140px;" class="logo_psa_white" />
+                        </a>
+                        
+                    </aura:if>
+                    <aura:if isTrue="{!v.countryAtrib == 'AR'}">
+                        <a href="https://www.dsautomobiles.com.ar/">
+                            <img alt="PSA Groupe" src="/dsautomobiles/s/sfsites/c/resource/DSBranding/Images/DSAutomobiles_logo_white.png"
+                                 title="DSAutomobiles" style="width : 105.2px; height : 80px;margin-bottom : 10px;margin-right:140px;"
+                                 class="logo_psa_white" />
+                        </a>
+                    </aura:if>
+                </div>
+                <div class="slds-col slds-size--1-of-7 slds-large-size--4-of-12 slds-order_1 slds-large-order_1" style="margin-left : 40px;">
+                    {! v.navBar }
+                </div>
+
+            <div class="slds-col slds-size--3-of-7 slds-large-size--3-of-12 slds-order_4 slds-large-order_3 slds-col--bump-left global-search-container">
+
+            </div>
+            <div class="slds-col slds-size--1-of-7 slds-large-size--1-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container">
+            </div>
+        </div>
+    </div>
+    <div class="main-body" style="background-color : rgb(47,39,38)">
+        <div style="background-color : white;margin-left : 80px;margin-right: 80px;height: 100%">
+        {! v.search }
+        {! v.body }
+        </div>
+    </div>
+    </aura:if>
+    <aura:if isTrue="{!$Browser.isPhone}">
+             <div class="banner-background" style="height : 60px;"></div>
+    <div class="header-container" style="height : 60px;">
+        <div class="slds-grid slds-grid_vertical-align-center">
+            <div class="slds-size--2-of-7 slds-large-size--4-of-12 slds-order_2 slds-large-order_2 logo-container" style = "text-align : center;"
+                 onclick="{! c.goToHomePage }">
+                <aura:if isTrue="{!v.countryAtrib == 'PT'}">
+                    <a href="http://dsautomobiles.pt/">
+                        <img alt="PSA Groupe" src="/dsautomobiles/s/sfsites/c/resource/DSBranding/Images/DSAutomobiles_logo_white.png"
+                             title="DSAutomobiles" style="width : 105.2px; height : 80px;margin-bottom : 10px;margin-right:140px;"
+                             class="logo_psa_white" />
+                    </a>
+                </aura:if>
+                <aura:if isTrue="{!v.countryAtrib == 'AR'}">
+                    <a href="https://www.dsautomobiles.com.ar/">
+                        <img alt="PSA Groupe" src="/dsautomobiles/s/sfsites/c/resource/DSBranding/Images/DSAutomobiles_logo_white.png"
+                             title="DSAutomobiles" style="width : 105.2px; height : 80px;margin-bottom : 10px;margin-right:140px;"
+                             class="logo_psa_white" />
+                    </a>
+                </aura:if>                         
+            </div>
+            <div class="slds-col slds-size--1-of-7 slds-large-size--4-of-12 slds-order_1 slds-large-order_1" style="margin-top : 18px;">
+                {! v.navBar }
+            </div>
+            
+            <div class="slds-col slds-size--3-of-7 slds-large-size--3-of-12 slds-order_4 slds-large-order_3 slds-col--bump-left global-search-container">
+                
+            </div>
+            <div class="slds-col slds-size--1-of-7 slds-large-size--1-of-12 slds-order_4 slds-large-order_4 slds-col--bump-left global-search-container">
+            </div>
+        </div>
+    </div>
+    <div class="main-body" style="background-color : rgb(47,39,38)">
+        <div style="background-color : white;height: 100%">
+        {! v.search }
+        {! v.body }
+        </div>
+    </div>
+    </aura:if>
+</aura:if>
+
+    <!-- <div class="main-body" style="top: 100px;width: 100%;z-index:2"> -->
+
+</aura:component>

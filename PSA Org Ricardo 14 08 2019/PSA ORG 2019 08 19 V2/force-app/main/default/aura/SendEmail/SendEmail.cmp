@@ -1,0 +1,229 @@
+<aura:component access="GLOBAL" controller="SendEmailController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId">
+	
+	<aura:html tag="style">
+		.cuf-content{
+			padding: 0 !important;
+			margin-top: -3rem !important;
+			overflow-y: hidden !important;
+			overflow-x: hidden !important;
+		}
+
+		.slds-p-around--medium{
+			padding: 0 !important;
+		}
+
+		.slds-modal__container{
+			width: 900px !important;
+			max-width: 900px !important;
+			overflow-y: hidden !important;
+			overflow-x: hidden !important;
+		}
+		
+		.slds-modal__content{
+			position: relative !important;
+			overflow-y: hidden;
+			overflow-x: hidden !important;
+		}
+
+		.slds-modal__header{
+			top: 0;
+			width: 100%;
+		}
+		
+		.slds-modal__footer{
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+		}
+
+		.slds-scrollable_y{
+			overflow-y: auto !important;
+		}
+	</aura:html>
+
+	<aura:attribute type="List" name="fromList"/>
+	<aura:attribute type="List" name="recipients" default="[]"/>
+	<aura:attribute type="List" name="messages"/>
+	<aura:attribute type="List" name="fields" default="[]"/>
+
+	<aura:attribute type="Map" name="parentFields"/>
+
+	<aura:attribute type="SObject" name="selectedRecipient" default="{}"/>
+	<aura:attribute type="SObject" name="defaultRecipient" default="{}"/>
+	<aura:attribute type="EmailTemplate" name="emailTemplate" default="{}"/>
+	<aura:attribute type="SObject" name="record" default="{}"/>
+	
+	<aura:attribute type="String" name="from"/>
+	<aura:attribute type="String" name="templateBody"/>
+	<aura:attribute type="String" name="templateSubject"/>
+	<aura:attribute type="String" name="pdfData"/>
+	<aura:attribute type="String" name="pdfResponse"/>
+	<aura:attribute type="String" name="selectedRecipients"/>
+	<aura:attribute type="String" name="recipientSOQLWHERE" default=""/>
+	<aura:attribute type="String" name="recipientIdField" default="Id"/>
+	<aura:attribute type="String" name="accountField"/>
+	<aura:attribute type="String" name="isPersonAccountField"/>
+
+	<aura:attribute type="Boolean" name="isQuickAction" default="true"/>
+	<aura:attribute type="Boolean" name="disableRecipienstLookup" default="false"/>
+	<aura:attribute type="Boolean" name="showErrors" default="false"/>
+	<aura:attribute type="Boolean" name="isPersonAccount" default="false"/>
+	
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+	<aura:handler name="change" value="{! v.emailTemplate }" action="{! c.validateBody }"/>
+	<aura:handler name="change" value="{! v.selectedRecipient }" action="{! c.addRecipient }"/>
+	
+	<lightning:overlayLibrary aura:id="overlayLib"/>
+
+	<aura:registerEvent name="sendEmail" type="c:SendEmailEvent"/>
+
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+
+	<aura:if isTrue="{! !empty( v.fields ) }">
+		<force:recordData
+			recordId="{! v.recordId }"
+			fields="{! v.fields }"
+			layoutType="FULL"
+			targetRecord="{! v.record }"
+			recordUpdated="{! c.recordUpdated }"
+			targetFields="{! v.parentFields }"
+			mode="VIEW"
+		/>
+	</aura:if>
+		
+	<div class="modal-container slds-modal__container">
+
+		<aura:if isTrue="{! v.isQuickAction }">
+			<header class="modal-header slds-modal__header">
+				<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{! $Label.c.SendEmailHeader }</h2>
+			</header>
+		</aura:if>
+
+		<div class="modal-body slds-modal__content slds-p-around_medium slds-scrollable_y" style="height:100%; max-height: 483.6px;">
+
+			<lightning:spinner aura:id="cmpSpinner" class="slds-show" variant="brand" style="z-index: 100"/>
+
+			<lightning:layout verticalAlign="spread" horizontalAlign="center" multipleRows="true" class="x-large">
+
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left slds-p-bottom_small" size="12">
+
+					<lightning:Select aura:id="sl_status" name="select" label="{! $Label.c.SendEmailInput1 }" value="{! v.from }">
+						<aura:iteration items="{! v.fromList }" var="f">
+							<option value="{! f.value }">{! f.label }</option>
+						</aura:iteration>
+					</lightning:Select>
+
+				</lightning:layoutItem>
+
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left slds-p-bottom_small" size="12">
+			
+					<aura:if isTrue="{! v.isPersonAccount }">
+						<c:Lookup aura:id="lkpContacts_b2c" disabled="{! v.disableRecipienstLookup }" objectAPIName="Contact" IconName="standard:contact" label="{! $Label.c.SendEmailInput2 }" selectedRecord="{! v.selectedRecipient }" whereSearch="{! v.recipientSOQLWHERE }" placeHolder="{! $Label.c.SendEmailRecipientsPlaceHolder }" Message="{! $Label.c.SendEmailRecipientMessage }" />
+						<div class="slds-form-element__help slds-hide" aura:id="lkpContacts_b2c_help">{! $Label.c.CaseRequiredFields }</div>
+
+						<aura:if isTrue="{! !empty( v.defaultRecipient ) }">
+							<div class="slds-pill-container">
+								<span class="slds-pill">
+									<span class="slds-icon_container slds-combobox__input-entity-icon" title="record">
+										<lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="standard:contact" size="x-small" alternativeText="icon"/>
+										<span class="slds-assistive-text"></span>
+									</span>
+									<span class="slds-pill__label slds-p-left_x-large">
+										{! v.defaultRecipient.Name }
+									</span>
+								</span>
+							</div>
+						</aura:if>
+
+						<aura:set attribute="else">
+							<c:Lookup aura:id="lkpContacts_b2b" objectAPIName="AccountContactRelation" fields="Id, ContactId, Contact.Name" fieldAsLabel="Contact.Name" IconName="standard:contact" label="{! $Label.c.SendEmailInput2 }" selectedRecord="{! v.selectedRecipient }" whereSearch="{! v.recipientSOQLWHERE }" placeHolder="{! $Label.c.SendEmailRecipientsPlaceHolder }"/>
+							<div class="slds-form-element__help slds-hide" aura:id="lkpContacts_b2b_help">{! $Label.c.CaseRequiredFields }</div>
+
+							<aura:if isTrue="{! !empty( v.recipients ) }">
+								<lightning:pillContainer items="{! v.recipients }" onitemremove="{! c.handleRemove }"/>
+							</aura:if>
+						</aura:set>
+					</aura:if>
+
+				</lightning:layoutItem>
+
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left slds-p-bottom_small" size="12">
+
+					<c:Lookup objectAPIName="EmailTemplate" IconName="standard:template" label="{! $Label.c.SendEmailInput3 }" selectedRecord="{! v.emailTemplate }" whereSearch="AND IsActive = true" placeHolder="{! $Label.c.SendEmailTemplatesPlaceHolder }"/>
+
+				</lightning:layoutItem>
+
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left slds-p-bottom_x-small" size="10">
+
+					<lightning:input aura:id="Subject" label="{! $Label.c.SendEmailInput4 }" value="{! v.templateSubject }" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+					<div class="slds-form-element__help slds-hide" aura:id="Subject_help">{! $Label.c.CaseRequiredFields }</div>
+
+				</lightning:layoutItem>
+
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left slds-p-bottom_x-small slds-p-left_small " size="2">
+
+					<label class="slds-form-element__label" for="lookup-348">{! $Label.c.SendEmailSection1 }</label>
+					<div aura:id="pdf" class="slds-form-element__control">
+
+						<div aura:id="divSpinner" class="slds-button_icon-container">
+							<lightning:spinner aura:id="spinner" class="slds-show" variant="brand" size="small" style="z-index: 10"/>
+						</div>
+
+						<aura:if isTrue="{! !empty( v.pdfData ) }">
+							<div style="float: left;">
+								<button class="slds-button slds-button_icon slds-shrink-none slds-button_icon-container" style="margin-right: .75rem; cursor: initial;">
+									<lightning:icon iconName="doctype:pdf" alternativeText="{! v.record.fields.Name.value + '.pdf' }"/>
+								</button>
+
+								<div style="float: right;">
+									<p class="slds-truncate" style="width: 5rem; line-height: 34px;" title="{! v.record.fields.Name.value + '.pdf' }">{! v.record.fields.Name.value + '.pdf' }</p>
+								</div>
+							</div>
+
+							<aura:set attribute="else" >
+								{! v.pdfResponse }
+							</aura:set>
+						</aura:if>
+					</div>
+
+				</lightning:layoutItem>
+
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left" size="12">
+
+					<lightning:inputRichText placeholder="{! $Label.c.SendEmailBodyPlaceHolder }" value="{! v.templateBody }" class="slds-scrollable_y"/>
+
+				</lightning:layoutItem>
+
+			</lightning:layout>
+
+		</div>
+
+	</div>
+
+	<footer class="modal-footer slds-modal__footer">
+		<aura:if isTrue="{! v.showErrors }">
+			<c:CustomPopover aura:id="errorPopover" variant="error" placement="auto top" theme="error" withClose="true">
+				<aura:set attribute="header">
+					<p> </p>
+				</aura:set>
+				<aura:set attribute="popoverBody">
+					<div class="slds-theme_error slds-text-align_left">
+						<aura:iteration items="{! v.messages }" var="message">
+							<ul class="errorsList">
+								<li style="list-style: initial !important;">{! message }</li>
+							</ul>
+						</aura:iteration>
+					</div>
+				</aura:set>
+
+				<button class="slds-button slds-button_icon slds-shrink-none slds-button_icon-container">
+					<lightning:icon iconName="utility:warning" variant="error" size="xx-small"/>
+				</button>
+			</c:CustomPopover>
+		</aura:if>
+
+		<lightning:button label="{! $Label.c.SendEmailButton1 }" onclick="{! c.cancel }"/>
+		<lightning:button label="{! $Label.c.SendEmailButton2 }" onclick="{! c.validateRequiredFields }" variant="brand" disabled="{! if( empty( v.pdfData ), 'true', 'false' ) }"/>
+	</footer>
+
+</aura:component>

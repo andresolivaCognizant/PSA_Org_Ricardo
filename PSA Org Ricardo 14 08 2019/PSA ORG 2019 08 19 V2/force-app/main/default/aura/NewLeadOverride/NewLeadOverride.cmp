@@ -1,0 +1,45 @@
+<aura:component controller="NewLeadOverrideController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,lightning:actionOverride,force:hasSObjectName" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:attribute name="edit" type="boolean" default="false"/>
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="true" access = "global" />
+    <aura:attribute name="leadName" type="String" access = "global" />
+    <aura:attribute name="leadId" type="String" access = "global" />
+    <aura:attribute name="IsPerson" type="boolean" default = "false" />
+    <aura:attribute name="IsMoreLeads" type="boolean" default = "false" />
+    
+     <aura:if isTrue="{!v.showLoadingSpinner}">
+			<lightning:spinner alternativeText="Loading" />
+    </aura:if> 
+
+
+    <aura:if isTrue="{!v.edit}">
+        <lightning:recordEditForm aura:id="newLead" objectApiName="Lead" onload="{!c.showRequiredFields}">
+            <lightning:messages />
+            <lightning:inputField fieldName="Case__c" value="{!v.recordId}" class="slds-hide"/>
+            <!--<lightning:inputField fieldName="LeadType__c" aura:id="LeadType" class="customRequired none"/>-->
+            <lightning:inputField fieldName="Activity__c" aura:id="Activity" class="customRequired none"/>
+            <lightning:inputField fieldName="ProductCustomerInterest__c" aura:id="ProductCustomerInterest"/>
+            <lightning:inputField fieldName="ProductOwned__c" aura:id="ProductOwned"/>
+            <lightning:inputField fieldName="LeadRequestType__c" aura:id="LeadRequestType" class="customRequired none"/>
+        </lightning:recordEditForm>        
+
+         <br></br>
+        
+        <footer>
+            <lightning:button variant="brand" label="{!$Label.c.CreateCase_Save}" title="Save" onclick="{!c.save}"/>
+        </footer> 
+
+        <aura:set attribute="else">
+            <aura:if isTrue="{!v.IsMoreLeads}">
+                 <ui:outputText class="slds-text-heading--normal" value="{!$Label.c.ALeadForCase}"/>
+                 <a name="linkLead" onclick="{!c.handleClick}" value="$Label.c.ALeadForCase">&nbsp;{!v.leadName}</a>               
+            </aura:if>
+            <aura:if isTrue="{!v.IsPerson}">
+                <ui:outputText class="slds-text-heading--normal" value="{!$Label.c.NoAccountB2C}"/>
+            </aura:if>
+        </aura:set> 
+    </aura:if> 
+</aura:component>

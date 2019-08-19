@@ -1,0 +1,199 @@
+<aura:component controller="AfterSalesVehicleInterventionsController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+
+	<!-- attributes -->
+	<aura:attribute type="Map" name="data" />
+	<aura:attribute type="Map" name="columns"/>
+	
+	<aura:attribute type="List" name="path_setting" default="[]"/>
+	
+	<aura:attribute type="String" name="step" default="0"/>
+	<aura:attribute type="String" name="recordError"/>
+	
+	<aura:attribute type="Boolean" name="isFromAsset"/>
+	
+	<aura:attribute type="WorkshopAppointment__c" name="wa"/>
+	<aura:attribute type="Asset" name="objAsset"/>
+
+	<aura:html tag="style">
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVDate}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVInterventionNumber}"]{
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
+		}
+		
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVMileage}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVAmount}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVAmountHtc}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVAmountTtc}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVQuantity}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVUnitPrice}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVTotalPrice}"],
+		.slds-th__action span[title="{!$Label.c.AfterSalesBVVTime}"]{
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
+			padding-right: 0.25rem;
+		}
+	</aura:html>
+
+	<!-- handlers-->
+	<aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+	<aura:if isTrue="{! v.isFromAsset }">
+
+		<force:recordData aura:id="assetForceRecord"
+			recordId="{! v.recordId }"
+			fields="VIN__c"
+			mode="VIEW"
+			targetRecord="{! v.objAsset }"
+			recordUpdated="{! c.handleRecordUpdated }"
+			targetError="{! v.recordError }"
+		/>
+		
+		<aura:set attribute="else" >
+		
+			<force:recordData aura:id="forceRecord"
+				recordId="{! v.recordId }"
+				fields="Asset__r.VIN__c"
+				mode="VIEW"
+				targetRecord="{! v.wa }"
+				recordUpdated="{! c.handleRecordUpdated }"
+				targetError="{! v.recordError }"
+			/>
+			
+		</aura:set>
+	
+	</aura:if>
+
+	<div class="card-container slds-border_top" >
+	
+		<article class="slds-card" style="border:0px solid rgb(216, 221, 230) !important;">
+		
+			<aura:if isTrue="{! v.isFromAsset }">
+				<lightning:card variant="narrow">
+					<aura:set attribute="title">
+						<lightning:icon iconName="standard:service_contract" size="medium"/>
+						{! $Label.c.AfterSalesBodyTabName3 }
+					</aura:set>
+				</lightning:card>
+			</aura:if>
+	
+			<div aura:id="_body" style="min-height:300px">
+				<lightning:spinner variant="brand" size="large" aura:id="_spinner" alternativeText="Loading" />
+		
+				<div aura:id="_main" class="slds-hide">
+		
+					<!-- progress indicator - begin -->
+					<div class="slds-path slds-p-horizontal_small">
+						<div class="slds-grid slds-path__track">
+							<div class="slds-grid slds-path__scroller-container">
+								<div class="slds-path__scroller" role="application">
+									<div class="slds-path__scroller_inner">
+										<ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+											<aura:iteration items="{! v.path_setting }" var="s" indexVar="i">
+												<li class="{! s.class }" role="presentation">
+													<a aria-selected="false"
+														class="slds-path__link"
+														href="javascript:void(0);"
+														role="option"
+														tabindex="-1"
+														onclick="{! c.handleOnStepClick }" 
+														data-step_id="{! i }"
+														data-parent_id="{! s.pId }">
+														<span class="slds-path__stage">
+															<span class="slds-assistive-text"></span>
+														</span>
+														<span class="slds-path__title">{! s.title }</span>
+													</a>
+												</li>
+											</aura:iteration>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- progress indicator - end -->
+		
+					<aura:if isTrue="{! v.step == '2' }">
+						<!-- split results table when viewing intervention detail -->
+		
+						<!-- parts section - begin -->
+						<div class="slds-section slds-is-open slds-p-horizontal_small"  aura:id="_parts" >
+							<h3 class="slds-section__title" id="_parts" onclick="{! c.handleSectionClick }">
+								<button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" >
+									<lightning:layout>
+										<lightning:layoutItem>
+											<lightning:icon iconName="utility:switch" size="x-small"/>
+										</lightning:layoutItem>
+										<lightning:layoutItem class="slds-p-horizontal_x-small">
+											<span class="slds-text-title_caps" title="">
+												{! $Label.c.AfterSalesBVVPartsSubsection }
+											</span>
+										</lightning:layoutItem>
+										<lightning:layoutItem class="slds-col_bump-left">
+											<span class="slds-text-title_caps" title="" aura:id="pcs_sub_total">
+												0 €
+											</span>
+										</lightning:layoutItem>
+									</lightning:layout>
+								</button>
+							</h3>
+		
+							<div aria-hidden="false" class="slds-section__content slds-p-horizontal_small" id="expando-unique-id">
+								<!-- dynamic data table container - begin -->
+								<div aura:id="_pieces" class="slds-p-horizontal_small">
+								</div>
+								<!-- dynamic data table container - begin -->
+							</div>
+						</div>
+						<!-- parts section - end -->
+		
+						<!-- operations section - begin -->
+						<div class="slds-section slds-is-open slds-p-horizontal_small"  aura:id="_ops" >
+							<h3 class="slds-section__title" id="_ops" onclick="{! c.handleSectionClick }">
+								<button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action" >
+									<lightning:layout>
+										<lightning:layoutItem>
+											<lightning:icon iconName="utility:switch" size="x-small"/>
+										</lightning:layoutItem>
+										<lightning:layoutItem class="slds-p-horizontal_x-small">
+											<span class="slds-text-title_caps" title="">
+												{! $Label.c.AfterSalesBVVOperationsSubsection }
+											</span>
+										</lightning:layoutItem>
+										<lightning:layoutItem class="slds-col_bump-left" >
+											<span class="slds-text-title_caps" title="" aura:id="ops_sub_total">
+												0 €
+											</span>
+										</lightning:layoutItem>
+									</lightning:layout>
+								</button>
+							</h3>
+		
+							<div aria-hidden="false" class="slds-section__content slds-p-horizontal_small" id="expando-unique-id">
+								<!-- dynamic data table container - begin -->
+								<div aura:id="_operations" class="slds-p-horizontal_small">
+								</div>
+								<!-- dynamic data table container - begin -->
+							</div>
+						</div>
+						<!-- operations section - end -->
+		
+						<aura:set attribute="else">
+							<!-- dynamic data table container - begin -->
+							<div style="height: 300px" aura:id="_dataTable" class="slds-p-horizontal_small">
+							</div>
+							<!-- dynamic data table container - begin -->
+						</aura:set>
+					</aura:if>
+		
+				</div>
+			</div>
+		
+		</article>
+		
+	</div>
+		
+</aura:component>

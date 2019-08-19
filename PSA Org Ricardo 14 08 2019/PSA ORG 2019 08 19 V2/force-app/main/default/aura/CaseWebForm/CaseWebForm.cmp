@@ -1,0 +1,258 @@
+<aura:component controller="CaseWebFormController" implements="forceCommunity:availableForAllPageTypes" access="global">
+
+	<!-- Attributes -->
+	<aura:attribute name="parentId" type="Id" default="" access="global" />
+	<aura:attribute name="caseNumber" type="String" default="" access="global" />
+	<aura:attribute name="showLoadingSpinner" type="boolean" default="false" access="global" />
+	<aura:attribute name="validVIN" type="boolean" access="global" />
+	<aura:attribute name="fileName" type="String" default="" />
+	<aura:attribute name="isOpen" type="boolean" default="false" />
+	<aura:attribute name="isDisabled" type="Boolean" default="false"/>
+	<aura:attribute name="isDisabledModal" type="Boolean" default="false" />
+	<aura:attribute name="optionsSupportWith" type="List" default="[
+		{'label': '--', 'value' : 'none'},
+		{'label': 'Info Request', 'value': 'infoRequest'},
+		{'label': 'Commercial Info', 'value': 'commercialInfo'},
+		{'label': 'Claim', 'value': 'claim'},
+		{'label': 'Other', 'value': 'other'},
+		]" access="global" />
+	<aura:attribute name="optionsType" type="List" default="[
+		{'label': '--', 'value' : 'none'},
+		{'label': 'AfterSales', 'value': '123'},
+		{'label': 'In Progress', 'value': 'inProgress'},
+		{'label': 'Finished', 'value': 'finished'},
+		]" access="global" />
+	<aura:attribute name="surveyValues" type="List" default="[
+		{'label': 'Yes', 'value' : 'Yes'},
+		{'label': 'No', 'value': 'No'},
+		]" access="global" />
+	<aura:attribute name="knowledgeArticles" type="List" />
+	<aura:attribute name="solved" type="Boolean" default="false" />
+	<aura:attribute name="b2bacc" type="Boolean" default="false" access="global" />
+	<aura:attribute name="termsAccep" type="Boolean" default="false" access="global" />
+	<aura:attribute name="selectedcat" type="String" default="" access="global" />
+	<aura:attribute name="selectedreq" type="String" default="" access="global" />
+	<aura:attribute name="selectedSurvey" type="String" default="No" access="global" />
+	<aura:attribute name="subjectAtrib" type="String" default="" />
+	<aura:attribute name="summaryAtrib" type="String" default="" />
+	<aura:attribute name="companyAtrib" type="String" default="" />
+	<aura:attribute name="contactRoleAtrib" type="String" default="" />
+	<aura:attribute name="fiscalAtrib" type="String" default="" />
+	<aura:attribute name="firstNameAtrib" type="String" default="" />
+	<aura:attribute name="lastNameAtrib" type="String" default="" />
+	<aura:attribute name="emailAtrib" type="String" default="" />
+	<aura:attribute name="phoneAtrib" type="String" default="" />
+	<aura:attribute name="phoneCodeValues" type="String[]" default="" />
+	<aura:attribute name="selectedCountryCode" type="String" default="" access="global"/>
+	<aura:attribute name="RUTAtrib" type="String" default="" />
+	<aura:attribute name="postCodeAtrib" type="String" default="" />
+	<aura:attribute name="cityAtrib" type="String" default="" />
+	<aura:attribute name="vinAtrib" type="String" default="" />
+	<aura:attribute name="regNumberAtrib" type="String" />
+	<aura:attribute name="countryAtrib" type="String" />
+	<aura:attribute name="languageAtrib" type="String" />
+    <aura:attribute name="languageCode" type="String"/>
+	<aura:attribute name="brandAtrib" type="String" />
+    <aura:attribute name="hasErrors" type="Boolean" default="false" />
+	<aura:attribute type="Map" name="userSettings" default="{}"/>
+	
+	<!-- Handlers -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:handler name="change" value="{!v.caseNumber}" action="{!c.getCaseNumberAlert}" />
+
+	<lightning:notificationsLibrary aura:id="notifLib"/>
+
+	<!--Modal-->
+	<div class="slds-m-around_xx-large">
+		<!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->
+		<aura:if isTrue="{!v.isOpen}">
+			<!--###### MODAL BOX Start######-->
+			<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+				aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+				<div class="slds-modal__container">
+					<!-- ###### MODAL BOX HEADER Start ######-->
+					<header class="slds-modal__header">
+						<lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModel }"
+							alternativeText="close" variant="bare-inverse" class="slds-modal__close" />
+						<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+							{!$Label.c.CWF_ModalTitle}</h2>
+					</header>
+					<!--###### MODAL BOX BODY Part Start######-->
+					<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+						<p><b>{!$Label.c.CWF_ModalDescription}</b></p>
+						<aura:iteration items="{!v.knowledgeArticles}" var="k">
+							<div style="margin:10px;border:1px solid grey;">
+								<div style="margin:10px;">
+									<a target="_blank" rel="noopener noreferrer" href="{!k.urlName}">{!k.title}</a>
+									<br />
+								</div>
+							</div>
+						</aura:iteration>
+					</div>
+					<!--###### MODAL BOX FOOTER Part Start ######-->
+					<footer class="slds-modal__footer">
+						<lightning:button variant="neutral" label="{!$Label.c.CWF_ModalEdit}" title="Edit"
+							onclick="{! c.closeModel }" disabled="{!v.isDisabledModal}" />
+						<lightning:button variant="neutral" label="{!$Label.c.CWF_ModalSolved}" title="Solved"
+							onclick="{! c.doSaveSolved}" disabled="{!v.isDisabledModal}" />
+						<lightning:button variant="brand" label="{!$Label.c.CWF_CreateCase}" title="Create Case"
+							onclick="{!c.doSave}" disabled="{!v.isDisabledModal}" />
+						<aura:if isTrue="{!v.showLoadingSpinner}">
+							<div class="slds-text-body_small slds-text-color_error">{!v.LabelLogCase}
+								<img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img"
+									alt="Loading" />'
+							</div>
+						</aura:if>
+					</footer>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open"></div>
+			<!--###### MODAL BOX Part END Here ######-->
+		</aura:if>
+	</div>
+    <!--END Modal-->
+    
+    
+	<!---->
+	<div class="{!v.brandAtrib}" style="background-color: white;">
+        
+		<div>
+            <!-- SECTION 1: CASE INFO -->
+			<div style="margin:10px;">
+                <!-- Title Section -->
+				<div style="margin:10px;border:1px solid grey;border-top:transparent;border-left: transparent;border-right:transparent;margin-bottom : 15px">
+					<h1 style="font-size:16pt;margin-bottom: 15px;">{!$Label.c.CWF_CaseInfo}</h1>
+				</div>
+				<!-- Support -->
+				<lightning:combobox aura:id="requireSupport" name="supportWith" options="{!v.optionsSupportWith}"
+					label="{!$Label.c.CWF_Reason}" value="none" placeholder="--" onchange="{!c.setSelectedReq}"
+					required="true" disabled="{!v.isDisabled}"/>
+				<!-- Category -->
+				<lightning:radioGroup aura:id="category" name="category" options="{!v.optionsType}"
+					label="{!$Label.c.CWF_Category}" onchange="{!c.setSelectedCat}" required="true" disabled="{!v.isDisabled}"/>
+				<!-- Subject -->
+				<lightning:input aura:id="subject" label="{!$Label.c.CWF_Subject}" name="subject" maxlength="255"
+					value="{!v.subjectAtrib}" placeholder="{!$Label.c.CWF_Subject}" required="true" disabled="{!v.isDisabled}"/>
+				<lightning:textarea name="summary" label="{!$Label.c.CWF_Summary}" value="{!v.summaryAtrib}" maxlength="32000"    
+					placeholder="{!$Label.c.CWF_Summary}" required="true" disabled="{!v.isDisabled}"/>
+			</div>
+		</div>
+        
+		<div>
+            <!-- SECTION 2: CONTACT INFO -->
+			<div style="margin:10px;">
+				<div style="margin:10px;border:1px solid grey;border-top:transparent;border-left: transparent;border-right:transparent;margin-bottom : 15px;margin-top : 30px">
+					<h1 style="font-size:16pt;margin-bottom : 15px;">{!$Label.c.CWF_ContactInfo}</h1>
+				</div>
+                <!-- Checkbox B2B/B2C? -->
+				<ui:inputCheckbox aura:id="b2bchk" label="{!$Label.c.CWF_B2B}" change="{!c.onCheck}" disabled="{!v.isDisabled}"/>
+				<!-- Name Company (Case B2B)-->
+				<aura:if isTrue="{!v.b2bacc}">
+					<lightning:input aura:id="companyname" label="{!$Label.c.CWF_Company}" name="company" maxlength="80"
+						value="{!v.companyAtrib}" placeholder="{!$Label.c.CWF_Company}" required="{!v.b2bacc}" disabled="{!v.isDisabled}"/>
+				</aura:if>
+				<!-- FirstName & LastName -->
+				<lightning:input aura:id="firstname" label="{!$Label.c.CWF_Name}" name="firstname" maxlength="30"
+					placeholder="{!$Label.c.CWF_Name}" required="true" value="{!v.firstNameAtrib}" disabled="{!v.isDisabled}"/>
+				<lightning:input aura:id="lastname" label="{!$Label.c.CWF_Last}" name="lastname" maxlength="45"
+					placeholder="{!$Label.c.CWF_Last}" required="true" value="{!v.lastNameAtrib}" disabled="{!v.isDisabled}"/>
+				<!-- RUT - Country:Chile -->
+				<aura:if isTrue="{!v.countryAtrib == 'CL'}">
+					<lightning:input aura:id="RUT" label="RUT" name="RUT" placeholder="RUT" required="true" maxlength="10"
+						value="{!v.RUTAtrib}" disabled="{!v.isDisabled}"/>
+				</aura:if>
+				<!-- Email -->
+				<lightning:input aura:id="email" label="{!$Label.c.CWF_Email}" name="email" type="email" maxlength="80"
+					placeholder="{!$Label.c.CWF_Email}" required="true" value="{!v.emailAtrib}" disabled="{!v.isDisabled}"/>
+				<!-- Phone -->
+				<lightning:layout horizontalAlign="center" verticalAlign="end">
+					<lightning:layoutItem size="3">
+						<lightning:combobox aura:id="countryCode" name="countryCode" options="{!v.phoneCodeValues}"
+							label="{!$Label.c.CWF_Phone}" value="{!v.selectedCountryCode}" onchange="{!c.setSelectedCountryCode}"
+							required="false" disabled="{!v.isDisabled}"/>
+					</lightning:layoutItem>
+					<lightning:layoutItem size="9">
+						<lightning:input aura:id="mobile" name="mobile" placeholder="{!v.userSettings.placeHolderPhone}" required="false" value="{!v.phoneAtrib}" type="tel"
+							disabled="{!v.isDisabled}" pattern="[0-9]*"/> 
+					</lightning:layoutItem>
+				</lightning:layout>
+				<!-- Post Code-->
+                <lightning:input aura:id="postcode" label="{!$Label.c.CWF_PostCode}" name="postcode" maxlength="10" placeholder="{!$Label.c.CWF_PostCode}" 
+                                 required="{!v.userSettings.isPostCodeRequired}" value="{!v.postCodeAtrib}" disabled="{!v.isDisabled}"/>
+				<!-- City -->
+				<lightning:input aura:id="city" label="{!$Label.c.CWF_City}" name="city" maxlength="255"
+					placeholder="{!$Label.c.CWF_City}" required="false" value="{!v.cityAtrib}" disabled="{!v.isDisabled}"/>
+			</div>
+		</div>
+
+		<div>
+            <!-- SECTION 3: VEHICLE INFO -->
+			<div style="margin:10px;">
+				<div style="margin:10px;border:1px solid grey;border-top:transparent;border-left: transparent;border-right:transparent;margin-bottom : 15px;margin-top : 30px">
+					<h1 style="font-size:16pt;margin-bottom : 15px">{!$Label.c.CWF_VehicleInfo}</h1>
+				</div>
+				<!-- VIN -->
+				<lightning:helptext content="{!$Label.c.CWF_VINInfo}" />
+				<lightning:input aura:id="vin" label="{!$Label.c.CWF_VIN}" name="vin" placeholder="VIN" required="false" maxlength="17"
+					value="{!v.vinAtrib}" disabled="{!v.isDisabled}"/>
+				<!-- Registration Number -->
+				<lightning:input aura:id="regnumber" label="{!$Label.c.CWF_RegNum}" name="regnumber" maxlength="20"
+					placeholder="{!$Label.c.CWF_RegNum}" required="false" value="{!v.regNumberAtrib}" disabled="{!v.isDisabled}"/>
+			</div>
+		</div>
+        
+		<div>
+            <!-- SECTION 4: ATTACHMENTS -->
+			<div style="margin:10px;">
+				<div style="margin:10px;border:1px solid grey;border-top:transparent;border-left: transparent;border-right:transparent;margin-bottom : 15px;margin-top : 30px">
+					<h1 style="font-size:16pt;margin-bottom : 15px;">{!$Label.c.CWF_Attach}</h1>
+				</div>
+				<!-- File -->
+				<lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file"
+				label="{!$Label.c.CWF_UploadAtt}" multiple="false" disabled="{!v.isDisabled}"/>
+				<aura:if isTrue="{!v.fileName != ''}">
+					<lightning:pill label="{!v.fileName}" onremove="{!c.clearFile}">
+						<aura:set attribute="media">
+							<lightning:icon iconName="doctype:attachment"/>
+						</aura:set>
+					</lightning:pill>
+				</aura:if>
+				<br />
+			</div>
+		</div>
+        
+		<div style="margin:10px;">
+            <!-- SECTION 5: TERMS & CONDITIONS -->
+			<div class="slds-grid slds-grid_vertical-align-center">                
+                <!-- Checkbox Accept Terms & Consents -->
+				<ui:inputCheckbox class="slds-size--1-of-5 slds-large-size--1-of-5 slds-order_1 slds-large-order_1"
+					aura:id="termsCon" label="" change="{!c.checkTerm}" disabled="{!v.isDisabled}" />
+                <!-- Link Terms & Consents -->
+                <a target="_blank" href="{!v.userSettings.urlTermsCons}" class="slds-size--4-of-5 slds-large-size--4-of-5 slds-order_2 slds-large-order_2"
+                   style="margin-left : 4px;">{!$Label.c.CWF_TermsCons}</a>
+			</div>
+			<br />
+			<!-- SURVEY -->
+			<lightning:radioGroup aura:id="survey" name="survey" options="{!v.surveyValues}" disabled="{!v.isDisabled}"
+				label="{!$Label.c.CWF_SurveyAcceptance}" onchange="{!c.setSelectedSurvey}" required="true" value="No"/>
+			<br />
+			<!-- Button Save-->
+			<lightning:button variant="brand" label="{!$Label.c.CWF_CreateCase}" title="{!$Label.c.CWF_CreateCase}" 
+				onclick="{! c.doValidate }" disabled="{!v.isDisabled}" />
+			<!-- Spinner -->
+			<aura:if isTrue="{!v.showLoadingSpinner}">
+				<div class="slds-text-body_small slds-text-color_error">{!v.LabelLogCase}
+					<img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading" />'
+				</div>
+			</aura:if>
+            <br />
+            <aura:if isTrue="{!v.hasErrors}">
+                <div class="slds-notify slds-notify_toast slds-theme_error slds-m-left_none">
+                    <p>{!$Label.c.CWF_ErrorMessage}</p>
+                </div>
+            </aura:if>
+			<br />
+		</div>
+        
+	</div>
+</aura:component>

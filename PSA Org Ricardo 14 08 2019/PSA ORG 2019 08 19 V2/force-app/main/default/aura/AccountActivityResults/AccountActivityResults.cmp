@@ -1,0 +1,59 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+                access="global"
+                controller="CustomerPortfolioTransfer">
+
+  <!-- attributes -->
+  <aura:attribute type="Map" name="config_obj" default="{'isLoading': true, 'show': false}"/>
+  <aura:attribute type="Map" name="user_input_obj" default="{}"/>
+
+  <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+  <aura:handler event="c:CustomerPortfolioTransferDestination" action="{!c.handleEvent}"/>
+
+  <aura:if isTrue="{!v.config_obj.show}">
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+      <div class="slds-modal__container">
+        <header class="slds-modal__header">
+          <lightning:buttonIcon name="_btn_close"
+                                class="slds-modal__close"
+                                iconName="utility:close"
+                                variant="bare-inverse"
+                                onclick="{!c.handleClick}"
+                                alternativeText="Close"
+                                size="large">
+          </lightning:buttonIcon>
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+            Activity Selection
+          </h2>
+        </header>
+        
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+          <aura:if isTrue="{!v.config_obj.isLoading}">
+            <div class="slds-is-relative" style="height: 33vh;">
+              <lightning:spinner alternativeText="Loading" size="medium" variant="brand"/>
+            </div>
+            <aura:set attribute="else">
+              <div aura:id="_modal_body"/>
+            </aura:set>
+          </aura:if>
+        </div>
+
+        <footer class="slds-modal__footer">
+          <lightning:button name="_btn_cancel"
+                            variant="neutral"
+                            label="Cancel"
+                            title="Cancel"
+                            onclick="{!c.handleClick}"/>
+
+          <lightning:button name="_btn_next"
+                            variant="brand"
+                            label="Save"
+                            title="Save"
+                            onclick="{!c.handleClick}"
+                            disabled="{!v.config_obj.btn_next.disabled}"/>
+        </footer>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </aura:if>
+
+</aura:component>

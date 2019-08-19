@@ -1,0 +1,21 @@
+<aura:component controller = "UpdateVINController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:handler name="change" value="{!v.updatedVINId}" action="{!c.openVIN}"/>
+	<aura:handler name="change" value = "{!v.errorMessage}" action="{!c.showError}" />
+	<aura:attribute name="caseVINId" type="String" default="" />
+	<aura:attribute name="updatedVINId" type="String" default="" />
+	<aura:attribute name="errorMessage" type="String" default="" />
+	<aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+	<aura:attribute name="vinPopulated" type ="boolean" default="false"/>
+	<aura:if isTrue="{!v.vinPopulated}">
+		<button class="slds-button slds-button_brand" onclick="{!c.doUpdate}">{!$Label.c.UpdateVIN_Update}</button>
+		<aura:if isTrue="{!v.showLoadingSpinner}">
+			<div class="slds-text-body_small slds-text-color_error">{!$Label.c.UpdateVIN_Updating}
+				<img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+			</div>
+		</aura:if>
+	</aura:if>
+	<aura:if isTrue="{!!v.vinPopulated}">
+		<p>{!$Label.c.UpdateVIN_NoVIN}</p>
+	</aura:if>
+</aura:component>

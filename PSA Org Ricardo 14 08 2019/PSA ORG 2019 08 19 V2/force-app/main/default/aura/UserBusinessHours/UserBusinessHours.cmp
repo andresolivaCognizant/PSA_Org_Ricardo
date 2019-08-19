@@ -1,0 +1,151 @@
+<aura:component controller="UserBusinessHController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:availableForFlowScreens" access="global">
+
+    <!-- Global Access Attributes area -->
+    <aura:attribute name="recordId" type="String" access="global"/>
+    <aura:attribute name="mondayStart" type="String" access="global"/>
+    <aura:attribute name="mondayEnd" type="String" access="global"/>
+    <aura:attribute name="tuesdayStart" type="String" access="global"/>
+    <aura:attribute name="tuesdayEnd" type="String" access="global"/>
+    <aura:attribute name="wednesdayStart" type="String" access="global"/>
+    <aura:attribute name="wednesdayEnd" type="String" access="global"/>
+    <aura:attribute name="thursdayStart" type="String" access="global"/>
+    <aura:attribute name="thursdayEnd" type="String" access="global"/> 
+    <aura:attribute name="fridayStart" type="String" access="global"/>
+    <aura:attribute name="fridayEnd" type="String" access="global"/>    
+    <aura:attribute name="saturdayStart" type="String" access="global"/>
+    <aura:attribute name="saturdayEnd" type="String" access="global"/> 
+    <aura:attribute name="sundayStart" type="String" access="global"/>
+    <aura:attribute name="sundayEnd" type="String" access="global"/> 
+    <aura:attribute name="holiStart" type="String" access="global"/>
+    <aura:attribute name="holiEnd" type="String" access="global"/> 
+    <aura:attribute name="isexpanded" type="boolean" default="false" access="global"/> 
+    <aura:attribute name="isexpandedH" type="boolean" default="false" access="global"/> 
+    <aura:attribute name="isexpandedT" type="boolean" default="false" access="global"/> 
+    <aura:attribute name="showTm" type="boolean" default="true"/> 
+    <aura:attribute name="path" type="String" access="global"/> 
+    <aura:attribute name="commName" type="String" default=""/> 
+    <aura:attribute name="isProduction" type="boolean" default="false"/> 
+
+    <aura:attribute name="userList" type="Object[]"/>
+
+    <!-- Retrieve your data using an Apex Controller -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div id="uBHContenedor" aura:id="uBHContenedor" style="width:auto;">
+        <div class="{! 'slds-section' + (v.isexpanded ? ' slds-is-open' : '')}">
+              <h3 class="slds-section__title">
+                <button aria-controls="expando-unique-id" aria-expanded="{!v.isexpanded}" onclick="{!c.changeState}" class="slds-button slds-section__title-action">
+                    <lightning:icon iconName="utility:chevronright" size="xx-small" class="slds-m-right_x-small"/>
+                    <span class="slds-truncate slds-p-horizontal_small" title="Section Title">{!$Label.c.BusinessHours}</span>
+                </button>
+              </h3>
+              <div aria-hidden="false" class="slds-section__content">
+                <div class="slds-grid slds-gutters" style="margin-bottom:5px;">
+                    <div class="slds-col">
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.mondayStart}" label="{!$Label.c.MondayStart}" name="mStart" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.tuesdayStart}" label="{!$Label.c.TuesdayStart}" name="tuStart" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.wednesdayStart}" label="{!$Label.c.WednesdayStart}" name="wStart" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.thursdayStart}" label="{!$Label.c.ThursdayStart}" name="thStart" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.fridayStart}" label="{!$Label.c.FridayStart}" name="fStart" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.saturdayStart}" label="{!$Label.c.SaturdayStart}" name="saStart" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.sundayStart}" label="{!$Label.c.SundayStart}" name="suStart" formatter="hh:mm"/>
+                      </div>
+                      <div class="slds-col">
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.mondayEnd}" label="{!$Label.c.End}" name="mEnd" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.tuesdayEnd}" label="{!$Label.c.End}" name="tuEnd" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.wednesdayEnd}" label="{!$Label.c.End}" name="wEnd" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.thursdayEnd}" label="{!$Label.c.End}" name="thEnd" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.fridayEnd}" label="{!$Label.c.End}" name="fEnd" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.saturdayEnd}" label="{!$Label.c.End}" name="saEnd" formatter="hh:mm"/>
+                          <lightning:input type="time" class="input-time" aura:id="time" value="{!v.sundayEnd}" label="{!$Label.c.End}" name="suEnd" formatter="hh:mm"/>
+                      </div>
+                  </div>
+
+                  <lightning:layoutItem flexibility="auto, grow" class="custom-box slds-align_absolute-left" size="12">
+                    <lightning:buttonGroup aura:id="bHoursBtt" class="slds-p-top-medium">
+                        <lightning:button label="{!$Label.c.ModifyBusinessHours}" variant="brand" onclick="{!c.handleSaveBHour}"/>
+                    </lightning:buttonGroup>
+                </lightning:layoutItem>
+              </div>
+
+        </div>
+
+        <div class="{! 'slds-section' + (v.isexpandedH ? ' slds-is-open' : '')}">
+              <h3 class="slds-section__title">
+                <button aria-controls="expando-unique-id" aria-expanded="{!v.isexpandedH}" onclick="{!c.changeStateH}" class="slds-button slds-section__title-action">
+                    <lightning:icon iconName="utility:chevronright" size="xx-small" class="slds-m-right_x-small"/>
+                    <span class="slds-truncate slds-p-horizontal_small" title="Section Title">{!$Label.c.Holidays}</span>
+                  </button>
+              </h3>
+              <div aria-hidden="false" class="slds-section__content">
+                <div class="slds-grid slds-gutters" style="margin-bottom:5px;">
+                    <div class="slds-col">
+                        <lightning:input type="date"
+                                           name="holiStart"
+                                           label="{!$Label.c.Start}" 
+                                           required="false"
+                                           value="{!v.holiStart}"
+                                           aura:id="holiday_start"
+                        />
+                      </div>
+                      <div class="slds-col">
+                        <lightning:input type="date"
+                                           name="holiEnd"
+                                           label="{!$Label.c.End}"
+                                           required="false"
+                                           value="{!v.holiEnd}"
+                                           aura:id="holiday_end"
+                        />
+                      </div>
+                  </div>
+
+                  <lightning:layoutItem flexibility="auto, grow" class="custom-box slds-align_absolute-left" size="12">
+                    <lightning:buttonGroup aura:id="holidatBtt" class="slds-p-top-medium">
+                        <lightning:button label="{!$Label.c.ModifyHolidays}" variant="brand" onclick="{!c.handleSaveHoliday}"/>
+                    </lightning:buttonGroup>
+                </lightning:layoutItem>
+              </div>
+        </div>
+
+        <aura:if isTrue="{!v.showTm}"> 
+            <div class="{! 'slds-section' + (v.isexpandedT ? ' slds-is-open' : '')}" >
+                  <h3 class="slds-section__title">
+                    <button aria-controls="expando-unique-id" aria-expanded="{!v.isexpandedT}" onclick="{!c.changeStateT}" class="slds-button slds-section__title-action">
+                        <lightning:icon iconName="utility:chevronright" size="xx-small" class="slds-m-right_x-small"/>
+                        <span class="slds-truncate slds-p-horizontal_small" title="Section Title">{!$Label.c.TeamMembers}</span>
+                      </button>
+                  </h3>
+                  <div aria-hidden="false" class="slds-section__content">
+                      <lightning:layout multipleRows="true"> 
+                          <aura:iteration items="{!v.userList}" var="usersItem">	
+                            <lightning:layoutItem padding="around-medium" size="6">  
+                                <div id="Tilu" class="slds-box">
+                                    <lightning:tile label="{!usersItem.Name}" href="{!v.commName+usersItem.Id}">
+                                        <aura:set attribute="media">
+                                            <lightning:icon iconName="standard:user"/>
+                                        </aura:set>
+                                    <dl class="slds-dl_horizontal">
+                                        <dt class="slds-dl_horizontal__label">
+                                            <p class="slds-truncate" title="Phone">{!$Label.c.phone}:</p>
+                                        </dt>
+                                        <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!usersItem.Phone}">{!usersItem.Phone}</p>
+                                        </dd>
+                                        <dt class="slds-dl_horizontal__label">
+                                            <p class="slds-truncate" title="Email">{!$Label.c.email}:</p>
+                                        </dt>
+                                        <dd class="slds-dl_horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!usersItem.Email}">{!usersItem.Email}</p>
+                                        </dd>
+                                    </dl>
+                                    </lightning:tile>
+                                </div> 
+                            </lightning:layoutItem>
+                        </aura:iteration>
+                    </lightning:layout>
+                  </div>
+            </div>
+        </aura:if>
+    </div>
+
+</aura:component>

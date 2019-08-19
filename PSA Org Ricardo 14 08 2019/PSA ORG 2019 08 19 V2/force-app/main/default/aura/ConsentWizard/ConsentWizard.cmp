@@ -1,0 +1,170 @@
+<aura:component controller="ConsentWizardController" implements="force:lightningQuickAction,lightning:actionOverride,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens" access="global">
+    <!-- PAGE HEADER -->
+    <aura:attribute name="visualforceDomain" type="String" />
+
+    <aura:html tag="style">
+        @media print { 
+            .noprint, body * { visibility:hidden !important;} 
+            .divToPrint, #divToPrint *, .divToPrint * { visibility:visible !important; } 
+            .divToPrint{ }
+            .banner-background, .header-container, .slds-button, .slds-modal__header{
+                display: none !important;
+            }
+            .main-body{
+                top: 0px;
+            }
+            /* Defining Pagebreaks */
+            table, pre { page-break-inside:avoid; }
+            h1, h2, h3, h4, h5, h6 { page-break-after:avoid;page-break-before:avoid}
+        }
+    </aura:html>
+    
+    <aura:attribute name="recordId" type="String" default="" access="global" />
+    <aura:attribute name="country" type="String" default="" />
+    <aura:attribute name="brand" type="String" default="" />
+    <aura:attribute name="name" type="String" default="" />
+    <aura:attribute name="firstname" type="String" default="" />
+    <aura:attribute name="lastname" type="String" default="" />
+    <aura:attribute name="idCnt" type="String" default="" />
+    <aura:attribute name="activity" type="String" default=""/>
+    <aura:attribute name="documentType" type="String" default=""/>
+    
+    <aura:attribute name="askForActivityDocType" type="Boolean" default="true" />
+    <aura:attribute name="consentBrandDZD" type="Boolean" default="false" />
+    <aura:attribute name="consentDealerDZD" type="Boolean" default="false" />
+    <aura:attribute name="enableCancelButton" type="Boolean" default="true" />
+    
+    <aura:attribute name="consentC3" type="Boolean" default="false" />
+    <aura:attribute name="consentC4" type="Boolean" default="false" />
+    <aura:attribute name="consentC5" type="Boolean" default="false" />
+    <aura:attribute name="consentC6" type="Boolean" default="false" />
+    <aura:attribute name="consentC7" type="Boolean" default="false" />
+    <aura:attribute name="consentC8" type="Boolean" default="false" />
+    <aura:attribute name="consentC9" type="Boolean" default="false" />
+    <aura:attribute name="consentC10" type="Boolean" default="false" />
+
+
+    <aura:attribute name="initFlag" type="Boolean" default="false" access="private"/>
+    <aura:attribute name="skipFlowFlag" type="Boolean" default="false" access="private"/>
+    
+    <aura:attribute name="newConsent" type="Consent__c" default="{ 'sobjectType': 'Consent__c' }" />
+    <!-- <aura:handler event="force:showToast" action="{!c.handleToastEvent}"/> -->
+    <!-- default to empty record -->
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- -->
+    
+    <!--<div class="noprint" id="noprint">-->
+        <!-- Display a header with details about the account -->
+        <div class="slds-modal__header noprint" role="banner">
+            <h1 class="slds-page-header__title slds-m-right_small slds-truncate slds-align-left noprint">{!$Label.c.ConsentWizardTitle}</h1>
+
+            <aura:if isTrue="{! v.enableCancelButton }">
+                <lightning:button label="{!$Label.SBQQ.Cancel}" onclick="{!c.handleCancel}" class="slds-m-top_medium" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.country == 'PL' || v.country == 'DZ'}">
+                <lightning:button label="{!$Label.c.AfterSalesPlanningPrintButton}" onclick="{!c.handlePrint}" variant="brand" class="slds-m-top_medium" />
+                <lightning:button label="{!$Label.SBQQ.Save}" onclick="{!c.handleSave}" variant="brand" class="slds-m-top_medium" />
+            </aura:if>
+        </div>
+        <!-- <lightning:card title="{!v.consent.Name}" iconName="standard:scan_card" class=""> -->
+        <!-- ARGELIA  -->
+        <!-- <div aura:id="modal" id="modal" class="modal-body scrollable slds-modal__content slds-p-around_medium" > -->
+            <lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large" pullToBoundary="medium">
+                <aura:if isTrue="{!v.country == 'DZ'}">
+                    <div aura:id="CDZ" id="CDZ" class="divToPrint">
+                        <lightning:layoutItem flexibility="grow" size="12" padding="around-medium">
+                            <p style="text-align:justify">
+                                {!$Label.c.ConsentWizard_LegalMessageDZD}
+                            </p>
+                        </lightning:layoutItem> 
+                        <lightning:layoutItem flexibility="grow" size="12" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.Consent_Wizard_English_Field_Dealer}" name="consentDealer" class="slds-p-around_medim" checked="{!v.consentDealerDZD}" onchange="{!c.clickReimbursed}" />
+                        </lightning:layoutItem>       
+                        <lightning:layoutItem flexibility="grow" size="12" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.Consent_Wizard_English_Field_Brand}" name="consentBrand" class="slds-p-around_medim" checked="{!v.consentBrandDZD}" onchange="{!c.clickReimbursed}" />
+                        </lightning:layoutItem>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.country == 'PL'}">
+                    <div aura:id="CPL" id="CPL" class="divToPrint">
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium">
+                            <p style="text-align:justify">
+                                {!$Label.c.consentWizard_LegalMessageAddPL}
+                            </p>
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.ConsentWizardPolandField_Email}" name="consentDealer" class="slds-p-around_small" checked="{!v.consentC3}" onchange="{!c.clickReimbursed}" />
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.ConsentWizardPolandField_Phone}" name="consentBrand" class="slds-p-around_small" checked="{!v.consentC4}" onchange="{!c.clickReimbursed}" />
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" class="custom-box" padding="around-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.consentWizard_LegalMessageComPL}" name="consentComPL" class="slds-p-around_small" checked="{!v.consentC5}" onchange="{!c.clickReimbursed}" style="text-align:justify;" padding="around-medium"/>
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.ConsentWizardPolandField_Email}" name="consentDealer" class="slds-p-around_small" checked="{!v.consentC6}" onchange="{!c.clickReimbursed}" disabled="{!!v.consentC5}"/>
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.ConsentWizardPolandField_Phone}" name="consentBrand" class="slds-p-around_small" checked="{!v.consentC7}" onchange="{!c.clickReimbursed}" disabled="{!!v.consentC5}"/>
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.consentWizard_LegalMessageComPartnersPL}" name="consentComPartnersPL" class="slds-p-around_small" checked="{!v.consentC8}" onchange="{!c.clickReimbursed}" />
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.ConsentWizardPolandField_Email}" name="consentDealer" class="slds-p-around_small" checked="{!v.consentC9}" onchange="{!c.clickReimbursed}" disabled="{!!v.consentC8}"/>
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="horizontal-medium">
+                            <lightning:input type="checkbox" label="{!$Label.c.ConsentWizardPolandField_Phone}" name="consentBrand" class="slds-p-around_small" checked="{!v.consentC10}" onchange="{!c.clickReimbursed}" disabled="{!!v.consentC8}"/>
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium">
+                            DATA: __/__/____
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium">
+                            IMIĘ: {!v.firstname}
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium">
+                            NAZWISKO: {!v.lastname}
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium">
+                            PODPIS
+                        </lightning:layoutItem>
+                        
+                        <lightning:layoutItem size="12" flexibility="grow" padding="around-medium"> 
+                                <aura:if isTrue="{!v.visualforceDomain != ''}">
+                                <!--<img src="{!$Resource.LegalTextPL}" /> -->
+                                <!--<iframe aura:id="vfFrame" src="{!'https://' + v.visualforceDomain + '/apex/PL_LegalConsents'}" height="2750px" width="100%" scrolling="no" style="overflow:hidden;border:0px"/>-->
+                                <iframe aura:id="vfFrame" src="{!v.visualforceDomain}" height="2750px" width="100%" scrolling="no" style="overflow:hidden;border:0px"/>
+                                <!-- <iframe aura:id="vfFrame" src="{!$Resource.LegalTxtPL + '/Legal Text PL.html'}" style="width: 100%; height: 1000px;" frameborder="0"></iframe>  -->                       	           
+                            </aura:if>             	
+                        </lightning:layoutItem>           
+                    </div>
+                   
+                </aura:if>
+            
+            </lightning:layout>
+            <div class="noprint" id="noprint">
+                <aura:if isTrue="{!v.country != 'PL'}">
+                    <aura:if isTrue="{!v.country != 'DZ'}">
+                        <lightning:flow aura:id="flowConsent" onstatuschange="{!c.flowStatusChange}"/>
+                    </aura:if>
+                </aura:if>
+            </div>
+            
+        <!--</div>-->
+        <!-- </lightning:card> -->
+        
+    <!--<</div>-->
+    
+    <!-- <lightning:spinner aura:id="divSpinner" class="slds-hide" variant="brand" size="large"/> -->
+</aura:component>

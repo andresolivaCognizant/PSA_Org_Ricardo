@@ -1,0 +1,83 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                access="global"
+                controller="CustomerPortfolioTransfer"
+                >
+
+  <!-- handlers-->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+  <!-- attributes -->
+  <aura:attribute type="Map" name="config_obj" default="{}"/>
+  <aura:attribute type="Map" name="user_input_obj" default="{}"/>
+
+  <aura:registerEvent name="evt" type="c:CustomerPortfolioTransferSource"/>
+
+  <lightning:card title="Source" iconName="standard:omni_supervisor">
+
+    <aura:set attribute="footer">
+      <lightning:button label="{! v.config_obj.next_btn.label ? v.config_obj.next_btn.label : 'Select'}" 
+                        variant="{! v.config_obj.next_btn.variant ? v.config_obj.next_btn.variant : 'brand'}"
+                        title="Select Source"
+                        disabled="{!v.config_obj.next_btn.disabled}"
+                        onclick="{!c.handleClick}"/>
+    </aura:set>
+
+    <div style="position: relative;">
+      <div style="z-index:5;">
+
+        <lightning:layout multipleRows="true">
+
+          <lightning:layoutItem size="12" padding="horizontal-medium">
+            <lightning:select name="_vn_contract_number" 
+                              label="VN Contract Number"
+                              required="true"
+                              value="{!v.user_input_obj.source.vn_contract}"
+                              onchange="{!c.handleSelectChange}"
+                              disabled="{!v.config_obj.vn_contract.disabled}"
+                              >
+              <option value="">None</option>
+              <aura:iteration items="{!v.config_obj.vn_contract.options}" var="i">
+                <option value="{!i}">{!i}</option>
+              </aura:iteration>
+            </lightning:select>
+          </lightning:layoutItem>
+      
+          <lightning:layoutItem size="12" padding="horizontal-medium">
+            <lightning:select name="_agent_contract_number"
+                              label="Agent Contract Number"
+                              value="{!v.user_input_obj.source.agent_contract}"
+                              onchange="{!c.handleSelectChange}"
+                              disabled="{!v.config_obj.agent_contract.disabled}"
+                              >
+              <option value="">None</option>
+                <aura:iteration items="{!v.config_obj.agent_contract.options}" var="i">
+                  <option value="{!i}">{!i}</option>
+                </aura:iteration>
+            </lightning:select>
+          </lightning:layoutItem>
+      
+          <lightning:layoutItem size="12" padding="horizontal-medium">
+            <lightning:select name="_user_id"
+                              label="User"
+                              value="{!v.user_input_obj.source.user_id}"
+                              onchange="{!c.handleSelectChange}"
+                              disabled="{!v.config_obj.user_id.disabled}"
+                              >
+              <option value="">None</option>
+              <aura:iteration items="{!v.config_obj.user_id.options}" var="i">
+                <option value="{!i.Id}">{!i.Name}</option>
+              </aura:iteration>
+            </lightning:select>
+          </lightning:layoutItem>
+
+        </lightning:layout>
+
+        <aura:if isTrue="{!v.config_obj.locked}">
+          <div style="position: absolute; z-index:6; left: 0; top: 0; right:0; bottom:0"
+               class="slds-align_absolute-center"/>
+        </aura:if>
+
+      </div>
+    </div>
+  </lightning:card>
+</aura:component>

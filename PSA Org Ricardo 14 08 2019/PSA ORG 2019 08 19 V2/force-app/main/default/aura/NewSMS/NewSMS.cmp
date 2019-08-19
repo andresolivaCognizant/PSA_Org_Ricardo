@@ -1,0 +1,26 @@
+<aura:component controller="NewSMSController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler name="change" value="{!v.smsId}" action="{!c.smsCreated}" />
+    <aura:attribute name="country" type="String" />
+    <aura:attribute name="brand" type="String" />
+    <aura:attribute name="smsId" type="String" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:attribute name="smsTemplates" type="List" default="[]" />
+    <aura:attribute name="phones" type="List" default="[]" />
+    <aura:attribute name="selectedTemplate" type="String" default="" />
+    <aura:attribute name="body" type="String" />
+    <aura:attribute name="selectedPhone" type="String" />
+    <lightning:combobox name="phones" options="{!v.phones}" label="{!$Label.c.SMS_Phone}" value="{!v.selectedPhone}"
+        onchange="{!c.loadPhone}" required="true" />
+    <lightning:combobox name="templates" options="{!v.smsTemplates}" label="{!$Label.c.SMS_Templates}" value="none" placeholder="--"
+        onchange="{!c.loadTemplate}" />
+    <lightning:textarea name="body" label="{!$Label.c.SMS_Body}" value="{!v.body}" required="true" />
+    <button class="slds-button slds-button_brand" onclick="{!c.doValidate}">{!$Label.c.SMS_Send}</button>
+    <aura:if isTrue="{!v.showLoadingSpinner}">
+        <div class="slds-text-body_small slds-text-color_error">
+            <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading" />'
+        </div>
+    </aura:if>
+</aura:component>

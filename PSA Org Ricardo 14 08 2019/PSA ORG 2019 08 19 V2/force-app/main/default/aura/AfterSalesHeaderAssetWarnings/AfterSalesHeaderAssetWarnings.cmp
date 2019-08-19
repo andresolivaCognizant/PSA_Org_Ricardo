@@ -1,0 +1,110 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global" controller="AfterSalesHeaderAssetController">
+	
+	<aura:attribute type="Object" name="warnings"/>
+	<aura:attribute type="String" name="vin"/>
+	<aura:attribute type="String" name="brand" default="false"/>
+	<aura:attribute type="String" name="warningsClass" default="slds-text-title_caps slds-media slds-media_center slds-has-flexi-truncate"/>
+	
+	<aura:attribute type="Boolean" name="hasWarnings" default="false"/>
+	<aura:attribute type="Boolean" name="isSameBrand" default="false"/>
+	
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+	
+	<aura:if isTrue="{! v.hasWarnings }">
+	
+		<div class="c-container slds-p-top_small slds-p-right_small slds-p-left_small slds-p-bottom_small">
+				
+			<div class="slds-p-around_small" style="background-color: #f7f9fb; border: 0px; border-radius: .25rem; font-size: 10px">
+				
+				<div class="{! if( v.isSameBrand, v.warningsClass + ' slds-p-bottom_small', v.warningsClass ) }">
+					<div class="slds-media__body">
+						<div style="font-weight:bold; color: #00396b">{! $Label.c.AfterSalesWarningsSection }
+							<div style="line-height: 0px; display: inline; padding-left: 5px;">
+								<c:HighlightedIcon iconName="utility:warning" className="blue"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<aura:if isTrue="{! v.isSameBrand }">
+				
+					<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+				
+						<aura:iteration items="{! v.warnings }" var="warning">
+						
+							<lightning:layoutItem flexibility="auto, no-grow" class="custom-box" size="2">
+								<p style="font-weight:900;">{! warning.codeCampagne }</p>
+							</lightning:layoutItem>
+							
+							<lightning:layoutItem flexibility="auto, no-grow" class="custom-box" size="6">
+								<aura:if isTrue="{! v.isSameBrand }">
+								
+									<c:CustomPopover variant="base" placement="auto right" theme="default" withClose="false">
+										<aura:set attribute="popoverBody">
+											
+											<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+											
+												<lightning:layoutItem flexibility="auto" class="custom-box slds-p-right_small" size="6">
+													<dl class="slds-list_horizontal slds-wrap">
+														<dt class="slds-item_label slds-text-color_weak" style="width: 60%">
+															{! $Label.c.AfterSalesWarningsReleaseDate }:
+														</dt>
+														<dd class="slds-item_detail slds-text-align_right" style="width: 40%">
+															{! warning.dateLancement }
+														</dd>
+														<dt class="slds-item_label slds-text-color_weak" style="width: 60%">
+															{! $Label.c.AfterSalesWarningsStatus }:
+														</dt>
+														<dd class="slds-item_detail slds-text-align_right" style="width: 40%">
+															{! warning.status }
+														</dd>
+													</dl>
+												</lightning:layoutItem>
+												
+												<lightning:layoutItem flexibility="auto" class="custom-box slds-p-left_small" size="6">
+													<dl class="slds-list_horizontal">
+														<dt class="slds-item_label slds-text-color_weak" style="width: 60%">
+															{! $Label.c.AfterSalesWarningsPointRattrape }:
+														</dt>
+														<dd class="slds-item_detail slds-text-align_right" style="width: 40%">
+															{! warning.pointRattrape }
+														</dd>
+													</dl>
+												</lightning:layoutItem>
+												
+											</lightning:layout>
+											
+										</aura:set>
+										<p class="" style="color: #696969; text-decoration: underline; cursor: pointer;">{! warning.libelle }</p>
+									</c:CustomPopover>
+									
+									<aura:set attribute="else">
+										<p class="" style="color: #696969;">{! warning.libelle }</p>
+									</aura:set>
+									
+								</aura:if>
+							</lightning:layoutItem>
+							
+							<lightning:layoutItem flexibility="auto, no-grow" class="custom-box slds-align_absolute-center" size="2">
+								<p style="font-weight:900;">{! warning.typeCampagne }</p>
+							</lightning:layoutItem>
+							
+							<lightning:layoutItem flexibility="auto, no-grow" class="custom-box slds-p-bottom_xx-small slds-text-align_right" size="2">
+								<lightning:icon iconName="utility:record" size="xx-small" class="{! if( or( warning.statusColor == 'red', warning.statusColor == 'blue' ), 'warning-' + warning.statusColor, 'warning-default' ) }"/>
+								<lightning:icon iconName="utility:record" size="xx-small" class="{! if( warning.statusColor == 'orange', 'slds-p-left_xx-small slds-p-right_xx-small warning-' + warning.statusColor, 'slds-p-left_xx-small slds-p-right_xx-small warning-default' ) }"/>
+								<lightning:icon iconName="utility:record" size="xx-small" class="{! if( or( warning.statusColor == 'green', warning.statusColor == 'violet' ), 'warning-' + warning.statusColor, 'warning-default' ) }"/>
+							</lightning:layoutItem>
+						
+						</aura:iteration>
+					
+					</lightning:layout>
+					
+				</aura:if>
+					
+			</div>
+		
+		</div>
+	
+	</aura:if>
+	
+</aura:component>

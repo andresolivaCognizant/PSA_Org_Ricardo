@@ -1,0 +1,58 @@
+<aura:component controller="LeadManualAssigmentController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <!-- input parameters -->
+    <aura:attribute name="Fields" type="String" default=""/>
+    <aura:attribute name="WhereClause" type="String" default=""/>    
+    <aura:attribute name="filterByStatus" type="String" default=""/>
+    <aura:attribute name="filterByPriority" type="String" default=""/>
+    <aura:attribute name="filterByActivity" type="String" default=""/>
+    <aura:attribute name="filterByActivityIsList" type="Boolean" default="false"/>
+    <aura:attribute name="filterByCurrentUser" type="Boolean" default="false"/>
+    <aura:attribute name="allowSelection" type="Boolean" default="true"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="c:LeadManualAssignmentTabEvent" action="{!c.handleTabEvent}"/>
+    
+
+    
+    <!-- Begin static Modal-->
+    
+    <c:Modal aura:id="theStaticModal" title="{!$Label.c.LeadAssigmentModalTitle}" isDirectional="true" isLarge="false" hasCloseIcon="true"><!-- $Label -->
+        <aura:set attribute="tagline">
+            {!$Label.c.LeadAssigmentModalTagLine}
+        </aura:set>
+        <div style="height:250px;">
+            <c:Lookup objectAPIName="User" IconName="standard:user" label="User" selectedRecord="{!v.selectedUser}" whereSearch=""/>
+            <!--whereSearch="{!' and AccountId = \''+ v.UserAccountId +'\''}"/>-->
+        </div>
+        <aura:set attribute="footer">
+            <lightning:button label="{!$Label.c.LeadAssigmentButtonCancel}" onclick="{!c.onCancel}" /><!-- $Label -->
+            <lightning:button variant="brand" label="{!$Label.c.LeadAssigmentButtonChangeOwner}" onclick="{!c.onConfirm}" /><!-- $Label -->
+        </aura:set>
+    </c:Modal>
+    <!--End static Modal -->
+    
+    <c:CL002_CreateRecord aura:id="cmpCreateRecord" objectName="Lead"/>
+    
+           <c:LMAResult aura:id="cmpResults" 
+                        object="Lead" 
+                        relobject="RecordType" 
+                        objecttype="Lead" 
+                        fields="{! v.Fields }" 
+                        filter="false" 
+                        allowSelection="true" 
+                        paginate="false"
+                        filterByStatus="{! v.filterByStatus }"
+                        filterByPriority="{! v.filterPriority }"
+                        filterByActivity="{! v.filterByActivity }"
+                        filterByActivityIsList="{! v.filterByActivityIsList }"
+                        filterByCurrentUser="{! v.filterByCurrentUser }"/> 
+
+        <footer class="slds-card__footer">
+            <div class="slds-no-flex">
+                <!--iconName="utility:search" iconPosition="left"-->
+                <lightning:button aura:id="NewLead" label="{!$Label.c.LeadAssigmentButtonNew}" variant="neutral" onclick="{!c.onCreateRecord}"/>
+                <lightning:button aura:id="TransferLead" label="{!$Label.c.LeadAssigmentButtonChangeOwner}" variant="neutral" onclick="{!c.onOpenStaticModal}"/> <!-- $Label -->
+            </div>
+        </footer>
+</aura:component>

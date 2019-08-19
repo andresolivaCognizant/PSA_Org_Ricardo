@@ -1,0 +1,420 @@
+<!--<apex:page controller="CAServerCallContact" showHeader="false" action="{!doFindPhoneNumber}" tabStyle="Account" rendered = "IF({!accountListFound.size} > 1)">-->
+<apex:page controller="CAServerCallContact" showHeader="false"  tabStyle="Account" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+    <!--<apex:page controller="CAServerCallContact" showHeader="false" tabStyle="Account">-->
+
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+ 
+    <!-- Mobile View -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- jQuery CDN Reference -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <!-- Bootstarp css & Combined Css -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <style>
+        .tree {
+            min-height: 20px;
+            padding: 19px;
+            margin-bottom: 20px;
+            background-color: #fbfbfb;
+            border: 1px solid #999;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+            -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05)
+        }
+        
+        .tree li {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px 5px 0 5px;
+            position: relative;
+        }
+        .tree li::before,
+        .tree li::after {
+            content: '';
+            left: -20px;
+            position: absolute;
+            right: auto;
+        }
+        .tree li::before {
+            border-left: 1px solid #999;
+            bottom: 50px;
+            height: 100%;
+            top: 0;
+            width: 1px;
+        }
+        .tree li::after {
+            border-top: 1px solid #999;
+            height: 20px;
+            top: 25px;
+            width: 25px;
+        }
+        .tree li span {
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border: 1px solid #999;
+            border-radius: 5px;
+            display: inline-block;
+            padding: 3px 8px;
+            text-decoration: none;
+        }
+        .tree li.parent_li>span {
+            cursor: pointer !important;
+        }
+        .tree>ul>li::before,
+        .tree>ul>li::after {
+            border: 0;
+        }
+        .tree li:last-child::before {
+            height: 30px;
+        }
+        .tree li.parent_li>span:hover,
+        .tree li.parent_li>span:hover+ul li span {
+            background: #eee;
+            border: 1px solid #94a0b4;
+            color: #000;
+        }
+    </style>
+
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge" />
+            <apex:slds />
+            <script type="text/javascript">
+                var numberCTINoPlus     = {!phoneNumber};
+                var numberCTI           = '+'+ numberCTINoPlus;
+                console.log('NUMERO: '+ numberCTI);
+                searchAccounts();
+            
+                var thereAccounts = 0;
+                var thereContacts = 0;
+
+                function checkOpenSubTab_aux(accId,conId,casId,res){
+                    /*sforce.console.openConsoleUrl(null, 'https://c1stdev1--psadev1w3.lightning.force.com/lightning/o/Case/new?count=2&nooverride=1&ws=%2Flightning%2Fr%2FAccount%2F0010Q000007uZXXQA2%2Fview'+accId+'%2Fview?AccountId='+accId, true);*/
+                    console.log('res: '+res);
+                    if(res == 'acc'){
+                        sforce.console.openConsoleUrl(null, '/lightning/r/Account/'+accId+'/view', true);
+                    }else if(res == 'con'){
+                        sforce.console.openConsoleUrl(null, '/lightning/r/Contact/'+conId+'/view?ws=%2Flightning%2Fr%2FAccount%2F'+accId+'%2Fview', true);
+                    }else if(res == 'cas'){
+                        sforce.console.openConsoleUrl(null, '/lightning/r/Case/'+casId+'/view?ws=%2Flightning%2Fr%2FAccount%2F'+accId+'%2Fview', true); 
+
+                    }
+                }
+
+                function searchAccounts(){
+                    console.log('searchAccounts');
+                    //numberCTI = document.getElementById('numberCTI').value;
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CAServerCallContact.getAccConCasesRemote}' , 
+                    numberCTI,
+                    function(result, event){   
+                    console.log('NUMERO DE CUENTAS: '+result.length);    
+                        if(result.length == 0){
+                            console.log('no hay cuentas');
+                            thereAccounts = 0;
+                            searchContacts(null);
+                        }else if(result.length == 1){
+                            console.log('1 cuenta');
+                            thereAccounts = 1;
+                            var accountId =  result[0].Id ;   
+                            searchContacts(accountId);
+                        }else{
+                            console.log('Mas de 1 cuenta');
+                            thereAccounts = 2;
+                        }
+                    }, {escape:true}
+                    );
+                }
+
+                function searchContacts(accountId){
+                    console.log('searchContacts');
+                    //numberCTI = document.getElementById('numberCTI').value;
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CAServerCallContact.getContactsCasesRemote}' , 
+                    numberCTI,
+                    function(result, event){     
+                        console.log('Contact: '+result.length+' accountId: '+accountId);           
+                        if(result.length == 0 && accountId == null){
+                            console.log('no Hay registros');
+                            alert('{!$Label.No_records_found}');
+                        }else if(result.length == 0 && accountId != null){
+                            console.log('Hay cuenta pero no contacto');
+                            searchCase(accountId, 'acc');
+                        }else if(result.length == 1){
+                            console.log('contactos: '+ result.length);
+                            var contactId =  result[0].Id; 
+                            thereContacts = 1;
+                            console.log('thereAccounts: '+thereAccounts+' thereContacts: '+thereContacts);
+                            if(thereAccounts == 1 && thereContacts == 0){
+                                console.log('hay cuentas pero no contcto');
+                                searchCase(accountId, 'acc');
+                            }else if(thereAccounts == 0 && thereContacts == 1){
+                                console.log('hay contactos pero no cuenta');
+                                searchCase(contactId, 'con');
+                            }else if(thereAccounts == 0 && thereContacts == 0){
+                                console.log('searchContacts no hay registros');
+                                alert('{!$Label.No_Search}');
+                            }
+                        }
+                    }, {escape:true}
+                    );           
+                }
+                function searchCase(field, object){
+                    console.log('searchCase: '+field+' '+object);
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CAServerCallContact.searchCase}' ,  
+                    field,   
+                    function(result, event){
+                    console.log('Cases: '+result.length);
+                        if(result.length == 1){
+                            var r = confirm('{!$Label.Case_open}');
+                            if (r == true) {
+                                if(object == 'acc'){
+                                    sforce.console.openConsoleUrl(null, '/lightning/r/Case/'+result[0].Id+'/view?ws=%2Flightning%2Fr%2FAccount%2F'+field+'%2Fview', true); 
+                                }else if(object == 'con'){
+                                    sforce.console.openConsoleUrl(null, '/lightning/r/Case/'+result[0].Id+'/view?ws=%2Flightning%2Fr%2FContact%2F'+field+'%2Fview', true)
+                                }
+                            }else{
+                                if(object == 'acc'){
+                                    sforce.console.openConsoleUrl(null, '/lightning/r/Account/'+field+'/view', true);
+                                }else if(object == 'con'){
+                                    sforce.console.openConsoleUrl(null, '/lightning/r/Contact/'+field+'/view', true);
+                                }
+                            }
+                        }else if(result.length == 0){
+                            if(object == 'acc'){
+                                createCase(field);                       
+                            }else if(object == 'con'){
+                                createCaseContact(field);
+                            }
+                        }
+                    }, {escape:true}
+                    );
+                    }  
+                function createCase(account){
+                    console.log('createCase. '+' AccountId: '+account);
+                    var parameter = '{!$CurrentPage.parameters.XRX_LineID}';
+                     
+					console.log(parameter);
+                    console.log('Param VF: '+parameter);
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.CAServerCallContact.createCase}' , 
+                        account,
+                        function(result, event){ 
+                            if (event.status) {
+                                console.log('Caso creado: '+result);
+                                ruta = result;
+                                sforce.console.openConsoleUrl(null, '/lightning/r/Case/'+result+'/view', true,null, null, callback); 
+                            }
+                        }, {escape:true}
+                    );                
+                }
+                function createCaseContact(contact){
+                    console.log('createCaseContact. '+' ContactId: '+contact);
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.CAServerCallContact.createCaseContact}' , 
+                        contact,
+                        function(result, event){ 
+                            if (event.status) {
+                                console.log('Caso creado: '+result);
+                                ruta = result;
+                                sforce.console.openConsoleUrl(null, '/lightning/r/Case/'+result+'/view', true,null, null, callback); 
+                            }
+                        }, {escape:true}
+                    );                
+                }
+
+                var ruta = '';
+                //When the caseis created, this is open in edit mode
+                var callback = function (result) {
+                    if(result.success){
+                        console.log('Ruta: '+ruta);
+                        console.log('Result: '+result);
+
+                        sforce.console.openConsoleUrl(null, '/lightning/cmp/c__NewCaseOverride?c__recordId='+ruta, true);
+
+                        //sforce.console.openConsoleUrl(null, '/lightning/r/Case/'+ruta+'/edit', true);
+                    }else{
+                        //alert('Something is wrong!');
+                    }
+                };
+
+
+                function newAccount(){
+                    sforce.console.openConsoleUrl(null, '/lightning/o/Account/new?count=1&rs=1', true);
+                }  
+
+                function newContact(){
+                    sforce.console.openConsoleUrl(null, '/lightning/o/Contact/new?count=1&rs=1', true);
+                } 
+
+                /*function openTab() {
+                    numberCTI = document.getElementById('numberCTI').value;
+                    console.log(numberCTI);
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CAServerCallContact.searchAccount}' , 
+                        numberCTI,
+                    function(result, event){     
+                        console.log('Account: '+result.length);           
+                        if(result.length >= 1){
+                            searchContact(result);
+                        }else{
+                            alert('No records found. Use the global search')
+                        }
+                    }, {escape:true}
+                    );
+
+                    }*/
+
+                /*function searchContact(account){
+                    Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.CAServerCallContact.searchContact}' ,   
+                    numberCTI,  
+                    function(result, event){   
+                    console.log('Contact: '+result.length);             
+                        if(result.length == 0 && account.length == 1){ 
+                            searchCase(account[0].Id);
+                        }
+                    }, {escape:true}
+                    );
+                
+                }*/           
+                </script>
+            </head>
+            <body>
+            <div class="slds-scope">
+                <div class="slds-page-header">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-has-flexi-truncate">
+                            <div class="slds-media slds-no-space slds-grow">
+                                <div class="slds-media__figure">
+                                    <svg aria-hidden="true" class="slds-icon slds-icon-standard-contact">
+                                        <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#call')}"></use>
+                                    </svg>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-title_caps slds-line-height_reset">{!$Label.Call_Center_Records}</p>
+                                    <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate" title="My Contacts">{!$Label.My_Records}</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-no-flex slds-grid slds-align-top">
+                            <div class="slds-button-group" role="group">
+                                <button class="slds-button slds-button_neutral" onclick="newAccount();"> {!$Label.New_Account} </button>
+                                <button class="slds-button slds-button_neutral"  onclick="newContact();"> {!$Label.New_Contact} </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        <br></br>
+        <div class="tree well" rendered="False">
+        <!--<ul>
+            <li class="parent_li">
+                <span onclick="newAccount();">
+                    <i class="icon-plus-sign"></i> New Account
+                </span> 
+            </li>
+        </ul>-->
+            <ul>
+                <apex:repeat value="{!AccConCases}" var="acc" rendered="{!!reddenderAccounts}">
+                    <li>
+                        <span>
+                            <i class="icon-folder-open icon-plus-sign"></i> {!$Label.Account}
+                        </span>
+                    <!--<a href="/{!c.Id}"  target="_blank"></a> {!c.Name}-->
+                            <apex:outputLink onclick="javascript:newTabName='{!acc.Name}';checkOpenSubTab_aux('{!acc.Id}',null,null,'acc');return false;"> 
+                                <apex:outputText style="margin-left: 20px;" value=" Name: {!acc.Name}  | Phone: {!acc.MobilePersonalTelephone__pc}  |  Email: {!acc.PersonalEmail__pc}"/> 
+                            </apex:outputLink>
+                       
+                    <ul>
+                        <apex:repeat value="{!acc.Contacts}" var="cont">
+                            <li>
+                                <span>
+                                    <i class="glyphicon glyphicon-user"></i> {!$Label.Contact}
+                                </span>
+                                <!--<a href="/{!ca.Id}" target="_blank"></a> {!ca.CaseNumber}-->
+                                <apex:outputLink onclick="javascript:newTabName='{!cont.Name}';checkOpenSubTab_aux('{!cont.AccountId}','{!cont.Id}',null,'con');return false;"> 
+                                    <apex:outputText style="margin-left: 20px;" value=" Number: {!cont.Name}  |  Phone: {!cont.MobilePersonalTelephone__c}  |  Email: {!cont.PersonalEmail__c}"/> 
+                                </apex:outputLink>
+
+                                <ul>
+                                    <apex:repeat value="{!acc.Cases}" var="cas">
+                                        <li>
+                                            <span>
+                                                <i class="glyphicon glyphicon-briefcase"></i> {!$Label.Case}
+                                            </span>
+                                            <apex:outputLink onclick="javascript:newTabName='{!cas.CaseNumber}';checkOpenSubTab_aux('{!cont.AccountId}','{!cas.ContactId}', '{!cas.Id}', 'cas');return false;"> 
+                                                <apex:outputText style="margin-left: 20px;" value=" Number: {!cas.CaseNumber}  |  Phone: {!cas.ContactMobile}  |  Email: {!cas.ContactEmail}"/> 
+                                            </apex:outputLink>
+                                        </li>
+                                    </apex:repeat>
+                                </ul>
+
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </li>
+            </apex:repeat>
+        </ul>
+        <ul>
+            <apex:repeat value="{!ContactsCases}" var="c" rendered="{!!reddenderContacts}">
+                <li>
+                    <span>
+                        <i class="glyphicon glyphicon-user"></i> Contact
+                    </span>
+                    <!--<a href="/{!c.Id}"  target="_blank"></a> {!c.Name}-->
+                            <apex:outputLink onclick="javascript:newTabName='{!c.Name}';checkOpenSubTab_aux('{!c.AccountId}','{!c.Id}', null, 'con');return false;"> 
+                            <apex:outputText style="margin-left: 20px;" value=" Name: {!c.Name}  | Phone: {!c.Phone}  |  Email: {!c.Email}"/> 
+                        </apex:outputLink>
+                    <ul>
+                        <apex:repeat value="{!c.Cases}" var="ca">
+                            <li>
+                                <span>
+                                    <i class="glyphicon glyphicon-briefcase"></i> Case
+                                </span>
+                                <!--<a href="/{!ca.Id}" target="_blank"></a> {!ca.CaseNumber}-->
+                                <apex:outputLink onclick="javascript:newTabName='{!ca.CaseNumber}';checkOpenSubTab_aux('{!c.AccountId}','{!c.Id}', '{!ca.Id}', 'cas');return false;"> 
+                                    <apex:outputText style="margin-left: 20px;" value=" Number: {!ca.CaseNumber}  |  Phone: {!ca.ContactPhone}  |  Email: {!ca.ContactEmail}"/> 
+                                </apex:outputLink>
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </li>
+            </apex:repeat>
+        </ul>
+    </div>
+
+    </html>
+
+    <script>
+        $(function() {
+            $('span').on('click', function(e) {});
+
+            $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+            $('.tree li:has(ul)').addClass('parent_li').find(' > ul > li').hide('slow');
+            $('.tree li.parent_li > span').on('click', function(e) {
+                //alert('clicked');
+                var children = $(this).parent('li.parent_li').find(' > ul > li');
+                if (children.is(":visible")) {
+                    children.hide('fast');
+                   // $(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+                } else {
+                    children.show('fast');
+                    //$(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+                }
+                e.stopPropagation();
+            });
+        });    
+    </script> 
+    <!--<button onclick="searchAccounts();">Search</button>
+    <input id="numberCTI" type="text" name="theTextInput" label="Numero" value="+56222222222"/>-->
+
+</apex:page>

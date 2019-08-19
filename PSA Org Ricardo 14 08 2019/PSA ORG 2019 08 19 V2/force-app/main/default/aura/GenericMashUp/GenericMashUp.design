@@ -1,0 +1,31 @@
+<design:component >
+	<design:attribute name="dealerId" label="dealerId" description="Arcad PDV code: User.Contact.Account.ShortVNContractNumber__c"/>
+	<design:attribute name="salesAgentId" label="salesAgentId" description="Arcad PDV code: User.Contact.Account.TECH_ShortAgentContractNumber__c"/>
+	<design:attribute name="localeId" label="locale" description="ISO 639x Code: User.LanguageLocaleKey"/>
+	<design:attribute name="brand" label="brand" description="Brand Code (AC, AP, DS): User.Brand__c"/>
+	<design:attribute name="slCustomerId" label="slCustomerId" description="Salesforce Customer ID: Account.Id"/>
+	<design:attribute name="slOpportunityId" label="slOpportunityId" description="Salesforce opportunity ID: Opportunity.Id"/>
+	<design:attribute name="slDriverId" label="slDriverId" description="Salesforce Driver ID: Campo driver del flow de creacion de quote"/>
+	<design:attribute name="slLessorId" label="slLessorId" description="Salesforce Lessor ID: Campo Lessor del flow de creacion de quote"/>
+	<design:attribute name="slContactPersonId" label="slContactPersonId" description="Salesforce Contact Person ID: Campo contact del flow de creacion de quote"/>
+	<design:attribute name="slQuoteId" label="slQuoteId" description="SBQQ__Quote__C.Id"/>
+	<design:attribute name="slContractId" label="slContractId" description="SBQQ__Quote__C.Id Quote with recordtype Order Form OPV"/>
+	<design:attribute name="slOrderId" label="slOrderId" description="Order.Id"/>
+	<design:attribute name="slCustomerType" label="slCustomerType" description="B2B or B2C"/>
+	<!-- US 7183 BEGIN -->
+	<design:attribute name="slLeaserContactPersonId" label="slLeaserContactPersonId" description="Leaser Contact B2B VN" />
+	<!-- US 7183 END -->
+	
+	<!-- Delivery Declaration -->
+	<design:attribute name="recId" label="recId" description="record Id when call from button"/>
+	<design:attribute name="objName" label="objName" description=""/> 
+	
+	<design:attribute name="mUpName" label="Mash Up Name" description=""/> 
+	<design:attribute name="isCommunity" label="Community" description=""/> 
+	<design:attribute name="isFlow" label="Flow" description=""/> 
+	<design:attribute name="isButton" label="Button" description=""/>
+	
+
+	<design:attribute name="country" label="Country" 
+		description="Current country. Not required, If null, the country is calculated from current user."/>
+</design:component>

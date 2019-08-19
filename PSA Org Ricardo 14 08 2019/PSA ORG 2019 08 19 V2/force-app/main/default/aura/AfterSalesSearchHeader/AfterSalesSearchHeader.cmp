@@ -1,0 +1,23 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global">
+    
+    <aura:attribute name="searchByAccount" type="String" description="Search account criteria"/>
+    <aura:attribute name="searchByAsset" type="String" description="Search asset criteria"/>
+    <aura:attribute name="isDoneRendering" type="Boolean" default="false"/>
+    
+    <aura:registerEvent name="searchEvent" type="c:AfterSalesSearchEvent" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="aura:doneRendering" action="{!c.doneRendering}"/>
+    
+ 	<div class="slds-grid slds-wrap slds-grid--align-center slds-grid--align-space" style="padding-top:47px;padding-bottom:17px;">
+        <div class="slds-col slds-size_1-of-3">
+            <c:AfterSalesSearchHeaderField placeholderText="Client..." searchField="{!v.searchByAccount}" />
+        </div>
+        <div class="slds-col slds-size_1-of-3">
+            <c:AfterSalesSearchHeaderField placeholderText="Vehicle..." searchField="{!v.searchByAsset}" />
+        </div>
+        <div class="slds-col slds-size_1-of-3 ">
+            <lightning:button aura:id="button1" label="Search" variant="brand" onclick="{! c.handleonclick }" value="Search" iconName="utility:right" />
+        </div>
+    </div> 
+</aura:component>

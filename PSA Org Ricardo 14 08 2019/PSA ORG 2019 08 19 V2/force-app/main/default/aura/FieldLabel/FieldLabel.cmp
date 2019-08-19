@@ -1,0 +1,17 @@
+<aura:component controller="AfterSalesHeaderAssetController">
+	
+	<aura:attribute name="fieldName" type="String" description="Field's API name." required="true"/>
+	<aura:attribute name="sObject" type="String" description="sObject name related to fieldName." required="true"/>
+	<aura:attribute name="fieldLabel" type="String" description="Field's label." />
+	<aura:attribute name="hasError" type="Boolean" description="" default="false"/>
+	
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+	<aura:if isTrue="{!v.hasError}">
+		<div class="slds-text-color_error"><i>{!v.fieldLabel}</i></div>
+		<aura:set attribute="else">
+			{!v.fieldLabel}
+		</aura:set>
+	</aura:if>
+
+</aura:component>

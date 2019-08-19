@@ -1,0 +1,28 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,lightning:isUrlAddressable"
+                controller="DealerSalesmenCalendarsController">
+
+  <aura:attribute type="Id" name="dealer_id"/>
+
+  <ltng:require
+      styles="{!$Resource.FullCalendar_Library + '/fullcalendar-3.9.0/fullcalendar.css'}"
+      scripts="{!join(',',
+          $Resource.ColourPalette,
+          $Resource.FullCalendar_Library + '/fullcalendar-3.9.0/lib/jquery.min.js',
+          $Resource.FullCalendar_Library + '/fullcalendar-3.9.0/lib/moment.min.js',
+          $Resource.FullCalendar_Library + '/fullcalendar-3.9.0/fullcalendar.js')}"
+      afterScriptsLoaded="{!c.doInit}"/>
+
+  <lightning:layout>
+    <lightning:layoutItem size="8">
+      <div id='calendar'>
+      </div>
+    </lightning:layoutItem>
+
+    <lightning:layoutItem size="4">
+      <div aura:id='dealer_users'>
+
+      </div>
+    </lightning:layoutItem>
+
+  </lightning:layout>
+</aura:component>

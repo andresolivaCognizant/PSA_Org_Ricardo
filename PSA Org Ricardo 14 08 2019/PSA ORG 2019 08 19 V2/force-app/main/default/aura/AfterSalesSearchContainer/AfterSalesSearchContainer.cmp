@@ -1,0 +1,284 @@
+<aura:component controller="AfterSalesSearchController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+	<aura:attribute name="ObjectType" type="String" default="AfterSales" description="Store selected sObject type"/>
+	<aura:attribute name="From" type="String" default="Account" description="Store selected sObject type"/>
+	<aura:attribute name="selectedRecord" type="sObject" default="{}" description="Store selected sObject Record"/>
+	<aura:attribute name="selectedRecordId" type="String" default="" description="Store selected Record Id"/>
+	<aura:attribute name="selectedRows" type="List" default="[]" description="Store List of selected rows"/>
+	<aura:attribute name="selectedRowsAst" type="List" default="[]" description="Store List of selected rows"/>
+	<aura:attribute name="selectedRowsAcc" type="List" default="[]" description="Store List of selected rows"/>
+	<aura:attribute name="selectedRowsRel" type="List" default="[]" description="Store List of selected rows"/>
+	<aura:attribute name="receptionDateTime" type="DateTime" />
+	<aura:attribute name="dateSelected" type="Boolean" default="false" />
+	<aura:attribute name="myoRecord" type="Map"/>
+	<aura:attribute name="filterByCurrentUser" type="Boolean" default="false"/>
+	<aura:attribute name="userPortalRole" type="String" default="" />
+	<aura:attribute name="data" type="Object" default=""/>
+	<aura:attribute name="data_tmp" type="Object" default=""/>
+	<aura:attribute name="setdata" type="Object" default=""/>
+	<aura:attribute name="setdataRel" type="Object" default=""/>
+	<aura:attribute name="numberRows" type="Integer" default="0"/>
+	<aura:attribute name="showData" type="Boolean" default="true"/>
+	<aura:attribute name="selectedAssetRow" type="String" default=""/>
+	<aura:attribute name="selectedAccRow" type="String" default=""/>
+	<aura:attribute name="setdata_tmp" type="Map" default=""/>
+	<aura:attribute name="columns" type="List" default=""/>
+	<aura:attribute name="setcolumns" type="List" default=""/>
+	<aura:attribute name="shortcolumns" type="List" default=""/>
+	<aura:attribute name="shortcolumnsb" type="List" default=""/>
+	<!--- enableSorting  -->
+	<aura:attribute name="sortedBy" type="string" default="LastName" />
+	<aura:attribute name="sortedDirection" type="string" default="asc" />
+	<!--- secretQuestionOptions  -->
+	<aura:attribute name="secretvalue" type="String"/>
+	<aura:attribute name="selectedrecordSQ" type="String"/>
+	<aura:attribute name="selectedrecordSQB" type="String"/>
+	<!--- collapsible section  -->
+	<aura:attribute name="isexpanded" type="Boolean" default="true"/>
+	<aura:attribute name="filterrows" type="Boolean" default="false"/>
+	
+	<aura:attribute name="pageReference" type="Object"/>
+	<lightning:navigation aura:id="navService"/>
+	<!--- START CORS  -->
+	<aura:attribute name="EditObject" type="String" description="Store record edited"/>
+	<aura:attribute name="windowHash" type="String" default=""/>
+	<!--- END CORS  -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	
+	<aura:attribute type="Map" name="attributesByGlobalSetting"  description="Contains all attributes returned by GlobalSettings." />
+	
+	<c:GlobalSettings aura:id="appointmentURLs"
+		globalSettings="APPOINTMENT"
+		attributes="QuickReception_URL,Estimation_URL"
+		targetResult="{! v.attributesByGlobalSetting }"
+		runInit="false"
+	/>
+
+	<aura:attribute name="objInfo" type="AccountContactAssetRelation__c" default="{sobjectType : 'AccountContactAssetRelation__c'}" />
+
+	<!--- SearchParam  -->
+	<aura:attribute name="searchByAccount" type="string" />
+	<aura:attribute name="searchByAsset" type="string" />
+
+	<aura:handler event="force:showToast" action="{!c.handleToastEvent}"/>
+	<!-- <aura:handler event="c:AfterSalesMyOEvents" action="{!c.handleMyOEvent}" name="MyOEvent"/>  -->
+	<aura:handler event="c:AfterSalesSearchEvent" action="{!c.handleSearchEvent}" includeFacets="true"/>
+	<aura:handler event="c:LMAToggleFilterByUserEvent" action="{!c.handleSearchEvent}" includeFacets="true"  />
+	<aura:handler event="c:AfterSalesSearchRelEvent" action="{! c.handleRelationEvent }" />
+
+	<aura:registerEvent name="MyOEventField" type="c:AfterSalesSearchHeaderFieldEvent" />
+
+	<!-- Secret Question Modal Window -->
+	<c:Modal aura:id="theStaticModal" title="Secret Question" isDirectional="true" isLarge="false" hasCloseIcon="true">
+		<aura:set attribute="tagline">{!$Label.c.SecretQuestionMessage}</aura:set>
+		<lightning:input aura:id="FieldSecret" label="" />
+		<aura:set attribute="footer">
+			<lightning:button aura:id="buttonCancelResponse" label="{!$Label.c.CustomerSearchButtonCancel}" onclick="{!c.onCancel}" />
+			<lightning:button aura:id="buttonConfirmResponse" variant="brand" label="{!$Label.c.CustomerSearchButtonConfirm}" onclick="{!c.onConfirm}" />
+		</aura:set>
+	</c:Modal>
+
+	<!--Change Account Role Modal Window -->
+	<c:Modal aura:id="theStaticModalOwner" title="Change Role" isDirectional="true" isLarge="false" hasCloseIcon="true">
+		<ui:inputSelect aura:id="FieldRole" class="slds-select"  label="{!$Label.c.AfterSalesSearchFieldLabel}" />
+		<br/>
+		<ui:inputCheckbox aura:id="SaveRecord" label="{!$Label.c.AfterSalesSearchChangeOwnerConfirmationCheck}"/>
+		<aura:set attribute="footer">
+			<lightning:button aura:id="buttonCancelRole" label="{!$Label.c.CustomerSearchButtonCancel}" onclick="{!c.onCancel}" />
+			<lightning:button aura:id="buttonConfirmRole" variant="brand" label="{!$Label.c.CustomerSearchButtonConfirm}" onclick="{!c.onConfirm}" />
+		</aura:set>
+	</c:Modal>
+
+	<!--New Relationship Modal Window -->
+	<c:Modal aura:id="theStaticModalRelation" title="Set Relationship" isDirectional="true" isLarge="false" hasCloseIcon="false">
+	
+		<lightning:buttonIcon aura:id="buttonCloselRel" onclick="{!c.onCancel}" iconName="utility:close" alternativeText="Close" class="slds-modal__close" variant="bare-inverse" size="large"/>
+	
+		<p class="form-element__label">{!$Label.c.AfterSalesSearchPopupTitle}</p>
+		<div id="dataTb1" style="height: 150px">
+			
+			<aura:renderIf isTrue="{! !empty( v.setdata ) }">
+				<lightning:datatable aura:id="AssetSelectionTable" data="{!v.setdata}" columns="{!v.shortcolumns}" keyField="Id" sortedBy="{!v.sortedBy}" selectedRows="{! v.selectedRowsAst }" onrowselection="{!c.getSelecteRowFilter}" resizeColumnDisabled="true" />
+			</aura:renderIf>
+			
+		</div>
+		<p class="form-element__label">{!$Label.c.AfterSalesSearchPopupTitleAcc}</p>
+		<div id="dataTb2" style="height: 150px">
+		
+			<aura:renderIf isTrue="{! !empty( v.setdata ) }">
+				<lightning:datatable aura:id="AccountSelectionTable" data="{!v.setdata}" columns="{!v.shortcolumnsb}" keyField="Id" sortedBy="{!v.sortedBy}" selectedRows="{! v.selectedRowsAcc }" onrowselection="{!c.getSelecteRowFilter}" resizeColumnDisabled="true" />
+			</aura:renderIf>
+			
+		</div>
+		<ui:inputSelect aura:id="FieldRoleRel" class="slds-select" label="{!$Label.c.AfterSalesSearchFieldLabel}" />
+		<br/>
+		<ui:inputCheckbox aura:id="SaveRecordRel" label="{!$Label.c.AfterSalesSearchChangeOwnerConfirmationCheck}"/>
+		<aura:set attribute="footer">
+			<lightning:button aura:id="buttonCancelRel" label="{!$Label.c.CustomerSearchButtonCancel}" onclick="{!c.onCancel}" />
+			<lightning:button aura:id="buttonConfirmRel" variant="brand" label="{!$Label.c.CustomerSearchButtonConfirm}" onclick="{!c.onConfirm}" />
+		</aura:set>
+	</c:Modal>
+
+	<!-- apppointment bar - begin -->
+	<div class="slds-utility-bar blue_bar">
+		<lightning:layout class="slds-grid_vertical-align-center wide_grid">
+			<lightning:layoutItem flexibility="grow">
+				<lightning:layout horizontalAlign="space">
+					<lightning:layoutItem class="slds-text-color_inverse">
+						<aura:if isTrue="{!empty(v.setdata)}">
+							<div class="red_flag">
+								{!$Label.c.AfterSalesBottomCustomerSelection}
+							</div>
+							<aura:set attribute="else">
+								<div class="green_flag">
+									{!$Label.c.AfterSalesBottomCustomerSelected}
+									<lightning:formattedName
+										aura:id="myCustomer"
+										firstName=""
+										lastName="{!v.setdata[0].Name}"
+										informalName=""
+										middleName=""
+										salutation=""
+										suffix=""
+										title=""
+										format="short"
+									/> 
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+					<lightning:layoutItem class="slds-text-color_inverse">
+						<aura:if isTrue="{!!v.dateSelected}">
+							<div class="red_flag">
+								{!$Label.c.AfterSalesBottomTimeSlotSelection}
+							</div>
+							<aura:set attribute="else">
+								<div class="green_flag">
+									{!$Label.c.AfterSalesBottomTimeSlotSelected}
+									{! v.receptionDateTime }
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+				</lightning:layout>
+			</lightning:layoutItem>
+			<lightning:layoutItem>
+				<lightning:layout>
+					<lightning:layoutItem class="slds-p-around_x-small">
+					
+						<lightning:button
+							label="{! $Label.c.AfterSalesAppointmentButton }"
+							title=""
+							class="btn_fix"
+							disabled="{!!and(v.dateSelected, !empty(v.setdata))}"
+							aura:id="_new_appointment_bar"
+							onclick="{!c.handleClick}"
+						/>
+						
+						<lightning:button
+							label="{! $Label.c.AfterSalesQuickReceptionButton }"
+							title=""
+							class="btn_fix"
+							disabled="{! !and( !v.dateSelected, !empty( v.setdata ) ) }"
+							aura:id="_new_quickReception_bar"
+							onclick="{!c.handleClick}"
+						/>
+						
+						<lightning:button
+							label="{! $Label.c.AfterSalesEstimationButton }"
+							title=""
+							class="btn_fix"
+							disabled="{! v.dateSelected }"
+							aura:id="_new_estimation_bar"
+							onclick="{!c.handleClick}"
+						/>
+						
+					</lightning:layoutItem>
+				</lightning:layout>
+			</lightning:layoutItem>
+		</lightning:layout>
+	</div>
+	<!-- apppointment bar - end -->
+
+	<div class="card-container" >
+		<article class="slds-card">
+			<c:AfterSalesSearchCardHeader headerLine1="My Quick"
+				headerLine2="Actions"
+				buttonLabel1="{! $Label.c.AfterSalesSearchAction1 }"
+				buttonValue1=""
+				buttonAction1="Account"
+				buttonVariant1="neutral"
+				buttonLabel2="{! $Label.c.AfterSalesSearchAction2 }"
+				buttonValue2=""
+				buttonAction2="Asset"
+				buttonVariant2="neutral"
+				buttonLabel3="{! $Label.c.AfterSalesSearchAction3 }"
+				buttonValue3=""
+				buttonVariant3="neutral"
+				iconName="utility:setup_assistant_guide"
+			/>
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col slds-size_1-of-2 searchPanel">
+					<div class="slds-col slds-grid slds-gutters">
+						<c:AfterSalesSearchHeader searchByAccount="{!v.searchByAccount}" searchByAsset="{!v.searchByAsset}"/>
+						<aura:if isTrue="{! or( !empty(v.data), !empty(v.data_tmp) ) }">
+							<div class="slds-float_right">    
+								<label class="slds-checkbox_toggle slds-grid labelCheckbox restrictedCheck">{!$Label.c.AfterSalesRestrictedSearch} 
+									<ui:inputCheckbox value="{!v.filterrows}" change="{!c.handleRunSearchEvent}"/>
+									<span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
+										<span class="slds-checkbox_faux"/>
+										<span class="slds-checkbox_on"/>
+										<span class="slds-checkbox_off"/>
+									</span>
+								</label>
+
+								<label class="slds-checkbox_toggle slds-grid labelCheckbox">{!$Label.c.AfterSalesResultVisibility} 
+									<ui:inputCheckbox change="{!c.changeState}" value="{! v.showData }"/>
+									<span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
+										<span class="slds-checkbox_faux"/>
+										<span class="slds-checkbox_on"/>
+										<span class="slds-checkbox_off"/>
+									</span>
+								</label>
+							</div>                
+						</aura:if>
+
+					</div>
+				</div>
+				<div class="slds-col slds-size_1-of-2">
+					<c:AfterSalesSearchCounters aura:id="AfterSalesSearchCounters" runInit="false"/>
+				</div>
+			</div>
+			<aura:if isTrue="{! or( !empty(v.data), !empty(v.data_tmp) ) }">
+				<aura:if isTrue="{! v.showData }">
+					<div aura:id="sectionHide" class="slds-is-open">
+						<lightning:datatable aura:id="FullSelectionTable"
+							data="{!v.data}" 
+							columns="{!v.columns}"
+							enableInfiniteLoading="true"
+							keyField="Id"
+							sortedBy="{!v.sortedBy}" 
+							sortedDirection="{!v.sortedDirection}"
+							onsort="{!c.updateColumnSorting}" 
+							onrowselection="{!c.getSelecteRowFilter}" 
+							selectedRows="{! v.selectedRowsRel }" 
+							onrowaction="{!c.navigateToSObject}"
+						/>
+					</div>
+				</aura:if>
+				<aura:set attribute="else">
+					<div class="slds-grid">
+						<div aura:id="divNoResults" class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1">
+							<span class="slds-align_absolute-center">{!$Label.c.CustomerSearchNoSearchResults}</span>
+							<br/>
+						</div>
+					</div>
+				</aura:set>
+
+			</aura:if>
+
+			<lightning:spinner aura:id="divSpinner" class="slds-hide" variant="brand" size="large" alternativeText="loading"/>
+		</article>
+
+	</div>
+</aura:component>

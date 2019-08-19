@@ -1,0 +1,12 @@
+<design:component>
+    
+    <!-- input -->
+    <design:attribute name="accountId" label="Account Id" description="Id of the related account"/>
+    <design:attribute name="country" label="Country"/>
+    <design:attribute name="brand" label="Brand"/>
+    
+    <!-- output -->
+    <design:attribute name="type" label="Quote Type" description="Selected quote type"/> 
+    <design:attribute name="oppId" label="Opportunity Id" description="Selected Opportunity Id"/> 	
+
+</design:component>

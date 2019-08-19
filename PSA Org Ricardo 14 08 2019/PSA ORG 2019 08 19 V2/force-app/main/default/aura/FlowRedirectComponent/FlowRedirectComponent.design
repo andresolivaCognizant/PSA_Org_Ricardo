@@ -1,0 +1,43 @@
+<design:component >
+    <design:attribute name="mUpName" label="Mash Up Name" description=""/> 
+    <design:attribute name="isCommunity" label="Community" description=""/> 
+    <design:attribute name="isFlow" label="Flow" description=""/>
+    <design:attribute name="navigateTo" label="Navigate To" datasource="Record, Component, URL" description=""/>
+    <design:attribute name="recId" label="Record Id" description=""/>
+        
+    <design:attribute name="dealerId" label="dealerId" description="Arcad PDV code: User.Contact.Account.ShortVNContractNumber__c"/>
+	<design:attribute name="salesAgentId" label="salesAgentId" description="Arcad PDV code: User.Contact.Account.TECH_ShortAgentContractNumber__c"/>
+	<design:attribute name="localeId" label="localeId" description="ISO 639x Code: User.LanguagelocaleKey"/>
+	<design:attribute name="brand" label="brand" description="Brand Code (AC, AP, DS): User.Brand__c"/>
+	<design:attribute name="slCustomerId" label="slCustomerId" description="Salesforce Customer ID: Account.Id"/>
+	<design:attribute name="slOpportunityId" label="slOpportunityId" description="Salesforce opportunity ID: Opportunity.Id"/>
+	<design:attribute name="slDriverId" label="slDriverId" description="Salesforce Driver ID: Campo driver del flow de creacion de quote"/>
+	<design:attribute name="slLessorId" label="slLessorId" description="Salesforce Lessor ID: Campo Lessor del flow de creacion de quote"/>
+	<design:attribute name="slContactPersonId" label="slContactPersonId" description="Salesforce Contact Person ID: Campo contact del flow de creacion de quote"/>
+	<design:attribute name="slQuoteId" label="slQuoteId" description="SBQQ__Quote__C.Id"/>
+	<design:attribute name="slContractId" label="slContractId" description="SBQQ__Quote__C.Id"/>
+	<design:attribute name="slOrderId" label="slOrderId" description="Order.Id"/>
+	<design:attribute name="slCustomerType" label="slCustomerType" description="B2B or B2C"/>
+	<!-- US 7183 BEGIN -->
+	<design:attribute name="slLeaserContactPersonId" label="slLeaserContactPersonId" description="Leaser Contact B2B VN" />
+	<!-- US 7183 END -->
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-207 - 05042019 -->
+	<design:attribute name="sdhCustomerId" label="sdhCustomerId" description="SDH Customer ID" />
+	<design:attribute name="sdhContactPersonId" label="sdhContactPersonId" description="SDH Contact Person ID" />
+	<design:attribute name="sdhDriverId" label="sdhDriverId" description="SDH Driver ID" />
+	<!-- END - Manuel Medina - 05042019 -->
+
+	<!-- BEGIN - Manuel Medina - C1STAGILE-8027 - 08042019 -->
+	<design:attribute name="sdhLessorId" label="sdhLessorId" description="SDH Lessor ID" />
+	<design:attribute name="sdhLeaserContactPersonId" label="sdhLeaserContactPersonId" description="SDH Leaser contact person ID" />
+	<design:attribute name="sdhQuoteId" label="sdhQuoteId" description="SDH Quote ID" />
+	<design:attribute name="sdhContractId" label="sdhContractId" description="SDH Order Form ID" />
+	<design:attribute name="sdhOrderId" label="sdhOrderId" description="SDH Order ID" />
+	<design:attribute name="sdhVpoId" label="sdhVpoId" description="SDH VPO ID" />
+	<!-- END - Manuel Medina - 08042019 -->
+
+	<design:attribute name="country" label="Country" 
+		description="Current country. Not required, If null, the country is calculated from current user."/>
+		
+</design:component>

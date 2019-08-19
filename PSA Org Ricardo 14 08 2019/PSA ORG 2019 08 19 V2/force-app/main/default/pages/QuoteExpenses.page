@@ -1,0 +1,25 @@
+<apex:page showHeader="false"
+           sidebar="false"
+           cache="false" 
+           contentType="text/xml"
+           controller="QuoteExpensesController">
+
+  <block background-color="rgb(0, 0, 0)"
+         color="rgb(255, 255, 255)"
+         text-align="left"
+         font-family="Helvetica"
+         font-size="10">
+    <apex:outputText value="{!UPPER($ObjectType.Expenses__c.labelPlural)}">
+    </apex:outputText>
+  </block>
+
+  <leader/>
+
+  <block text-align="center"
+         font-family="Helvetica"
+         font-size="8">
+    <apex:outputText value="{!strExpenses}">
+    </apex:outputText>
+  </block>
+
+</apex:page>

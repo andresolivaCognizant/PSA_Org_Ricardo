@@ -1,0 +1,25 @@
+.THIS .traffic-light {
+	border-radius: 50%;
+	width: 10px;
+	height: 10px;
+    display: inline-block;
+    left-margin: 10px;
+}
+
+.THIS .red-light {
+	color: #c23934;
+	background-color: #c23934;
+    display: inline-block;
+}
+
+.THIS .amber-light {
+	color: #f6a357;
+	background-color: #f6a357;
+    display: inline-block;
+}
+
+.THIS .green-light {
+	color: #00716b;
+	background-color: #00716b;
+    display: inline-block;
+}

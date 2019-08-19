@@ -1,0 +1,80 @@
+<aura:component controller="DynamicCardHeaderController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="headerLine1" type="String" />
+    <aura:attribute name="headerLine2" type="String" />   
+    <aura:attribute name="iconName" type="String" default="standard:lead"/>   
+    <aura:attribute name="buttonLabel1" type="String" />
+    <aura:attribute name="buttonValue1" type="String" />
+    <aura:attribute name="buttonVariant1" type="String" default="neutral" />
+    <aura:attribute name="navigateToRecord1" type="String" />
+    <aura:attribute name="customHandler1" type="Boolean" default="false" />
+    <aura:attribute name="calledFrom" type="String" description="Name of component that called this component" />
+    
+    <aura:attribute name="cardBody" type="Aura.Component[]" required="false"/>
+
+
+    <aura:attribute name="objectName" type="String" default="Lead" />
+    <aura:attribute name="relobject" type="String" default="" />
+    <aura:attribute name="fields" type="String" default="" />
+    <aura:attribute name="labelList" type="String[]" />
+    <aura:attribute name="fieldList" type="String[]" default="" />
+    <aura:attribute name="latestRecords" type="sObject[]" />
+    <aura:attribute name="latestRecordsAccess" type="Map" />
+    <aura:attribute name="recordsShown" type="Integer" default="1"/>
+        
+    <aura:attribute name="navigateToURL1" type="String" />
+        
+    <aura:registerEvent name="toggleEvent" type="c:LMAToggleFilterByUserEvent" />
+    
+    <div class="slds-card" style="height:68px;
+						    	  background-color: #f7f9fb;
+							      border-radius: 4px 4px 0 0;
+								  border: solid 1px #d8dde6;">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="{! v.iconName }" size="medium" alternativeText="icon" />
+                </div>
+                <div class="slds-media__body">
+                    <h1 class="slds-text-body_small slds-truncate slds-align-middle" title="{! v.headerLine1 + ' ' + v.headerLine2  }">{! v.headerLine1 }</h1>
+                    <p class="slds-page-header__title  slds-line-height_reset" style="font-weight:bold;">{! v.headerLine2 }</p>
+                </div>
+            </header>
+            <div class="slds-no-flex">
+                <aura:if isTrue="{! v.buttonLabel1 != null }">
+                    <lightning:button aura:id="button1" label="{! v.buttonLabel1 }" variant="{! v.buttonVariant1 }" onclick="{! c.handleOnClick1 }" value="{! v.buttonValue1 }" />
+                </aura:if>
+            </div>
+
+        </div>
+        <!--
+        <div>
+        	{! v.cardBody }
+        </div>
+        <footer class="slds-card__footer">
+            <table>
+                <thead>
+                    <tr>
+                        <aura:iteration items="{!v.labelList}" var="label" indexVar="varindex">
+                            <th class="slds-col slds-truncate" scope="col" id="{!label}" aura:id="theader">{!label}</th>
+                        </aura:iteration>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <aura:iteration items="{!v.latestRecords}" var="record">
+                            <aura:iteration items="{!v.fieldList}" var="field" indexVar="index">
+                                <td class="slds-cell-wrap">
+                                    <c:CSResultField record="{!record}" 
+                                                     fieldName="{!field}" 
+                                                     latestRecordsAccess="{!v.latestRecordsAccess}" />
+                                </td>
+                            </aura:iteration>
+
+                        </aura:iteration>
+                    </tr>
+                </tbody>
+            </table>
+        </footer>
+        -->
+    </div>
+</aura:component>

@@ -1,0 +1,11 @@
+<design:component >
+	<design:attribute name="headerLine1" label="Header Line 1" default="Card" description="Header line 1"  />
+    <design:attribute name="headerLine2" label="Header Line 2" default="Name" description="Header line 2" />   
+    <design:attribute name="iconName" label="Icon Name" default="standard:lead" description="Name of icon to use in header" />   
+    <design:attribute name="buttonLabel1" label="Button 1 Label" default="Button 1" description="Label used for button 1" />
+    <design:attribute name="buttonValue1" label="Button 1 Value" default="Button 1" description="Value of button 1" />
+    <design:attribute name="buttonVariant1" label="Button 1 Variant" default="neutral" description="Variant of button 1"/>
+    <design:attribute name="navigateToRecord1" label="Button 1 Navigate To Record" description="Name of record that pressing this button should navigate to"/>
+    <design:attribute name="customHandler1" label="Use custom handler 1" default="false" description="If set to true then custom handler 1 will be used"/>
+    <design:attribute name="calledFrom" label="Calling Component" description="Name of component that called this component" />
+</design:component>

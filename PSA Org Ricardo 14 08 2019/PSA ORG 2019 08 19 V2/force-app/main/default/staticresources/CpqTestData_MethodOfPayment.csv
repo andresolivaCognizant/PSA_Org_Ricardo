@@ -1,0 +1,2 @@
+Id,Quote__c,BankName__c,CurrencyIsoCode,MethodOfPaymentType__c,PaymentAmount__c,DueDateOfDocument__c,PaymentDocumentNumber__c
+a2qA,a0uA,HSBC BANK CHILE,EUR,Bank Note,2700,2019-08-16,123456789

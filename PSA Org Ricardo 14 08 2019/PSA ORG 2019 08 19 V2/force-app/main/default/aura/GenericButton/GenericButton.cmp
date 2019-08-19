@@ -1,0 +1,39 @@
+<aura:component controller="GenericButtonController"  implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens" access="global">
+    
+    <!-- ****** THIS COMPONENT MUST BE USED ONLY FOR MASHUP, YOU CAN FIND A BOTONGENICO COMPONENT TO SET GENERAL BUTTONS *****  -->
+    
+    <!-- Global Access Attributes area -->
+    <aura:attribute name="recordId" type="String" default="0015E00000cJXXFQA4" />
+    <aura:attribute name="name1" type="String" access="global"/> 
+    <aura:attribute name="mUpName1" type="string" default="" access="global"/> 
+    <aura:attribute name="name2" type="String" access="global"/> 
+    <aura:attribute name="mUpName2" type="string" default="" access="global"/> 
+    <aura:attribute name="name3" type="String" access="global"/> 
+    <aura:attribute name="mUpName3" type="string" default="" access="global"/> 
+    <aura:attribute name="name4" type="String" access="global"/> 
+    <aura:attribute name="mUpName4" type="string" default="" access="global"/> 
+  
+    <aura:attribute name="isCommunity" type="Boolean" default ="false" access="global"/>
+    
+    <aura:attribute name="swhide" type="Boolean" default="false"/>
+    <aura:attribute name="hide1" type="String" default="slds-hide"/>
+    <aura:attribute name="hide2" type="String" default="slds-hide"/>
+    <aura:attribute name="hide3" type="String" default="slds-hide"/>
+        
+    <!-- Retrieve your data using an Apex Controller -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <!-- Retrieve your data using an Apex Controller -->
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> -->
+    <div class="slds-grid slds-grid_align-end" style="padding-bottom: 2px; padding-top: 2px;">
+    	<aura:if isTrue="{!v.name1 ne undefined}">
+    		<lightning:button variant="brand" label="{!v.name1}" title="Base action" onclick="{! c.handleClick1}" class="{!v.hide1}"/>
+    	</aura:if>
+		<aura:if isTrue="{!v.name2 ne undefined}">
+			<lightning:button variant="brand" label="{!v.name2}" title="Base action" onclick="{! c.handleClick2}" class="{!v.hide2}"/>
+		</aura:if>
+		<aura:if isTrue="{!v.name3 ne undefined}">
+			<lightning:button variant="brand" label="{!v.name3}" title="Base action" onclick="{! c.handleClick3}" class="{!v.hide3}"/>
+        </aura:if>
+	</div>
+</aura:component>

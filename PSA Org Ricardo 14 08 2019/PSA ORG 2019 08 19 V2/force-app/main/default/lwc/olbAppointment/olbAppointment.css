@@ -1,0 +1,25 @@
+.modal-body {
+    height      : unset !important;
+    max-height  : 900px !important;
+    padding     : 0 !important;
+  }
+
+  .cuf-content {
+    padding     : 0 !important;
+  }
+
+  .slds-p-around--medium {
+    padding     : 0 !important;
+  }
+  
+  .slds-modal__container {
+    width       : 50% !important;
+    max-width   : 100% !important;
+  }
+
+  .slds-modal__content {
+    position    : relative !important;
+    overflow-y  : hidden !important;
+    overflow-x  : hidden !important;
+    max-height  : unset !important;
+  }

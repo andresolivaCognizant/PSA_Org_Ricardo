@@ -1,0 +1,20 @@
+<apex:page standardController="Lead" standardStylesheets="false" applyBodyTag="false" recordSetVar="leads" showheader="false" sidebar="false" showchat="false">
+    <apex:includeLightning />
+
+    <div id="lightning" />
+
+    <script>
+        $Lightning.use("c:LookupUser_App", function() {
+          $Lightning.createComponent("c:LookupUser",
+          { label : "Change Owner!"
+          	,objectAPIName : "User"
+          	,IconName : "standard:user" 
+          	,label : "User"
+           },
+          "lightning",
+          function(cmp) {
+            // do some stuff
+          });
+        });
+    </script>
+</apex:page>

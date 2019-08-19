@@ -1,0 +1,2 @@
+Id,Quote__c,Financial_Institution__c,Country__c,CurrencyIsoCode,Payment_Method__c,PaymentAmount__c,DueDateDocument__c,PaymentDocumentNumber__c,PaymentDate__c
+a2xA,a0uA,CL_0007,CL,CLP,PM01,1000000,2099-12-31,123456789,2099-12-30

@@ -1,0 +1,134 @@
+<aura:component controller="DMSearchController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+	<aura:attribute name="ObjectType" type="String" default="AfterSales" description="Store selected sObject type"/>
+	<aura:attribute name="recordId" type="String" default="" />
+	<aura:attribute name="selectedRecord" type="sObject" default="{}" description="Store selected sObject Record"/>
+	<aura:attribute name="selectedRecordId" type="String" default="" description="Store selected Record Id"/>
+	<aura:attribute name="selectedRows" type="List" default="[]" description="Store List of selected rows"/>
+	<aura:attribute name="validRows" type="List" default="[]" description="Store List of valid selected rows"/>
+	
+	<aura:attribute name="selectedRowsRel" type="List" default="[]" description="Store List of selected rows"/>
+	<aura:attribute name="buttonValue1" type="String" />
+	<aura:attribute name="FilterDates" type="List" default="{}"/>
+	<aura:attribute name="FilterField" type="List" default="{}"/>
+	<aura:attribute name="AuxField" type="String" />
+
+	<aura:attribute name="filterByCurrentUser" type="Boolean" default="false"/>
+	<aura:attribute name="userPortalRole" type="String" default="" />
+
+	<!-- <aura:attribute name="listOfSearchRecords" type="List" default="[]" /> -->
+	<aura:attribute name="data" type="Object" default=""/>
+	<aura:attribute name="data_tmp" type="Object" default=""/>
+	<aura:attribute name="setdata" type="Object" default=""/>
+	<aura:attribute name="numberRows" type="Integer" default="0"/>
+	<aura:attribute name="numberRowsKO" type="Integer" default="0"/>
+	<aura:attribute name="CampaignMembers" type="Integer" default="0"/>
+
+	
+	<aura:attribute name="showData" type="Boolean" default="true"/>
+		
+	<aura:attribute name="selectedAssetRow" type="String" default=""/>
+	<aura:attribute name="selectedAccRow" type="String" default=""/>
+
+	<aura:attribute name="setdata_tmp" type="Map" default=""/>
+
+	<aura:attribute name="columns" type="List" default=""/>
+	<aura:attribute name="setcolumns" type="List" default=""/>
+	<aura:attribute name="shortcolumns" type="List" default=""/>
+	<aura:attribute name="shortcolumnsb" type="List" default=""/>
+	<!--- enableSorting  -->
+	<aura:attribute name="sortedBy" type="string" default="LastName" />
+	<aura:attribute name="sortedDirection" type="string" default="asc" />
+	<!--- secretQuestionOptions  -->
+	<aura:attribute name="secretvalue" type="String"/>
+	<aura:attribute name="selectedrecordSQ" type="String"/>
+	<aura:attribute name="selectedrecordSQB" type="String"/>
+	<!--- collapsible section  -->
+	<aura:attribute name="isexpanded" type="Boolean" default="true"/>
+	<aura:attribute name="filterrows" type="Boolean" default="false"/>
+	
+	<aura:attribute name="pageReference" type="Object"/>
+	<lightning:navigation aura:id="navService"/>
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+	<!--- SearchParam  -->
+	<aura:attribute name="searchByAccount" type="string" />
+	<aura:attribute name="searchByAsset" type="string" />
+    <aura:attribute name="searchBySales" type="string" />
+    <aura:attribute name="searchByAfterSales" type="string" />
+
+
+	<!-- <aura:handler event="force:showToast" action="{!c.handleToastEvent}"/> -->
+	<aura:handler event="c:DMSearchEvent" action="{!c.handleSearchEvent}" includeFacets="true"/>
+
+	<!-- C1STAGILE-8442 - Began-->
+	<c:LabelComponent />
+	<!-- C1STAGILE-8442 - End-->
+
+	<c:Modal aura:id="theStaticModal" title="{!$Label.c.DMSearchAddMemberTitle}" isDirectional="true" isLarge="false" hasCloseIcon="true">
+		<!-- <aura:set attribute="tagline">{!$Label.c.DMSearchAddMemberSubTitle}</aura:set> -->
+		<aura:if isTrue="{!v.numberRowsKO>0}">
+			{!$Label.c.DMSearchAddMemberKOSelection}
+			<aura:set attribute="else">
+				{!$Label.c.DMSearchAddMemberOKSelection}
+			</aura:set>
+		</aura:if>
+		<!-- Selected Records: {! v.numberRows } <br/>
+		Records to Create: {! v.numberRows - v.numberRowsKO }  -->
+		<aura:set attribute="footer">
+			<lightning:button aura:id="buttonCancelResponse" label="{!$Label.c.CustomerSearchButtonCancel}" onclick="{!c.onCancel}" />
+			<lightning:button aura:id="buttonConfirmResponse" variant="brand" label="{!$Label.c.CustomerSearchButtonConfirm}" onclick="{!c.onConfirm}" />
+		</aura:set>
+	</c:Modal>
+	<div class="card-container" style="padding-top: 20px;" >
+		<article class="slds-card">
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col slds-size_4-of-7">
+					<div class="slds-col slds-grid slds-gutters">
+                        <c:DMSearchHeader searchByAccount="{!v.searchByAccount}" searchByAsset="{!v.searchByAsset}" searchBySales="{!v.searchBySales}" searchByAfterSales="{!v.searchByAfterSales}" filtersDates="{!v.FilterDates}" filtersField="{!v.FilterField}"/>
+					</div>
+				</div>
+				<div class="slds-col slds-size_2-of-7">
+					<div class="slds-grid slds-wrap slds-grid--align-center slds-grid--align-space" >
+        				<c:DMSearchCounters aura:id="DMSearchCounters"
+						vTotals="{! v.data.length }" vSelected="{! v.numberRows }" vMembers="{! v.CampaignMembers }"/>
+					</div>
+				</div>
+				<div class="slds-col slds-size_1-of-7">
+					<lightning:button aura:id="_add_campaign_members" label="{!$Label.c.DMSearchAction1}" variant="neutral" value="{! v.buttonValue1 }" onclick="{! c.handleClick }" />
+				</div>
+			
+			</div>
+			<aura:if isTrue="{! or( !empty(v.data), !empty(v.data_tmp) ) }">
+				<aura:if isTrue="{! v.showData }">
+					<div aura:id="sectionHide" class="slds-is-open">
+						<lightning:datatable aura:id="FullSelectionTable"
+							data="{!v.data}" 
+							columns="{!v.columns}"
+							enableInfiniteLoading="true"
+							keyField="Id"
+							sortedBy="{!v.sortedBy}" 
+							sortedDirection="{!v.sortedDirection}"
+							onsort="{!c.updateColumnSorting}" 
+							onrowselection="{!c.getSelecteRowFilter}" 
+							selectedRows="{! v.selectedRowsRel }" 
+						/>
+					</div>
+				</aura:if>
+				<aura:set attribute="else">
+					<div class="slds-grid">
+						<div aura:id="divNoResults" class="slds-p-around--small slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1">
+							<span class="slds-align_absolute-center">{!$Label.c.CustomerSearchNoSearchResults}</span>
+							<br/>
+						</div>
+					</div>
+				</aura:set>
+
+			</aura:if>
+
+			<lightning:spinner aura:id="divSpinner" class="slds-hide" variant="brand" size="large" alternativeText="loading"/>
+		</article>
+
+	</div>
+</aura:component>

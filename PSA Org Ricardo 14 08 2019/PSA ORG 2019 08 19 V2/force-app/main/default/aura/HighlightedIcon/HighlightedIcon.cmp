@@ -1,0 +1,8 @@
+<aura:component implements="flexipage:availableForRecordHome">
+
+  <aura:attribute name="iconName" type="String"/>
+  <aura:attribute name="className" type="String"/>
+  
+  <lightning:icon iconName="{!v.iconName}" size="xx-small" class="{!'lightningIconsClassName-' + v.className}"/>
+
+</aura:component>

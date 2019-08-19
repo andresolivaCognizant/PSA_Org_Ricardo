@@ -1,0 +1,341 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" controller="AfterSalesBoardController" access="global">
+
+	<aura:attribute name="sRecordId" type="String"/> 
+	<aura:attribute name="sRelationId" type="String"/> 
+	<aura:attribute name="metricsData" type="Object[]"/>
+	<aura:attribute name="sObjectName" type="String"/>
+	<aura:attribute name="Campaigns" type="List" />
+	<aura:attribute name="Opportunities" type="List" />
+	<aura:attribute name="TestDrives" type="List" />
+	<aura:attribute name="wa" type="WorkshopAppointment__c"/>
+	<aura:attribute name="objAccount" type="Account"/>
+	<aura:attribute name="iFrameUrl" type="String" default="#"/>
+	<aura:attribute name="timerId" type="Integer"/>
+	
+	<aura:attribute type="String" name="recordError"/>
+	<aura:attribute type="String" name="consentClass" default="warning"/>
+	<aura:attribute type="String" name="recordViewFormClass" default="slds-text-align_left slds-grid slds-grid_align-spread slds-grid_vertical-stretch slds-wrap x-large slds-truncate"/>
+
+	<aura:attribute type="Integer" name="recentConsents" default="0"/>
+	
+	<aura:attribute type="Map" name="activeActionsByName" />
+	<aura:attribute type="Map" name="parentFields" />
+	<aura:attribute type="Map" name="attributesByGlobalSetting"  description="Contains all attributes returned by GlobalSettings." />
+	<aura:attribute type="Object" name="fieldLabels"/>
+
+	<aura:attribute type="Boolean" name="showConsentsHighlightedIcon" />
+	<aura:attribute type="Boolean" name="showIDDMSHighlightedIcon" />
+	<aura:attribute type="Boolean" name="showConsentToast" default="true"/>
+
+	<aura:attribute name="objMyM"
+		type="Map" 
+		default="{'checked': false, 'visible': false, 'disabled': true, 'help': ''}"
+	/>
+
+	<aura:attribute name="objReminder"
+		type="Map" 
+		default="{'checked': false, 'visible': false, 'disabled': true, 'help': ''}"
+	/>
+
+	<aura:handler event="c:AfterSalesOpportunityEvent" action="{! c.reloadOpportunities }" />
+
+	<c:GetCustomMetadataRecords aura:id="customMetadataRecords"
+		runInit="false"
+		customMetadata="APVHeaderConsentsActions__mdt"
+		fields="ShowToast__c,ShowHighlightedIcon__c"
+		key=""
+		getAll="true"
+		targetResult="{! v.activeActionsByName }"
+	/>
+	
+	<c:GlobalSettings aura:id="appointmentURLs"
+		globalSettings="APPOINTMENT"
+		attributes="QuickReception_URL,Estimation_URL"
+		targetResult="{! v.attributesByGlobalSetting }"
+		runInit="false"
+	/>
+
+	<force:recordData
+		aura:id="forceRecord"
+		recordId="{!v.recordId}"
+		fields="Driver__c, Asset__c, TECH_AccountAssetRelation__c, ContactAcceptance__c, Driver__r.TECH_UnsubscribeURL__c, Driver__r.Name, MyM_Invitation__c, Asset__r.Brand__c, Asset__r.Country__c, AppointmentStatus__c, AppointmentType__c,ReceptionDatetime__c,TECH_ConsentStatus__c,TECH_ConsentCount__c"
+		mode="EDIT"
+		targetRecord="{!v.wa}"
+		recordUpdated="{!c.handleRecordUpdated}"
+		targetFields="{! v.parentFields }"
+		targetError="{! v.recordError }"
+	/>
+	
+	<aura:if isTrue="{! !empty( v.metricsData[0] ) }">
+		<force:recordData
+			aura:id="accountRecord"
+			recordId="{! v.metricsData[0].Id }"
+			fields="LastModifiedDate,SystemModstamp"
+			mode="EDIT"
+			targetRecord="{! v.objAccount }"
+			recordUpdated="{! c.handleDates }"
+		/>
+	</aura:if>
+	
+	<c:FieldLabels aura:id="fieldLabels"
+		fieldNames="Account.MobilePersonalTelephone__pc,Account.MobileProfessionalTelephone__pc,Account.PersonEmail,Opportunity.Name,et4ae5__IndividualEmailResult__c.et4ae5__DateSent__c,et4ae5__IndividualEmailResult__c.et4ae5__DateOpened__c"
+		fieldLabels="{! v.fieldLabels }"
+		runInit="true"
+	/>
+
+	<div class="card-container" >
+		<article class="slds-card">	
+			<c:AfterSalesSearchCardHeader aura:id="headerCard"
+				headerLine1=""
+				headerLine2="{! v.metricsData[0].Name }"
+				buttonLabel1="" 
+				buttonValue1="" 
+				buttonAction1="" 
+				buttonVariant1=""
+				buttonLabel2="" 
+				buttonValue2="" 
+				buttonAction2="" 
+				buttonVariant2=""
+				buttonLabel3="" 
+				buttonValue3="" 
+				buttonAction3="" 
+				buttonVariant3=""
+				iconName="standard:user"
+			/>
+		</article>
+		<div class="slds-grid PaddingHeader">
+			<div class="slds-col slds-size_1-of-3 slds-has-flexi-truncate">
+				<div aura:id="tbl_1of4" class="PaddingClass slds-border_right" >
+					<table>
+						<tr>
+							<td class="field-record-label">
+								{! v.fieldLabels.Account.MobilePersonalTelephone__pc }:
+							</td>
+							<td class="field-record-value">
+								<lightning:formattedPhone value="{! v.metricsData[0].MobilePhone }"/>
+							</td>
+						</tr>            
+						<tr>
+							<td class="field-record-label">
+								{! v.fieldLabels.Account.MobileProfessionalTelephone__pc }:
+							</td>
+							<td class="field-record-value">
+								<lightning:formattedPhone value="{! v.metricsData[0].Phone }"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field-record-label">
+								{! v.fieldLabels.Account.PersonEmail }:
+							</td>
+							<td class="field-record-value">
+								<lightning:formattedEmail value="{! v.metricsData[0].Email }"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="field-record-label">
+								{! $Label.c.AfterSalesIDDMSField }
+							</td>
+							<td class="field-record-value">
+								<div style="float: right;">
+									<aura:if isTrue="{! v.showIDDMSHighlightedIcon }">
+										<div style="line-height: 0px; display: inline-block; float: left; padding-right: 5px;">
+											<lightning:icon iconName="utility:record" class="consents-error"/>
+										</div>
+									</aura:if>
+									<div style="display: inline-block; float: left;" aura:id="_idDMS">
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="slds-col slds-size_1-of-3">
+				<div aura:id="tbl_2of4" class="PaddingClass">
+					<table>
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderConsentement} :</td>
+							<td class="field-record-value">
+								<div style="float: right;">
+									<aura:if isTrue="{! v.showConsentsHighlightedIcon }">
+										<aura:if isTrue="{! v.metricsData[0].Consentement.length eq 0 }">
+											<div style="line-height: 0px; display: inline-block; float: left; padding-right: 5px;">
+												<lightning:icon iconName="utility:record" class="consents-error"/>
+											</div>
+											<aura:set attribute="else">
+												<div style="line-height: 0px; display: inline-block; float: left; padding-right: 5px;">
+													<lightning:icon iconName="utility:record" class="{! 'consents-' + v.consentClass }"/>
+												</div>
+											</aura:set>
+										</aura:if>
+									</aura:if>
+									<div style="display: inline-block; float: left;" aura:id="_consents">
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderLeads} :</td>
+							<td class="field-record-value">
+								<aura:if isTrue="{!v.Opportunities.length gt 0}">
+									<c:CustomPopover variant="base" placement="auto right" theme="default" withClose="false">
+										<aura:set attribute="popoverBody">
+											<aura:iteration items="{!v.Opportunities}" var="opportunity" indexVar="i" start="0">
+												<lightning:recordViewForm recordId="{! opportunity.Id }" objectApiName="Opportunity" class="{! v.recordViewFormClass + if( i != 0, ' slds-p-top_small slds-p-bottom_small', ' slds-p-bottom_small' ) + if( i lt ( v.Opportunities.length - 1 ), ' slds-border_bottom', '' ) }">
+
+													<lightning:layoutItem flexibility="auto" class="custom-box slds-p-right_small slds-p-bottom_xx-small" size="3">
+														<lightning:outputField fieldName="Activity__c" class="slds-truncate"/>
+													</lightning:layoutItem>
+
+													<lightning:layoutItem flexibility="auto" class="custom-box slds-p-left_small slds-p-bottom_xx-small" size="9">
+														<span class="slds-form-element__label">
+															{! v.fieldLabels.Opportunity.Name }:
+														</span>
+														<div class="slds-form-element__control">
+															<div class="slds-form-element__static slds-truncate">
+																<a id="{! 'opp_' + i }" href="" onclick="{! c.redirectToRecord }">{! opportunity.Name }</a>
+															</div>
+														</div>
+													</lightning:layoutItem>
+
+													<lightning:layoutItem flexibility="auto" class="custom-box slds-p-right_small" size="3">
+														<lightning:outputField fieldName="CreatedDate" class="slds-truncate"/>
+													</lightning:layoutItem>
+
+													<lightning:layoutItem flexibility="auto" class="custom-box slds-p-left_small" size="3">
+														<lightning:outputField fieldName="CloseDate" class="slds-truncate"/>
+													</lightning:layoutItem>
+
+													<lightning:layoutItem flexibility="auto" class="custom-box slds-p-right_small" size="3">
+														<lightning:outputField fieldName="StageName" class="slds-truncate"/>
+													</lightning:layoutItem>
+
+													<lightning:layoutItem flexibility="auto" class="custom-box slds-p-left_small" size="3">
+														<lightning:outputField fieldName="Probability" class="slds-truncate"/>
+													</lightning:layoutItem>
+
+												</lightning:recordViewForm>
+
+											</aura:iteration>
+										</aura:set>
+										<lightning:formattedNumber value="{! v.Opportunities.length }" class="consents-date-link"/>
+									</c:CustomPopover>
+									<aura:set attribute="else"> 
+										<lightning:formattedNumber value="{! v.Opportunities.length }"/>
+									</aura:set>
+								</aura:if>
+							</td>
+						</tr> 
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderCampaigns} :</td>
+							<td class="field-record-value">
+								<aura:if isTrue="{!v.metricsData[0].Campaigns > 0}">
+									<c:CustomPopover variant="base" placement="auto right" theme="default" withClose="false" class="opp-popupover">
+										<aura:set attribute="popoverBody">
+											<table>
+												<aura:iteration items="{!v.Campaigns}" var="campaign">
+													<tr>
+														<td colspan="4" class="field-record-value" style="text-align: left;" >
+															<a id="miniViewerMkt" onclick="{!c.onViewDetail}">
+																<lightning:formattedName aura:id="mycampaign" firstName="" lastName="{!campaign.Name}" informalName="" middleName="" salutation="" suffix="" title="" format="short" />
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td class="field-record-label">
+															{! v.fieldLabels.et4ae5__IndividualEmailResult__c.et4ae5__DateSent__c }:
+														</td>
+														<td class="field-record-value" style="text-align: left;">
+															<lightning:formattedDateTime value="{!campaign.et4ae5__DateSent__c}" year="2-digit" month="short" day="2-digit"/>
+														</td>
+														<td class="field-record-label">
+															{! v.fieldLabels.et4ae5__IndividualEmailResult__c.et4ae5__DateOpened__c }:
+														</td>
+														<td class="field-record-value" style="text-align: left;">
+															<lightning:formattedDateTime value="{!campaign.et4ae5__DateOpened__c}" year="2-digit" month="short" day="2-digit"/>
+														</td>
+													</tr>
+												</aura:iteration>
+											</table>
+										</aura:set>
+										<lightning:formattedNumber value="{! v.metricsData[0].Campaigns }" />
+									</c:CustomPopover>
+									<aura:set attribute="else"> 
+										<lightning:formattedNumber value="{! v.metricsData[0].Campaigns }" />
+									</aura:set>
+								</aura:if>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="slds-col slds-size_1-of-3">
+				<div aura:id="tbl_3of4" class="PaddingClass slds-border_left">
+					<table>
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderMyMarquee} :</td>
+							<td class="field-record-value smallToggle">
+								<div class="slds-clearfix">
+									<div class="slds-clearfix">
+										<div class="slds-float_right" title="{!v.objMyM.help}">
+											<label class="slds-checkbox_toggle slds-grid">
+												<input disabled="{!v.objMyM.disabled}"
+													type="checkbox"
+													checked="{!v.objMyM.checked}"
+													onclick="{!c.updateMyBrandInvitation}"
+													aura:id="_boxMyM"
+												/>
+												<span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+													<span class="slds-checkbox_faux"/>
+												</span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderLastAccess} :</td>
+							<td class="field-record-value">
+								{! v.objAccount.fields.SystemModstamp.formatedDate }
+							</td>
+						</tr>
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderLastContact} :</td>
+							<td class="field-record-value">
+								{! v.objAccount.fields.LastModifiedDate.formatedDate }
+							</td>
+						</tr>
+						<tr>
+							<td class="field-record-label">{!$Label.c.AfterSalesHeaderContactAcceptance}: </td>
+							<td class="field-record-value smallToggle">
+								<div class="slds-clearfix">
+									<div class="slds-clearfix">
+										<div class="slds-float_right" title="{!v.objReminder.help}">
+											<label class="slds-checkbox_toggle slds-grid">
+												<input disabled="{!v.objReminder.disabled}"
+													type="checkbox"
+													checked="{!v.wa.fields.ContactAcceptance__c.value}"
+													onclick="{!c.updateContactAcceptance}"
+													aura:id="_contactAcceptance"
+												/>
+												<span id="checkbox-toggle-2" class="slds-checkbox_faux_container" aria-live="assertive">
+													<span class="slds-checkbox_faux"/>
+												</span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div aura:id="consent_modal_container">
+
+	</div>
+
+</aura:component>

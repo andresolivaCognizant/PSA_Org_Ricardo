@@ -1,0 +1,72 @@
+<aura:component
+  implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"
+  controller="LeadManualAssignment"
+  access="global"
+  >
+
+  <aura:attribute name="filterByCurrentUser" type="Boolean" default="true"/>
+  <aura:attribute type="String" name="defaultTab" default="tab1Id"/>
+  <aura:attribute type = "String" name = "cols_fields"/>
+
+  <!--<aura:handler name="tabEvent" event="c:LeadManualAssignmentTabEvent" action="{!c.handleTabEvent}"/>-->
+  <!-- BEGIN - Manuel Medina - C1STAGILE-4826 New logic with lightning:tabset to allow responsivity on small devices - 26092018 -->
+  <!-- The defaultTab attribute also was added to this new implementation -->
+  <lightning:tabset selectedTabId="{! v.defaultTab }" onselect="{! c.changeTab }">
+    <lightning:tab id="tab1Id" label="{!$Label.c.LeadAssignmentOverdue}">
+      <aura:if isTrue="{!and(v.defaultTab == 'tab1Id', !empty(v.cols_fields))}">
+        <c:LMAResult
+          aura:id               = "cmpResults" 
+          fields                = "{!v.cols_fields}" 
+          labelFields           = "LeadRequestType__c,LeadSource"
+          allowSelection        = "true" 
+          filterByPriority      = "Overdue" 
+          filterByStatus        = "('New','On Going')" 
+          filterByCurrentUser   = "{!v.filterByCurrentUser}"
+        />
+      </aura:if>
+    </lightning:tab>
+    
+    <lightning:tab id ="tab2Id" label="{! $Label.c.LeadAssignmentUrgent}">
+      <aura:if isTrue="{!and(v.defaultTab == 'tab2Id', !empty(v.cols_fields))}">
+        <c:LMAResult
+          aura:id               = "cmpResults" 
+          fields                = "{!v.cols_fields}" 
+          labelFields           = "LeadRequestType__c,LeadSource"
+          allowSelection        = "true" 
+          filterByPriority      = "Urgent" 
+          filterByStatus        = "('New','On Going')" 
+          filterByCurrentUser   = "{!v.filterByCurrentUser}"
+        />
+      </aura:if>
+    </lightning:tab>
+    
+    <lightning:tab id="tab3Id" label="{! $Label.c.LeadAssignmentOnTime}">
+      <aura:if isTrue="{!and(v.defaultTab == 'tab3Id', !empty(v.cols_fields))}">
+        <c:LMAResult
+          aura:id               = "cmpResults" 
+          fields                = "{!v.cols_fields}" 
+          labelFields           = "LeadRequestType__c,LeadSource"
+          allowSelection        = "true" 
+          filterByPriority      = "On Time" 
+          filterByStatus        = "('New','On Going')"
+          filterByCurrentUser   = "{!v.filterByCurrentUser}"
+        />
+      </aura:if>
+    </lightning:tab>
+    
+    <lightning:tab id="tab4Id" label="{! $Label.c.LeadAssignmentAll}">
+      <aura:if isTrue="{!and(v.defaultTab == 'tab4Id', !empty(v.cols_fields))}">
+        <c:LMAResult
+          aura:id               = "cmpResults" 
+          fields                = "{!v.cols_fields}" 
+          labelFields           = "LeadRequestType__c,LeadSource"
+          allowSelection        = "true" 
+          filterByStatus        = "('New','On Going')" 
+          filterByCurrentUser   = "{!v.filterByCurrentUser}"
+        />
+      </aura:if>
+    </lightning:tab>
+    
+  </lightning:tabset>
+  <!-- END - Manuel Medina - 26092018 -->
+</aura:component>

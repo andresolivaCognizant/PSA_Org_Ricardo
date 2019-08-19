@@ -1,0 +1,62 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens" access="global" controller="FlowMandatoryController">
+    
+    <!-- Global Access Attributes area -->
+    <aura:attribute name="fields" type="String" access="global"/>
+    <aura:attribute name="skipCompleted" type="Boolean" access="global" default="false" 
+        description="If true, the screen will be skipped if there is no empty filds."/>
+    <aura:attribute name="object" type="String" access="global"/>
+    <aura:attribute name="type" type="String" access="global"/>
+    <aura:attribute name="id" type="String" access="global"/>
+    <aura:attribute name="allComplete" type="Boolean" default ="false" access="global" />
+    <aura:attribute name="lFields" type="List"/>
+    
+    <!-- Determine which actions are available -->
+    <aura:attribute name="canPause" type="Boolean" />
+    <aura:attribute name="canBack" type="Boolean" />
+    <aura:attribute name="canNext" type="Boolean" />
+    <aura:attribute name="canFinish" type="Boolean" />
+    <aura:attribute name="fieldChanged" type="Boolean" access="private" default="false"/>
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <lightning:recordEditForm aura:id="recordViewForm" 
+                                recordId="{!v.id}"
+                                recordTypeId="{!v.type}"
+                                objectApiName="{!v.object}"
+                                onsuccess="{!c.isMandatory}">
+        <lightning:card>
+            <div class="slds-p-bottom_large slds-p-left_large" style="width:70%">
+                <lightning:messages />
+                <aura:iteration var="field" items="{!v.lFields}">
+                    <lightning:inputField aura:id="InputField" class="customRequired" fieldName="{!field}" onchange="{!c.changeField}"/>
+                </aura:iteration>
+            </div>
+
+            <aura:set attribute="footer">
+                <div class="slds-clearfix">
+                    <div class="slds-float_right">
+                        <aura:if isTrue="{!v.canBack}">
+                            <lightning:button
+                                label       = "{!$Label.c.Previous}"
+                                title       = "{!$Label.c.Previous}"
+                                onclick     = "{!c.goToPrevious}"
+                                class       = "slds-m-top_medium"
+                            />
+                        </aura:if>
+                        <aura:if isTrue="{!v.fieldChanged}">
+                            <lightning:button aura:id="submit" type="submit" label="{!$Label.c.Update}" class="slds-m-top_medium"
+                            variant="brand"/>
+
+                            <aura:set attribute="else">
+                                <lightning:button label="{!$Label.c.Next}" title="{!$Label.c.Next}" onclick="{!c.isMandatory}" 
+                                class="slds-m-top_medium" variant="brand"/>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </div>
+            </aura:set>
+        </lightning:card>
+    </lightning:recordEditForm>
+
+</aura:component>

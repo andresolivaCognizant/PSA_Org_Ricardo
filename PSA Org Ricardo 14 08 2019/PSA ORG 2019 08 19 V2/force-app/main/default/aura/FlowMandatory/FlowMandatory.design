@@ -1,0 +1,8 @@
+<design:component>  
+    <design:attribute name="fields" label="Fields" description=""/>
+    <design:attribute name="skipCompleted" label="Skip screen if completed?" description="If true, the screen will be skipped if there is no empty fields."/>
+    <design:attribute name="object" label="Object" description=""/>
+    <design:attribute name="type" label="Record Type" description=""/> 
+    <design:attribute name="id" label="Record ID" description=""/> 	
+    <design:attribute name="allComplete" label="All Complete" description=""/> 	
+</design:component>

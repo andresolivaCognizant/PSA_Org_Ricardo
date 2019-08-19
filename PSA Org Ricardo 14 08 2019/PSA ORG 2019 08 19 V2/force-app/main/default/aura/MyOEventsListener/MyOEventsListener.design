@@ -1,0 +1,6 @@
+<design:component>
+    
+    <design:attribute name="HostType" label="Host Type" description="Integration Name"/>
+	<design:attribute name="recordId" label="recordId" description="Record Id" />
+    
+</design:component>

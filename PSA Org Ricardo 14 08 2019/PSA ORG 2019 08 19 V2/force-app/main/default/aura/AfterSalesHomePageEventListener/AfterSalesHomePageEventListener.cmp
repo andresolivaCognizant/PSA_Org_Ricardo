@@ -1,0 +1,13 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+                controller="ConsentsPopUpModalController"
+                access="global">
+
+  <aura:attribute type="Map" name="trackedRecords" default="{}"/>
+
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+  <div aura:id="consents_modal_container">
+  </div>
+
+
+</aura:component>

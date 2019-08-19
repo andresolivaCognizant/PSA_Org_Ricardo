@@ -1,0 +1,93 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <!-- Attributes-->
+    <aura:attribute type="Boolean" name="isEnabledSpinner" default="false"/>
+
+    <!-- Handlers -->
+    <aura:handler event="c:DealerCreateCaseEvent" action="{!c.handleSave}"/>
+    
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <lightning:recordEditForm aura:id="editForm" onload="{!c.handleLoad}" onsuccess="{!c.handleSuccess}" onerror="{!c.handleError}" objectApiName="Case">
+  
+        <lightning:messages />
+        <aura:if isTrue="{!v.isEnabledSpinner}">
+                <lightning:spinner size="medium" />
+        </aura:if>
+        <lightning:layout multipleRows="True">
+            <!-- Section: Case Info-->        
+            <lightning:layoutItem size="12"><h3 class="slds-section-title--divider">{!$Label.c.CreateCase_CaseInfo}</h3></lightning:layoutItem>               
+            <lightning:layoutItem size="12" padding="horizontal-medium">
+                <lightning:inputField aura:id="Status"  fieldName="Status" class="slds-hide"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" padding="horizontal-medium">
+                <lightning:inputField aura:id="Subject" fieldName="Subject" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="Subject_help">{! $Label.c.CaseRequiredFields }</div>   
+            </lightning:layoutItem>            
+            <lightning:layoutItem size="12" padding="horizontal-medium">
+                <lightning:inputField  aura:id="Description" fieldName="Description"/>
+            </lightning:layoutItem>            
+
+            <!-- Section: Aditional Info-->
+            <lightning:layoutItem size="12"><h3 class="slds-section-title--divider">{!$Label.c.CreateCase_AdditionalInfo}</h3></lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="Origin" fieldName="Origin" />
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="Brand__c" fieldName="Brand__c" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="Brand__c_help">{! $Label.c.CaseRequiredFields }</div>
+            </lightning:layoutItem>    
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="Priority" fieldName="Priority" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="Priority_help">{! $Label.c.CaseRequiredFields }</div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="CategoryL1__c" fieldName="CategoryL1__c" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="CategoryL1__c_help">{! $Label.c.CaseRequiredFields }</div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="Reason" fieldName="Reason" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="Reason_help">{! $Label.c.CaseRequiredFields }</div> 
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="CategoryL2__c" fieldName="CategoryL2__c" />
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="Country__c" fieldName="Country__c" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="Country__c_help">{! $Label.c.CaseRequiredFields }</div>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="CategoryL3__c" fieldName="CategoryL3__c" />
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="Language__c" fieldName="Language__c"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="horizontal-medium">
+                <lightning:inputField aura:id="CategoryL4__c" fieldName="CategoryL4__c" />
+            </lightning:layoutItem>
+            
+            <!-- Section: Vehicle Information-->
+            <lightning:layoutItem size="12"><h3 class="slds-section-title--divider">{!$Label.c.CreateCase_VehicleInfo}</h3></lightning:layoutItem>
+            <lightning:layoutItem size="12" padding="horizontal-medium">
+                <lightning:helptext content="{!$Label.c.CreateCase_AssetHelpText}" />
+                <lightning:inputField aura:id="AssetId" fieldName="AssetId" label="test" />
+            </lightning:layoutItem>
+            
+            <!-- Section: Contact Information-->
+            <lightning:layoutItem size="12"><h3 class="slds-section-title--divider">{!$Label.c.CreateCase_ContactInfo}</h3></lightning:layoutItem>
+            <lightning:layoutItem size="12" padding="horizontal-medium">
+                <lightning:helptext content="{!$Label.c.CreateCase_ContactHelpText}" />
+                <lightning:inputField aura:id="ContactId" fieldName="ContactId" />
+            </lightning:layoutItem>
+            
+            <!-- Section: Account Information-->        
+            <lightning:layoutItem><h3 class="slds-section-title--divider">{!$Label.c.CreateCase_AccountInfo}</h3></lightning:layoutItem>
+            <lightning:layoutItem size="12" padding="horizontal-medium">
+                <lightning:helptext content="{!$Label.c.CreateCase_AccountHelpText}" />
+                <lightning:inputField aura:id="AccountId" fieldName="AccountId" class="customRequired" onchange="{! c.removeRequiredStyles }"/>
+                <div class="slds-form-element__help slds-hide" aura:id="AccountId_help">{! $Label.c.CaseRequiredFields }</div> 
+            </lightning:layoutItem>
+        </lightning:layout>
+
+    </lightning:recordEditForm>
+</aura:component>

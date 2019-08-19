@@ -1,0 +1,44 @@
+<aura:component implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+	
+    <aura:attribute access="private" name="messageToSend" type="String" default=""/>
+    <aura:attribute access="private" name="messageReceived" type="String" default=""/>
+    <aura:attribute access="private" name="error" type="String" default=""/>
+    
+
+    <aura:attribute name="SFDCHost" type="String" default=""/>
+    <aura:attribute name="SFDCmessage" type="String" default=""/>
+    <aura:attribute name="SBOXMessages" type="String" default=""/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <div>
+		<div class="slds-grid slds-gutters">
+		  <div class="slds-col">
+		     <lightning:input type="text" label="Message to send to Service Box App:" name="messageToSend" value="{!v.SFDCmessage}"/>
+		  </div>
+		  <div class="slds-col">
+		    <lightning:textArea label="Messages Received from Service Box App:" value="{!v.SBOXMessages}"/>
+	        <br/>
+	        <aura:if isTrue="{! !empty(v.error)}">
+	            <lightning:textarea name="errorTextArea" value="{!v.error}" label="Error: "/>
+	        </aura:if>
+		  </div>
+		</div>    
+        <br/>
+        <div class="slds-align_absolute-center">
+            <!--<lightning:button aura:id="Search" label="Send" variant="brand" iconName="utility:search" iconPosition="left" onclick="{!c.sendMessage}"/>-->
+            <lightning:button aura:id="Search" label="Service BOx" variant="brand" iconName="utility:search" iconPosition="left" onclick="{!c.sendToSBOX}"/>
+        </div>
+        <br/>
+
+		<!-- <iframe aura:id="vfFrame" src="https://networkservice.citroen.com/agenda/planningReceptionnaire.action?isincluded=truelt;jbnRedirect=#" style="width: 100%; height: 600px;" frameborder="0"/> -->
+		<iframe aura:id="vfFrame" src="https://cedacritest.000webhostapp.com/index.html#" style="width: 100%; height: 600px;" frameborder="0"></iframe>
+    	<!-- CANVAS TEST -->    
+		<!--<force:canvasApp developerName="CanvasAppDemo"/>-->
+		<!-- IFRAME TEST: The app is hosted in a local pc (CapGemini). Access is only available through VNP --> 
+		<!--<iframe aura:id="vfFrame" src="http://localhost:8080/aga00Web/planningReceptionnaire.action" style="width: 100%; height: 800px;" frameborder="0"></iframe>-->
+		<!-- CONTAINER TEST: It doesn't work in Lighting -->
+		<!--<lightning:container aura:id="ServiceBoxTest" src="https://cedacritest.000webhostapp.com/index.html#" onmessage="{!c.handleMessage}"/>-->
+
+	</div>
+</aura:component>

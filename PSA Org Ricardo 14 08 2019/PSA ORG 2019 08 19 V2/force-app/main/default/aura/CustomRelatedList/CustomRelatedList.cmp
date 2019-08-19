@@ -1,0 +1,32 @@
+<aura:component access="GLOBAL" controller="CustomRelatedListController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId">
+
+	<aura:attribute type="String" name="title" description="Related List title. Allows custom labels, ie. $Label.c.LabelName." required="true" default="Custom Related List"/>
+	<aura:attribute type="String" name="childSObject" description="Salesforce object API name." required="true" default="Account"/>
+	<aura:attribute type="String" name="parentField" description="Lookup field API name from child to parent." required="true" default="AccountId"/>
+	<aura:attribute type="String" name="fieldSet" description="Field set API name."/>
+	<aura:attribute type="String" name="fields" description="Comma separated list of fields."/>
+	<aura:attribute type="String" name="filter" description="SOQL WHERE clause to filter showed records."/>
+	
+	<aura:attribute type="List" name="columns"/>
+	<aura:attribute type="List" name="records" description="Child records to given parent object and record id."/>
+
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+
+	<lightning:spinner aura:id="cmpSpinner" class="slds-show" variant="brand" style="z-index: 100"/>
+
+	<lightning:card variant="narrow">
+		<aura:set attribute="title">
+			<lightning:icon iconName="standard:campaign" size="medium"/>
+			{! v.title } ({! v.records.length })
+		</aura:set>
+	</lightning:card>
+
+	<lightning:datatable
+		columns="{! v.columns }"
+		data="{! v.records }"
+		keyField="Id"
+		hideCheckboxColumn="true"
+		showRowNumberColumn="false"
+	/>
+
+</aura:component>

@@ -1,0 +1,46 @@
+<aura:component access="GLOBAL"  controller="PDFReader" implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
+	
+	<aura:attribute name="pdfData" type="String"/>
+	<aura:attribute name="pdfContainer" type="Aura.Component[]"/>
+	<!-- <aura:handler name="render" value="{!this}" action="{!c.doInit}"/> -->
+
+   <!--  <aura:attribute type="Map" name="attributesByGlobalSetting"  description="Contains all attributes returned by GlobalSettings." />
+	<c:GlobalSettings aura:id="GlobalSettings" globalSettings="QuoteToPDF" attributes="QuoteToPDF_URL" targetResult="{! v.attributesByGlobalSetting }" runInit="true"/>
+
+	--> 
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	
+	<!-- BEGIN - Manuel Medina - C1STAGILE-5479 - Allows redirect to a QuickAction - 25042019 -->
+	<aura:registerEvent name="sendEmail" type="c:SendEmailEvent"/>
+	<!-- BEGIN - Manuel Medina - 25042019 -->
+
+	<aura:html tag="style">
+		.cuf-content {
+			padding: 0 0rem !important;
+		}
+		.slds-modal__container{
+		   max-width  : 70rem !important;
+		   width      : 90% !important;
+		}
+		.slds-p-around--medium {
+			padding: 0rem !important;
+		}       
+		.slds-modal__content{
+			overflow-y:hidden !important;
+			height:unset !important;
+			max-height:unset !important;
+		}
+	</aura:html>
+
+	{!v.pdfContainer}
+	
+	<div class="modal-footer slds-modal__footer">        
+		<lightning:button variant="brand" label="{! $Label.c.QuotesPDFButton1 }" onclick="{! c.downloadPDF }" />
+		<!-- BEGIN - Manuel Medina - C1STAGILE-5479 - New button to send email with generated PDF - 25042019 -->
+		<lightning:button variant="brand" label="{! $Label.c.QuotesPDFButton2 }" onclick="{! c.sendEmail }" />
+		<!-- BEGIN - Manuel Medina - 25042019 -->
+		<lightning:button variant="neutral" label="{! $Label.c.QuotesPDFButton3 }" onclick="{! c.cancelBtn }" />
+	</div>
+
+</aura:component>

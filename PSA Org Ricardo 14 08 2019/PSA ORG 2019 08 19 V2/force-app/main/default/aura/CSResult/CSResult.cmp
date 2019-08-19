@@ -1,0 +1,143 @@
+<aura:component controller="CSResultAController" implements="force:hasRecordId" access="global">
+    <!-- This component has the following attributes
+        object - Specify the API name of the object from where you need to retrieve the records
+        fields - Specify the list of columns you wants to display in the table. You have to mention the API name of the object fields
+        pageSize - Specify the number of records you wants to display per page 
+        order - Specify a field to sort records by 
+        paginate - If false, paginator is not shown and infinite scroll is activated
+        whereclause - Optional where clause -->
+    <aura:attribute name="object" type="String" default="RecentlyViewed" access="global"/> 
+    <aura:attribute name="relobject" type="String" default="" access="global"/>
+    <aura:attribute name="objecttype" type="String" default="B2B" access="global"/>
+    <aura:attribute name="latestRecords" type="sObject[]" />
+    <aura:attribute name="latestRecordsAccess" type="Map" />
+    <aura:attribute name="fields" type="String" default="Id" access="global"/>
+    <aura:attribute name="order" type="String" default="Id" />
+    <aura:attribute name="whereclause" type="String" default="" access="global"/>
+    <aura:attribute name="wheresosl" type="String" default="" access="global"/>
+	<aura:attribute name="filter" type="boolean" default="false" access="global"/>
+    <aura:attribute name="title" type="String" />
+    <!-- 
+	GAS-TMP uncomment init
+    -->
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+
+    
+    <aura:handler event="c:CSResultEvent" name="PageChange" action="{!c.pageChange}"/>
+	<aura:handler event="c:onOpenStaticModal" name="ModalShow" action="{!c.onOpenStaticModal}" />
+    <aura:method name="dataFilter" action="{!c.doInit}" access="global" />
+
+    <!-- Infinite Scroll -->
+    <aura:attribute name="paginate" type="boolean" default="true" />
+    <aura:attribute name="recordsShown" type="Integer" default="0"/>
+    <aura:attribute name="scrollCheckIntervalId" type="integer" />
+	<aura:attribute name="recordsPerPage" type="List" default="10" />
+
+    <aura:attribute name="labelList" type="String[]" />
+    <aura:attribute name="fieldList" type="String[]" />
+    <aura:attribute name="page" type="integer" default="1"/>
+    <aura:attribute name="pages" type="integer" default="1"/>
+    <aura:attribute name="total" type="integer" default="100"/>
+    <aura:attribute name="pageSize" type="String" default="5" />
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="message" type="String"/>
+    <aura:attribute name="secretvalue" type="String"/>
+    <aura:attribute name="selectedrecord" type="String"/>
+
+    <aura:attribute name="allowSelection" type="boolean" default="false"/>
+    <aura:attribute name="checkFieldValue" type="boolean"/>
+
+
+    <!-- Begin static Modal-->
+    <c:Modal aura:id="theStaticModal" title="Secret Question" isDirectional="true" isLarge="false" hasCloseIcon="true">
+        <aura:set attribute="tagline">
+            {!$Label.c.SecretQuestionMessage}
+        </aura:set>
+        <lightning:input aura:id="FieldSecret" label="" />
+    	<aura:set attribute="footer">
+			<lightning:button label="Cancel" onclick="{!c.onCancel}" />
+			<lightning:button variant="brand" label="Confirm" onclick="{!c.onConfirm}" />
+		</aura:set>
+    </c:Modal>
+    <!--End static Modal -->
+    <lightning:card aura:id="cmpResultBox" title="">
+        <aura:if isTrue="{!not(empty(v.title))}">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__body slds-truncate">
+                        <h2>
+                            <span class="slds-text-heading--small">{!v.title}</span>
+                        </h2>
+                    </div>
+                </header>
+            </div>
+        </aura:if>
+        <div class="slds-card__body slds-scrollable--y">
+            <aura:if isTrue="{!v.recordsShown>0}" >
+                
+                <table class="slds-table slds-table--bordered slds-table-cell-buffer slds-max-medium-table_stacked-horizontal" aura:id="tableresult">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                                 <aura:if isTrue="{!v.allowSelection}">
+                                    <th class="slds-truncate" aura:id="theaderCheck">
+                                        <ui:inputCheckbox value="{!v.checkFieldValue}" change="{!c.checkChange}" aura:id="checkField" label=""/>
+                                    </th>
+                                </aura:if>
+                            <aura:iteration items="{!v.labelList}" var="label" indexVar="varindex">
+                                <th class="slds-is-sortable slds-truncate" scope="col" id="{!label}" onclick="{!c.order}" aura:id="theader">{!label}
+                                    <lightning:icon class="arrow" aura:id="arrow" iconName="utility:arrowdown" size="x-small"/>
+                                </th>
+                            </aura:iteration>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.latestRecords}" var="record" >
+                            <tr>
+                                <aura:if isTrue="{!v.allowSelection}">
+                                    <td class="">
+                                        <ui:inputCheckbox text="{!record.Id}" value="" change="{!c.checkRowChange}" aura:id="checkFieldRow" label=""/>
+                                    </td>
+                                </aura:if>
+                                <aura:iteration items="{!v.fieldList}" var="field" indexVar="index">
+                                    <td  class="slds-cell-wrap">
+                                       <c:CSResultField record="{!record}" fieldName="{!field}" latestRecordsAccess="{!v.latestRecordsAccess}"/>
+  									</td>
+                                </aura:iteration>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </aura:if>
+            <br/>
+            <aura:if isTrue="{!v.recordsShown==0}" >
+                <div class="slds-text-align_center">{!$Label.c.NoResults}</div>
+            </aura:if>
+        </div>
+        <div class="slds-card__footer">
+            <aura:if isTrue="{!and(v.recordsShown>0,v.paginate)}" >
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_2-of-3">
+                        <c:CSPaginator page="{!v.page}" pages="{!v.pages}" total="{!v.total}" pagesize="{!v.pageSize}"/>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3 slds-text-align_right" style="padding-right: 1rem;">
+                        <lightning:select aura:id="selectRecordsPerPage" value="{!v.pageSize}" class="select-auto-width" onchange="{!c.changeRecordsPerPage}" variant="label-hidden" label="">
+                            <aura:iteration items="{!v.recordsPerPage}" var="var">
+                                <ui:inputSelectOption text="{!var.value}" label="{!var.label}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+            </aura:if>
+        </div>      
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--medium slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">{!$Label.c.Loading}</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+    </lightning:card>
+</aura:component>

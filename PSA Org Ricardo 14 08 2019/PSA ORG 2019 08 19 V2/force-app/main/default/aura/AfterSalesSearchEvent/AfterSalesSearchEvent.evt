@@ -1,0 +1,7 @@
+<aura:event type="APPLICATION" description="Display search results">
+    <aura:attribute name="searchByAccount" type="String"/>
+    <aura:attribute name="searchByAsset" type="String"/> 
+    <aura:attribute name="myoRecord" type="Object"/> 
+    <aura:attribute name="refreshData" type="Boolean" default="true"/> 
+ 	<aura:attribute name="doSearch" type="Boolean" default="true"/> 
+</aura:event>

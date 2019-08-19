@@ -1,0 +1,38 @@
+<aura:component controller="CL002_CreateRecordController" implements="force:hasRecordId,force:lightningQuickAction" access="global">
+    
+	<!-- <aura:handler name="init" value="{!this}" action="{!c.fetchListOfRecordTypes}"/> -->
+	
+	<aura:attribute name="lstOfRecordType" type="List" />
+	<aura:attribute name="isOpen" type="boolean" default="false" />
+  <aura:attribute name="ManageCallback" type="boolean" default="false" />
+	<aura:attribute name="rtselected" type="String" default="" />	
+  <aura:attribute name="objectName" type="String" default=""/>
+  <!--  -->
+  <aura:attribute name="windowHash" type="String" default=""/>
+  <aura:attribute name="bExecute" type="boolean"/>
+  <aura:attribute name="bCreate" type="boolean"/>
+  <aura:attribute name="bCallback" type="boolean" default="true" />
+  <!--  -->
+  <!-- <aura:handler event="force:showToast" action="{!c.handleToastEvent}"/> -->
+  <!--  -->
+	<aura:method name="dataLoad" action="{!c.onOpenStaticModal}" access="global" />
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+	<c:Modal aura:id="theStaticModal" title="{!$Label.c.CreateRecordModalTitle + ' ' + sObjectName}" isDirectional="true" isLarge="false" hasCloseIcon="true">
+        	<fieldset class="slds-form-element">
+  				<legend class="slds-form-element__legend slds-form-element__label">{!$Label.c.CreateRecordFieldTitle}</legend>
+ 					<lightning:radioGroup aura:id="customsearchSelection"
+                        	name="searchSelection"
+                        	label=""
+                        	options="{!v.lstOfRecordType}"
+                        	value="{!v.rtselected}"
+                        	onchange="{!c.onRadioGroup }"
+                        	required="true" />
+				</fieldset>
+    	<aura:set attribute="footer">
+			<lightning:button label="{!$Label.c.LeadAssigmentButtonCancel}" onclick="{!c.onCancel}" />
+			<lightning:button variant="brand" label="{!$Label.c.Next}" onclick="{!c.onCreateRecord}" />
+		</aura:set>
+    </c:Modal>
+
+</aura:component>

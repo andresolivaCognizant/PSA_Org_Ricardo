@@ -1,0 +1,30 @@
+<aura:component controller="FlowOppTypeInputController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,lightning:availableForFlowScreens" access="public">
+
+	<ltng:require scripts="{!join(',',$Resource.LightningUtilsLib)}"
+	afterScriptsLoaded="{!c.doLibLoaded}" />
+
+	<!-- input  -->
+	<aura:attribute name="accountId" type="String" access="public"/>
+	<aura:attribute name="country" type="String" access="public"/>
+	<aura:attribute name="brand" type="String" access="public"/>
+
+	<!-- output -->
+	<aura:attribute name="type" type="String" access="public"/>
+	<aura:attribute name="oppId" type="String" access="public"/>
+
+	<!-- private atts -->
+	<aura:attribute name="lstTypes" type="List" access="private"/>
+	<aura:attribute name="lstOpportunities" type="List" access="private"/>
+		
+
+	
+	<lightning:combobox name="typeSelection" aura:id="typeSelection" label="{!$Label.c.AfterSalesBVVType + ':'}" options="{!v.lstTypes}" 
+		style="max-width: 700px" value="{!v.type}" onchange="{!c.loadOpportunities}" class="slds-m-bottom_large"
+		required="true"/>
+	
+
+	<lightning:combobox name="opportunitySelection" aura:id="opportunitySelection" label="{!$Label.c.Opportunity + ':'}" 
+		options="{!v.lstOpportunities}" value="{!v.oppId}" style="max-width: 700px" class="slds-m-bottom_large"/>
+
+
+</aura:component>

@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Event to set country to Algeria in the community">
+    <aura:attribute name="country" type="String"/>
+</aura:event>

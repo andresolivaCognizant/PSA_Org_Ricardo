@@ -1,0 +1,18 @@
+<apex:page standardController="Lead">
+    <apex:includeScript value="/lightning/lightning.out.js" />
+
+    <script>
+        $Lightning.use("c:AppCTI", function() {
+            $Lightning.createComponent(
+                "c:SearchPageCTI",
+                {},
+                "tree",
+                function(cmp) {
+                    console.log("Component created!");
+                    console.log(cmp);
+                });
+            });
+    </script>
+    
+    <div id="tree"></div>
+</apex:page>

@@ -1,0 +1,4 @@
+<design:component>
+    <design:attribute name="object" label="Object Name" default="Opportunity" description="Name of the object" />
+    <design:attribute name="title" label="List View Title" default="Opportunities" description="Title for the List View" />
+</design:component>

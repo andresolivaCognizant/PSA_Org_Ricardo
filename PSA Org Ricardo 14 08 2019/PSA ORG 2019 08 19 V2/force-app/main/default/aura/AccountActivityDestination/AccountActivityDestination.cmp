@@ -1,0 +1,93 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" 
+                access="global"
+                controller="CustomerPortfolioTransfer"
+                >
+
+  <!-- handlers-->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  <aura:handler event="c:CustomerPortfolioTransferSource" action="{!c.handleEvent}"/>
+
+  <!-- attributes -->
+  <aura:attribute type="Map" name="config_obj" default="{}"/>
+  <aura:attribute type="Map" name="user_input_obj" default="{}"/>
+
+  <aura:registerEvent name="evt" type="c:CustomerPortfolioTransferDestination"/>
+
+  <lightning:card title="Destination" iconName="standard:product_request_line_item">
+
+    <aura:set attribute="footer">
+      <lightning:button label="{! v.config_obj.next_btn.label ? v.config_obj.next_btn.label : 'Select'}" 
+                        variant="{! v.config_obj.next_btn.variant ? v.config_obj.next_btn.variant : 'brand'}" 
+                        title="Select Source"
+                        disabled="{!v.config_obj.next_btn.disabled}"
+                        onclick="{!c.handleClick}"/>
+    </aura:set>
+
+    <div style="position: relative;">
+      <div style="z-index:2;">
+        <lightning:layout multipleRows="true">
+
+          <lightning:layoutItem size="12" padding="horizontal-medium">
+            <lightning:select name="_vn_contract_number" 
+                              label="VN Contract Number"
+                              required="true"
+                              value="{!v.user_input_obj.destination.vn_contract}"
+                              onchange="{!c.handleSelectChange}"
+                              disabled="{!v.config_obj.vn_contract.disabled}"
+                              >
+              <option value="">None</option>
+              <aura:iteration items="{!v.config_obj.vn_contract.options}" var="i">
+                <option value="{!i}">{!i}</option>
+              </aura:iteration>
+            </lightning:select>
+          </lightning:layoutItem>
+
+          <lightning:layoutItem size="12" padding="horizontal-medium">
+            <lightning:select name="_agent_contract_number"
+                              label="Agent Contract Number"
+                              value="{!v.user_input_obj.destination.agent_contract}"
+                              onchange="{!c.handleSelectChange}"
+                              disabled="{!v.config_obj.agent_contract.disabled}"
+                              >
+              <option value="">None</option>
+                <aura:iteration items="{!v.config_obj.agent_contract.options}" var="i">
+                  <option value="{!i}">{!i}</option>
+                </aura:iteration>
+            </lightning:select>
+          </lightning:layoutItem>
+    
+          <lightning:layoutItem size="12" padding="horizontal-medium">
+            <lightning:select name="_user_id"
+                              label="User"
+                              required="true"
+                              value="{!v.user_input_obj.destination.user_id}"
+                              onchange="{!c.handleSelectChange}"
+                              disabled="{!v.config_obj.user_id.disabled}"
+                              >
+              <option value="">None</option>
+              <aura:iteration items="{!v.config_obj.user_id.options}" var="i">
+                <option value="{!i.Id}">{!i.Name}</option>
+              </aura:iteration>
+            </lightning:select>
+          </lightning:layoutItem>
+
+        </lightning:layout>
+      </div>
+      
+      <aura:if isTrue="{! !v.user_input_obj.source}">
+        <div class="slds-align_absolute-center"
+              style="position: absolute; z-index:3; left: 0; top: 0; right:0; bottom:0; background: white;"
+        >
+          No Source Selected
+        </div>
+      </aura:if>
+
+      <!-- invisible block to prevent unintended changes after a destination is selected -->
+      <aura:if isTrue="{!v.config_obj.locked}">
+            <div class="slds-align_absolute-center"
+                style="position: absolute; z-index:4; left: 0; top: 0; right:0; bottom:0"/>
+      </aura:if>
+
+    </div>
+  </lightning:card>
+</aura:component>

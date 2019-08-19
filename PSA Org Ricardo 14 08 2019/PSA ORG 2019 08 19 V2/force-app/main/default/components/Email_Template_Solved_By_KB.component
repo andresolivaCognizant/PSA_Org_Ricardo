@@ -1,0 +1,6 @@
+<apex:component controller="SolvedByKnowledgeTemplateController" access="global">
+ <apex:attribute name="idOfTheCase" description="Id of the case to send" type="String" assignTo="{!caseId}"/>
+ 	<apex:repeat value="{!KnowledgeArticlesRelated}" var="know">
+ 		{!know}   
+ 	</apex:repeat>
+</apex:component>

@@ -1,0 +1,183 @@
+<apex:page showHeader="false"
+  sidebar="false"
+  cache="false" 
+  contentType="text/xml"
+  controller="QuoteExpensesController">
+
+  <block background-color="rgb(0, 0, 0)"
+         color="rgb(255, 255, 255)"
+         text-align="left"
+         font-family="Helvetica"
+         font-size="10">
+    <apex:outputText value="{!UPPER($ObjectType.Expenses__c.labelPlural)}">
+    </apex:outputText>
+  </block>
+
+  <block>
+    <table
+      table-layout="fixed" 
+      width="100%"
+      border-bottom-style="solid">
+      <table-column column-width="5%"/>
+      <table-column column-width="45%"/>
+      <table-column column-width="10%"/>
+      <table-column column-width="25%"/>
+      <table-column column-width="15%"/>
+      <table-body>
+        <!-- table header - begin -->
+        <table-row>
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block
+              text-align="center" 
+              font-family="Helvetica" 
+              font-size="8"
+              font-weight="bold">
+              <apex:outputText value="{!$Label.CpqTemplateTableRowCounter}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block
+              text-align="center" 
+              font-family="Helvetica" 
+              font-size="8"
+              font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Expenses__c.Fields.Name.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block
+              text-align="center" 
+              font-family="Helvetica" 
+              font-size="8"
+              font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Expenses__c.Fields.Price__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block
+              text-align="center" 
+              font-family="Helvetica" 
+              font-size="8"
+              font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Expenses__c.Fields.TotalDiscountAmount__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+           
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block
+              text-align="center" 
+              font-family="Helvetica" 
+              font-size="8"
+              font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Expenses__c.Fields.TotalToPay__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+        
+        </table-row>
+        <!-- table header - end -->
+
+        <apex:repeat var="e" value="{!lstExpenses}">
+          <table-row>
+
+             <table-cell display-align="center" padding="3" border="1pt solid">
+              <block
+                text-align="center" 
+                font-family="Helvetica" 
+                font-size="8">
+                  <apex:outputText value="{!e.index}">
+                  </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block
+                text-align="left" 
+                font-family="Helvetica" 
+                font-size="8">
+                  <apex:outputText value="{!e.obj.FeeType__c}">
+                  </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block
+                text-align="left" 
+                font-family="Helvetica" 
+                font-size="8">
+                  <apex:outputText value="{!e.obj.CurrencyIsoCode & ' ' & TEXT(e.obj.Price__c)}">
+                  </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block
+                text-align="left" 
+                font-family="Helvetica"
+                font-size="8">
+                  <apex:outputText value="{!e.obj.CurrencyIsoCode & ' ' & TEXT(-1 * e.obj.TotalDiscountAmount__c)}">
+                  </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block
+                text-align="left" 
+                font-family="Helvetica"
+                font-size="8">
+                  <apex:outputText value="{!e.obj.CurrencyIsoCode & ' ' & TEXT(e.obj.TotalToPay__c)}">
+                  </apex:outputText>
+              </block>
+            </table-cell>
+          </table-row>
+        </apex:repeat>
+
+        <!-- table footer - begin -->
+        <table-row>
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block
+              text-align="right"
+              font-family="Helvetica"
+              font-size="8"
+              font-weight="bold">
+              <apex:outputText value="{!$Label.CpqTemplateTotal}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block font-family="Helvetica" font-size="8">
+              <apex:outputText value="{!q.CurrencyIsoCode & ' ' & TEXT(-1 * q.ExpensesTotalDiscountAmount__c)}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block font-family="Helvetica" font-size="8">
+              <apex:outputText value="{!q.CurrencyIsoCode & ' ' & TEXT(q.CPQTotalExpenses__c)}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+        
+        </table-row>
+        <!-- table footer - end -->
+
+      </table-body>
+    </table>
+  </block>
+</apex:page>

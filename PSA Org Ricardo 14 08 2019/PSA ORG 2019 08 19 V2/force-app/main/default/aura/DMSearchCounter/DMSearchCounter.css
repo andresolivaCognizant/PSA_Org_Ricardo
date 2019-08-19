@@ -1,0 +1,86 @@
+.THIS .red-light {
+	border-left-color: #da0000;
+	border-left-width: 5px;
+	border-left-style: solid;
+	padding-left: 3px;
+}
+
+.THIS .green-light {
+	border-left-color: #03d000;
+	border-left-width: 5px;
+	border-left-style: solid;
+	padding-left: 3px;
+}
+
+.THIS .counts-container {
+	width: 70% !important;
+}
+
+.THIS .counts-container-indicators {
+	/*padding-left: 10%;
+	padding-right: 10%;*/
+	color: #16325c;
+}
+
+.THIS .counts {
+	background-color: #f7f9fb;
+	border-radius: 5px;
+}
+
+.THIS .counts_small {
+	display: inline-block;
+	border: 0;
+	font-size: 15px;
+	font-weight: 700;
+	text-align: center;
+	color: #16325c;
+}
+
+.THIS .counts_large {
+	display: inline-block;
+	border: 0;
+	font-size: 50px;
+	font-weight: 450;
+	text-align: center;
+	color: #16325c;
+}
+
+.THIS .counts-left-heading {
+	text-align: left;
+	font-size: 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: #16325c;
+}
+
+.THIS .counts-no-actions{
+	border: 1px solid #f7f9fb;
+	background-color: #f7f9fb;
+}
+
+.THIS .counts-actions{
+	border: 1px solid #f7f9fb;
+	background-color: #f7f9fb;
+	border-radius: 5px;
+}
+
+.THIS .counts-actions:hover {
+	background-color: rgba(25, 124, 190, 0.05);
+}
+
+.THIS .counts-actions:acive {
+	background-color: rgb(238, 241, 246);
+}
+
+.THIS .counts-actions_button{
+	padding-left: 1rem;
+	padding-right: 1rem;
+	text-align: center;
+	vertical-align: middle;
+	border: 1px solid rgb(217, 219, 221);
+	-webkit-transition: border .15s linear;
+	transition: border .15s linear;
+	border-color: rgb(216, 221, 230);
+	background-color: rgb(255, 255, 255);
+}

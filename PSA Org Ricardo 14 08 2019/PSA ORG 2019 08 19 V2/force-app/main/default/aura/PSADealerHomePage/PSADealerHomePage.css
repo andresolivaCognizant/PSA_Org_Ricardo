@@ -1,0 +1,46 @@
+.THIS .sfaTaskList .slds-page-header  {
+	padding-left:12px;
+	padding-right:12px;
+	background-color: #f7f9fb !important;
+}
+
+.THIS .slds-icon-standard-lead svg.slds-icon,
+.THIS .slds-icon-standard-task svg.slds-icon,
+.THIS .slds-icon-standard-dashboard svg.slds-icon,
+.THIS .slds-icon-standard-event svg.slds-icon {
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+
+.THIS .slds-icon-standard-task span.uiImage {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.THIS .slds-icon-standard-task img.icon {
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+
+.THIS div.left-1-container,
+.THIS div.right-1-container,
+.THIS div.right-2-container,
+.THIS div.fullwidth-1-container {
+	border: solid 1px #d8dde6 !important;
+	border-radius: 4px;
+	margin:10px;
+}
+
+.THIS .left-1-container .slds-table {
+    min-height:200px;
+}
+
+.THIS .fullwidth-1-container div.forceCalendar {
+	z-index:1; 
+}

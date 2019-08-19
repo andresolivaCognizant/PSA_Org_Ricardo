@@ -1,0 +1,8 @@
+<design:component label="Custom Related List">
+	<design:attribute name="title" label="Title" description="Related List title. Allows custom labels, ie. $Label.c.LabelName." required="true"/>
+	<design:attribute name="childSObject" label="Object" description="Salesforce object API name." required="true"/>
+	<design:attribute name="parentField" label="Lookup Field" description="Lookup field API name from child to parent." required="true"/>
+	<design:attribute name="fieldSet" label="Field Set" description="Field set API name."/>
+	<design:attribute name="fields" label="Fields" description="Comma separated list of fields."/>
+	<design:attribute name="filter" label="Filter" description="SOQL WHERE clause to filter showed records."/>
+</design:component>

@@ -1,0 +1,137 @@
+{
+  "0" : [
+    {
+      "label"     : "Invoice Id",
+      "type"      : "button",
+      "typeAttributes" : {
+        "label"   : {"fieldName" : "id"},
+        "title"   : "Click to view details",
+        "name"    : "view_interventions",
+        "class"   : "btn_next",
+        "variant" : "base"
+      }
+    },
+    {
+      "label"     : "Date",
+      "type"      : "text",
+      "fieldName" : "strDate"
+    },
+    {
+      "label"     : "Intervention",
+      "type"      : "text",
+      "fieldName" : "strDescription"
+    },
+    {
+      "label"     : "Mileage",
+      "type"      : "text",
+      "fieldName" : "kilometrage"
+    },
+    {
+      "label"     : "Amount",
+      "type"      : "text",
+      "fieldName" : "strAmount"
+    },
+    {
+      "label"     : "Folder",
+      "type"      : "text",
+      "fieldName" : "dossierId"
+    },
+    {
+      "label"     : "Imputation",
+      "type"      : "text",
+      "fieldName" : "strImputation"
+    }
+  ],
+  "1" : [
+    {
+      "label"     : "Intervention Number",
+      "type"      : "button",
+      "typeAttributes" : {
+        "label"   : {"fieldName" : "id"},
+        "title"   : "Click to view details",
+        "name"    : "view_parts",
+        "class"   : "btn_next",
+        "variant" : "base"
+      }
+    },
+    {
+      "label"     : "Description",
+      "type"      : "text",
+      "fieldName" : "libelle"
+    },
+    {
+      "label"     : "Imputation",
+      "type"      : "text",
+      "fieldName" : "imputationType"
+    },
+    {
+      "label"     : "Price (1)",
+      "type"      : "text",
+      "fieldName" : "prixTtc"
+    },
+    {
+      "label"     : "Price (2)",
+      "type"      : "text",
+      "fieldName" : "prixHt"
+    }
+  ],
+  "2" : [
+    {
+      "label"     : "Part Description",
+      "type"      : "text",
+      "fieldName" : "libelle"
+    },
+    {
+      "label"     : "Part Reference",
+      "type"      : "text",
+      "fieldName" : "reference"
+    },
+    {
+      "label"     : "Quantity",
+      "type"      : "text",
+      "fieldName" : "quantite"
+    },
+    {
+      "label"     : "Unit Price",
+      "type"      : "text",
+      "fieldName" : "prixTtc"
+    },
+    {
+      "label"     : "Price",
+      "type"      : "text",
+      "fieldName" : "strSubTotal"
+    }
+  ],
+  "3" : [
+    {
+      "label"     : "Operation Description",
+      "type"      : "text",
+      "fieldName" : "libelle"
+    },
+    {
+      "label"     : "Operation Code",
+      "type"      : "text",
+      "fieldName" : "code"
+    },
+    {
+      "label"     : "Operation Type",
+      "type"      : "text",
+      "fieldName" : "type"
+    },
+    {
+      "label"     : "Time",
+      "type"      : "text",
+      "fieldName" : "tempsFacture"
+    },
+    {
+      "label"     : "Price Tax Not Included",
+      "type"      : "text",
+      "fieldName" : "prixTtc"
+    },
+    {
+      "label"     : "Price Tax Included",
+      "type"      : "text",
+      "fieldName" : "prixHt"
+    }
+  ]
+}

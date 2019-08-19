@@ -1,0 +1,46 @@
+<aura:component implements="forceCommunity:layout,forceCommunity:availableForAllPageTypes" 
+	controller="DMSearchCountersController" access="global">
+
+	<aura:attribute type="Map" name="metricsData" default="{'toReceive':'0','received':'0'}" />
+	<aura:attribute type="Boolean" name="runInit" description="" default="true"/>
+
+	<aura:attribute name="vTotals" type="String" default="0" description="Counter 1"/>
+	<aura:attribute name="vSelected" type="String" default="0" description="Counter 3"/>
+	<aura:attribute name="vMembers" type="String" default="0" description="Counter 3"/>
+
+	<!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}" /> -->
+	
+	<aura:method name="reloadCounters" action="{! c.reloadCounters }" description="Allow reload counters from parent components.">
+		<aura:attribute type="Function" name="callback" description="Result"/>
+	</aura:method>
+	
+	<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large slds-p-top_medium">
+	
+		<lightning:layoutItem flexibility="auto" class="custom-box slds-border_left" size="4">
+		
+			<c:DMSearchCounter
+				leftCounter="{! v.vTotals }"
+				leftCounterText="{!$Label.c.DMSTotalButton}"
+			/>
+		</lightning:layoutItem>
+		
+		<lightning:layoutItem flexibility="auto" class="custom-box" size="4">
+			
+			<c:DMSearchCounter
+				leftCounter="{! v.vMembers }"
+				leftCounterText="{!$Label.c.DMSMembersButton}"
+			/>
+			
+		</lightning:layoutItem>
+		
+		<lightning:layoutItem flexibility="auto" class="custom-box" size="4">
+			<c:DMSearchCounter
+				leftCounter="{! v.vSelected }"
+				leftCounterText="{!$Label.c.DMSSelectedButton}"
+			/>
+			
+		</lightning:layoutItem>
+		
+	</lightning:layout>
+	
+</aura:component>

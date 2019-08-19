@@ -1,0 +1,29 @@
+<aura:component >
+    <aura:attribute name="userBrand" type="String" />
+
+    <aura:if isTrue="{! v.userBrand == 'DS' }">
+        <div class="brand-logo-single">
+            <img alt="DS" src="{! $Resource.DS_Logo }" title="DS" style="height:50px;margin-top:0" />
+        </div>
+    </aura:if>
+    <aura:if isTrue="{! v.userBrand == 'AP' }">
+        <div class="brand-logo-single">
+            <img alt="Peugeot" src="{! $Resource.Peugeot_Logo }" title="Peugeot" style="height:50px;margin-top:0" />
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{! v.userBrand == 'AC' }">
+        <div class="brand-logo-single">
+            <img alt="Citroen" src="{! $Resource.Citroen_Logo }" title="Citroen" style="height:55px;margin-top:0" />
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{! v.userBrand == 'All' }">
+        <div class="brand-logo-all">
+            <img alt="DS" src="{! $Resource.DS_Logo }" title="DS" style="height:46px;margin-top:0" />
+            <img alt="Peugeot" src="{! $Resource.Peugeot_Logo }" style="height:46px;margin-top:6px" />
+            <img alt="Citroen" src="{! $Resource.Citroen_Logo }" style="height:46px;margin-top:10px" />
+        </div>
+    </aura:if>
+
+</aura:component>

@@ -1,0 +1,127 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId"
+                controller="TeleAlertStatusChangeController">
+
+  <aura:html tag="style">
+    .modal-body {
+      height      : unset !important;
+      max-height  : 900px !important;
+    }
+
+    .cuf-content {
+      padding     :0 !important;
+    }
+
+    .slds-p-around--medium {
+      padding     :0 !important;
+    }
+    
+    .slds-modal__container{
+      width       :100% !important; // You can update the width as per your need
+      max-width   :100% !important;
+    }
+
+    .slds-modal__content{
+      position    : relative !important;
+      overflow-y  : hidden !important;
+      overflow-x  : hidden !important;
+      //height      :unset !important;
+      max-height  : unset !important;
+    }
+  </aura:html>
+
+  <!-- attributes -->
+  <aura:attribute name="data" type="List"/>
+  <aura:attribute name="columns" type="List"/>
+  <aura:attribute name="status" type="List"/>
+  <aura:attribute type="TeleAlert__c" name="lds_record"/>
+  <aura:attribute type="Object" name="child"/>
+  <aura:attribute type="Map" name="input_obj"/>
+  <aura:attribute name="recordLoadError" type="String"/>
+
+  <aura:attribute name="defaultValue" type="String"/>
+  <aura:attribute name="resultCode" type="String"/>
+  <aura:attribute name="resultLabel" type="String"/>
+  <aura:attribute name="showLoadingSpinner" type="boolean" default="false" access = "global" />
+
+  <!-- handlers-->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+  <aura:attribute name="nav" type="Object"/>
+
+  <force:recordData aura:id="lds_cmp"
+    recordId="{!v.recordId}"
+    fields="APVDealer__c, Status__c, OLBAppointmentID__c, Asset__c"
+    targetRecord="{!v.lds_record}"
+    mode="VIEW" 
+    targetError="{!v.recordLoadError}"
+    targetFields="{!v.child}"/>
+
+  <header class="slds-modal__header">
+    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+      {!$Label.c.TeleAlert_Change_Status}
+    </h2>
+  </header>
+  <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+  <aura:if isTrue="{!v.showLoadingSpinner}">
+    <div class="exampleHolder">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+    </div>
+  </aura:if>
+    <aura:if isTrue="{!v.nav.step lt 10}">
+      <lightning:recordEditForm aura:id="ltng_form" recordId="{!v.recordId}" objectApiName="TeleAlert__c">
+        <lightning:messages/>
+        <lightning:inputField fieldName="Status__c" onchange="{!c.changeStatus}"/>
+      </lightning:recordEditForm>
+    </aura:if>
+    <aura:if isTrue="{!and(v.nav.step gt 9,  v.nav.step lt 20)}">        
+                <lightning:select aura:id="select" name="select" label="Status" class="label-hidden" value="{!v.defaultValue}" onchange="{!c.onChange}">
+                  <option value="">None</option>
+                  <aura:iteration items="{!v.status}" var="s">
+                    <option value="{!s.Code__c}">{!s.MasterLabel}</option>
+                  </aura:iteration>
+                </lightning:select>
+             </aura:if>
+    <aura:if isTrue="{!v.nav.step eq 20}">
+      <lightning:recordEditForm aura:id="ltng_Coments" recordId="{!v.child.Asset__c}" objectApiName="Asset">
+        <lightning:messages/>
+        <lightning:inputField fieldName="TeleAlertsComments__c"/>
+      </lightning:recordEditForm>
+    </aura:if>
+  </div>
+  <footer class="slds-modal__footer slds-m-top_small">
+    <lightning:layout verticalAlign="center">
+      <lightning:layoutItem>
+        <lightning:button label="{!$Label.c.TeleAlert_Cancel}" variant="brand" onclick="{!c.closeButton}"/>
+      </lightning:layoutItem>
+      <lightning:layoutItem flexibility="grow">
+        <div class="slds-progress slds-progress_shade">
+          <ol class="slds-progress__list">
+            <li class="{!v.nav.progress_itm[0].class}">
+              <button class="{!v.nav.progress_itm[0].btn_class}">
+                <aura:if isTrue="{!v.nav.progress_itm[0].icon}">
+                  <lightning:icon iconName="utility:success" size="xx-small"/>
+                </aura:if>
+                <span class="slds-assistive-text">Step 1 - Active</span>
+              </button>
+            </li>
+            <li class="{!v.nav.progress_itm[1].class}">
+              <button class="{!v.nav.progress_itm[1].btn_class}">
+                <aura:if isTrue="{!v.nav.progress_itm[1].icon}">
+                  <lightning:icon iconName="utility:success" size="xx-small"/>
+                </aura:if>
+                <span class="slds-assistive-text">Step 2</span>
+              </button>
+            </li>
+          </ol>
+          <div class="slds-progress-bar slds-progress-bar_x-small" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" role="progressbar">
+            <span class="slds-progress-bar__value" style="{!v.nav.progress_bar}">
+              <span class="slds-assistive-text">Progress: 0%</span> 
+            </span>
+          </div>
+        </div>
+      </lightning:layoutItem>
+      <lightning:layoutItem>
+        <lightning:button label="{!v.nav.btn_label}" variant="brand" disabled="{!v.nav.btn_disabled}" onclick="{!c.handleClick}" /> 
+      </lightning:layoutItem>
+    </lightning:layout>
+  </footer>
+</aura:component>

@@ -1,0 +1,60 @@
+.THIS .leadIcon .slds-icon {
+    width: 16px;
+    height: 19px;
+    fill: #0070d2;
+}
+
+.THIS .traffic-light {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    left-margin: 10px;
+}
+
+.THIS .red-light {
+    color: #c23934;
+    background-color: #c23934;
+    display: inline-block;
+}
+
+.THIS .amber-light {
+    color: #f6a357;
+    background-color: #f6a357;
+    display: inline-block;
+}
+
+.THIS .green-light {
+    color: #00716b;
+    background-color: #00716b;
+    display: inline-block;
+}
+
+.THIS .card-header {
+   	border-radius: 4px;
+    background-color: #ffffff;
+    border: solid 1px #d8dde6 !important;
+}
+
+.THIS .card-body {
+   	border-radius: 4px;
+    background-color: white !important;
+    border: solid 1px #d8dde6;
+}
+
+.THIS .tabs-container .slds-tabs_default__link{
+	width: 98px;
+}
+
+.THIS .slds-icon_container {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+
+.THIS .slds-icon-standard-lead svg {
+    width: 40px;
+    height: 40px;
+    fill: white !important;
+}

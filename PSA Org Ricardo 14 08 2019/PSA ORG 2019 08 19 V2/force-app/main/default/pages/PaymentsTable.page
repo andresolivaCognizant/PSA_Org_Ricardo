@@ -1,0 +1,201 @@
+<apex:page controller="QuoteExpensesController"
+           contentType="text/xml"
+           showHeader="false"
+           sidebar="false"
+           cache="false">
+
+  <block background-color="rgb(0, 0, 0)"
+         color="rgb(255, 255, 255)"
+         text-align="left"
+         font-family="Helvetica"
+         font-size="10">
+    <apex:outputText value="{!UPPER($ObjectType.Payment__c.labelPlural)}">
+    </apex:outputText>
+  </block>
+
+  <block>
+    <table table-layout="fixed" width="100%" border-bottom-style="solid">
+      <table-column column-width="5%"/>
+      <table-column column-width="20%"/>
+      <table-column column-width="25%"/>
+      <table-column column-width="15%"/>
+      <table-column column-width="10%"/>
+      <table-column column-width="10%"/>
+      <table-column column-width="15%"/>
+      <table-body>
+        <!-- table header - begin -->
+        <table-row>
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center" 
+                   font-family="Helvetica" 
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$Label.CpqTemplateTableRowCounter}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Payment__c.Fields.Payment_Method__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Payment__c.Fields.Financial_Institution__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Payment__c.Fields.PaymentDocumentNumber__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Payment__c.Fields.DueDateDocument__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.User.Fields.CurrencyIsoCode.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="center"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$ObjectType.Payment__c.Fields.PaymentAmount__c.Label}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+        </table-row>
+        <!-- table header - end -->
+
+        <apex:repeat var="p" value="{!lstPayment}">
+          <table-row>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="center" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.index}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="left" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.obj.Payment_Method__c}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="left" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.obj.Financial_Institution__c}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="left" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.obj.PaymentDocumentNumber__c}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="left" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.formattedDueDate}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="left" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.obj.CurrencyIsoCode}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+            <table-cell display-align="center" padding="3" border="1pt solid">
+              <block text-align="left" font-family="Helvetica" font-size="8">
+                <apex:outputText value="{!p.obj.CurrencyIsoCode & ' ' & TEXT(p.obj.PaymentAmount__c)}">
+                </apex:outputText>
+              </block>
+            </table-cell>
+
+          </table-row>
+        </apex:repeat>
+
+        <!-- table footer - begin -->
+        <table-row>
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block></block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block text-align="right"
+                   font-family="Helvetica"
+                   font-size="8"
+                   font-weight="bold">
+              <apex:outputText value="{!$Label.CpqTemplateTotal}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+          <table-cell display-align="center" padding="3" border="1pt solid">
+            <block font-family="Helvetica" font-size="8">
+              <apex:outputText value="{!q.CurrencyIsoCode & ' ' & TEXT(q.TotalPayments__c)}">
+              </apex:outputText>
+            </block>
+          </table-cell>
+
+        </table-row>
+        <!-- table footer - end -->
+
+      </table-body>
+    </table>
+  </block>
+</apex:page>

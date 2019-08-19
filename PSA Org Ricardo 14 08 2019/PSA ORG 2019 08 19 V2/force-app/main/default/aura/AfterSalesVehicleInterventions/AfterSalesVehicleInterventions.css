@@ -1,0 +1,55 @@
+.THIS th[data-label="Invoice Id"], .THIS th[data-label="Intervention Number"] {
+	padding-top: 0px;
+	padding-bottom: 0px;
+
+}
+
+.THIS.blue_bar {
+	background-color: rgb(0, 112, 210);
+}
+
+.THIS .btn_next .slds-button:focus {
+
+	box-shadow: none;
+}
+
+.THIS ul.slds-path__nav {
+	margin: 0px;
+}
+
+.THIS .step_disabled .slds-path__link:hover {
+	cursor: not-allowed;
+}
+
+.THIS .slds-section__title-action {
+	background: #f3f2f2;
+}
+
+.THIS .slds-section__title-action:hover {
+	background: #eef1f6;;
+}
+
+.THIS .slds-section__title .slds-grid {
+	width: 100%;
+}
+
+.THIS .red_flag {
+	border-left-color: #da0000;
+	border-left-width: 4px;
+	border-left-style: solid;
+	padding-left: 6px;
+
+}
+
+.THIS .slds-th__action-button{
+	display: none !important;
+}
+
+
+.THIS .slds-has-button-menu .slds-th__action {
+	padding-right: 0.25rem !important;
+}
+
+.THIS .path_layer{
+	z-index: 0;
+}

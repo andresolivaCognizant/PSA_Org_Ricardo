@@ -1,0 +1,22 @@
+<aura:component access="GLOBAL" controller="SendEmailController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader,force:hasRecordId">
+	
+	<aura:attribute type="Boolean" name="launchModal" default="false"/>
+
+	<aura:handler event="c:SendEmailEvent" action="{! c.manageEvent }" />
+
+	<aura:if isTrue="{! v.launchModal }">
+
+		<aura:html tag="style">
+			.slds-modal__container{
+				padding-top: 0 !important;
+			}
+		</aura:html>
+
+		<c:Modal aura:id="sendEmail" isDirectional="true" title="{! $Label.c.SendEmailHeader }" isLarge="false" hasCloseIcon="true">
+		
+			<c:SendEmail recordId="{! v.recordId }" isQuickAction="false"/>
+		
+		</c:Modal>
+	</aura:if>
+
+</aura:component>

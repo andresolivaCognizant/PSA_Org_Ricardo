@@ -1,0 +1,163 @@
+.THIS .traffic-light {
+    height: 9px;
+    width: 3px;
+    padding-left:0;
+    display: inline-block;
+}
+
+.THIS .red-light {
+    background-color: #da0000;
+}
+
+.THIS .amber-light {
+    background-color: #f6a357;
+}
+
+.THIS .green-light {
+    background-color: #00716b;
+}
+
+/*
+.THIS .lead-count {
+    text-align: right;
+    padding-right: 3px;
+    width: 15px;
+}
+*/
+
+.THIS .new-leads-count-container {
+	padding-top:3px;
+	display: flex;
+  	justify-content: center;
+  	align-items: center; 
+  	/* background-color: #f7f9fb; */
+    /* color: #16325c; */
+    height: 82px;
+    /* width: auto; */
+}
+
+.THIS .new-leads-count-container .slds-button {
+    display: inline-block;
+    border: 0;
+    font-size: 86px;
+    font-weight: 300;
+    text-align: center;
+    color: #16325c;
+    height:72px;
+    width: auto;
+}
+
+.THIS .new-leads-metrics {
+    padding-top: 8px; 
+    height: 82px;
+    /*font-family: SalesforceSans; */
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: left;
+    color: #16325c;
+}
+
+.THIS .new-lead-count-heading {
+    text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap
+}
+
+.THIS .new-lead-count {
+    text-align: right;
+    padding-right: 3px;
+    padding-top: 1px;
+    width: 15px;
+    font-weight: bold;
+}
+
+.THIS .priority-leads-count-container {
+	padding-top:3px;
+	display: flex;
+  	justify-content: center;
+  	align-items: center; 
+	padding-top: 9px;
+	text-align: left;
+    height: 82px;
+    /* width: auto;  */
+    /* min-width: 82px; */
+}
+
+.THIS .priority-leads-count-container .slds-button {
+    display: inline-block;
+    border: 0;
+    font-size: 64px;
+    font-weight: 450;
+    text-align: center;
+    color: #16325c;
+    /* background-color: #f7f9fb; */
+    height: 64px;
+    /* width: auto; */
+}
+
+.THIS .priority-leads-count-container .btn-image,
+.THIS .new-leads-count-container .btn-image {
+    border: transparent;
+    /* height: 82px; */
+    width: 0;
+}
+
+.THIS .priority-leads-count-container .slds-button:hover,
+.THIS .new-leads-count-container .slds-button:hover {
+    background: #f7f9fb no-repeat;
+    outline-color: transparent;
+    border: 0;
+}
+
+.THIS .new-leads-count-container .slds-button:focus {
+    outline-color: transparent;
+    border: 0;
+}
+
+.THIS .priority-leads-count-container .slds-button:focus {
+    background: #f7f9fb no-repeat;
+    outline-color: transparent;
+    border: 0;
+}
+
+.THIS .priority-leads-metrics {  	
+    /* font-family: SalesforceSans; */
+    color: #16325c;
+    height: 82px;
+    max-width: 70px;
+    width:auto;
+    font-size: 8px;
+    /* padding-left: 5px; */
+    /* padding-right: 10px; */
+    padding-top: 18px;
+    line-height: 1.25;  
+}
+
+.THIS .priority-lead-count-heading {
+    text-align: left;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap
+}
+
+.THIS .lead-count-label {
+    /* width:35px; */
+    text-align: left;
+    font-size: 8px;
+    line-height: 1.25;
+}
+
+/* BEGIN - Manuel Medina - C1STAGILE-4826 New style to enable font size based on view port - 26092018 */
+.THIS .button-font {
+	font-size: 9vw !important;
+}
+
+@media screen and (min-width: 1200px) {
+	.THIS .button-font {
+		font-size: 64px !important;
+	}
+}
+/* END - Manuel Medina - 26092018 */

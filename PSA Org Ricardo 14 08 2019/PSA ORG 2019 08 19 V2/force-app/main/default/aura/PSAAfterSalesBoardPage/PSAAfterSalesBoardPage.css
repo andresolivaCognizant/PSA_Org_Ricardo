@@ -1,0 +1,74 @@
+.THIS .sfaTaskList .slds-page-header  {
+	padding-left:12px;
+	padding-right:12px;
+	background-color: #f7f9fb !important;
+}
+
+.THIS .left-1-container span.uiImage {
+    width: 40px !important;
+    height: 40px !important;
+}
+.THIS .left-1-container img.icon {
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+
+.THIS div.left-1-container,
+.THIS div.left-2-container {
+	border: solid 1px #d8dde6 !important;
+	border-radius: 4px;
+	margin:10px;
+}
+
+.THIS div.right-1-container,
+.THIS .right-1-container article.container forceRelatedListSingleContainer{
+	margin:10px;
+}
+
+.THIS .right-1-container div.uiTabBar,
+.THIS .right-1-container div.compactFeed {
+	border: solid 1px #d8dde6 !important;
+	border-radius: 4px;
+	padding-top:10px;
+	padding-left:12px;
+	padding-right:12px;
+	padding-bottom:20px;
+}
+
+.THIS .left-1-container div.slds-page-header {
+	position: sticky;
+	z-index:1; 
+}
+.THIS .slds-icon-standard-dashboard svg.slds-icon,
+.THIS .slds-icon-standard-operating-hours svg.slds-icon,
+.THIS .slds-icon-standard-user svg.slds-icon{
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+.THIS .standard-operating-hours img.icon {
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+.THIS .standard-dashboard img.icon {
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}
+.THIS .standard-user img.icon {
+    width: 40px !important;
+    height: 40px !important;
+    fill: white !important;
+    border-radius: 4px;
+    background-color: #1e2336 !important;
+}

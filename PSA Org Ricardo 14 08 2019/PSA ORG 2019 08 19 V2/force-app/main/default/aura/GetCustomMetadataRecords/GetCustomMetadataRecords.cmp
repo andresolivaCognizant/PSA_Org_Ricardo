@@ -1,0 +1,21 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global"  controller="GlobalSettingsUtil">
+	
+	<aura:attribute type="String" name="customMetadata" description="Custom metadata API name." required="true"/>
+	<aura:attribute type="String[]" name="fields" description="List of fields related to given custom metadata." required="true"/>
+	<aura:attribute type="String" name="key" description="A record metadata DeveloperName."/>
+	<aura:attribute type="Boolean" name="getAll" description="Returns all custom metadata records, default is false." default="false"/>
+	<aura:attribute type="Boolean" name="runInit" description="" default="true"/>
+	
+	<aura:attribute type="Map" name="targetResult"  description="Map with all records related to given custom metadata type. Return variable to allow get component result from main components." required="true"/>
+	
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+	
+	<aura:method name="getRecords" action="{! c.getRecords }" description="">
+		<aura:attribute type="String" name="customMetadata" description="Custom metadata API name." required="true"/>
+		<aura:attribute type="String[]" name="fields" description="List of fields related to given custom metadata." required="true"/>
+		<aura:attribute type="String" name="key" description="A record metadata DeveloperName."/>
+		<aura:attribute type="Boolean" name="getAll" description="Returns all custom metadata records, default is false." default="false"/>
+		<aura:attribute type="Function" name="callback" description="Result"/>
+	</aura:method>
+	
+</aura:component>

@@ -1,0 +1,96 @@
+.THIS .psaDarkBlue svg{
+    fill 				: white !important;
+    background-color 	: #1e2336 !important;
+}
+
+.THIS .labelCheckbox {
+     font-size 			: 11px;
+     display: inline-block;
+ }
+.THIS .restrictedCheck {
+     /*padding-top: 27px;*/
+     /*padding-bottom: 10px;*/
+ }
+
+.THIS .searchPanel {
+     margin-top: -20px;
+     padding-right: 0px;
+ }
+
+.THIS .slds-checkbox_faux {
+  height: 1rem;    
+}
+
+.THIS span .slds-checkbox_faux::before {
+  height: 0.75rem !important;
+  
+}
+
+.THIS span .slds-checkbox_faux::after {
+  height: 0.75rem !important;   
+}
+
+.THIS .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux::after{
+    top: -0.05rem !important;
+}
+
+.THIS .header-aftersales-metrics {  	
+    /* font-family: SalesforceSans; */
+    color 				: #16325c;
+    font-size 			: 12px;
+    line-height 		: 1.25;  
+}
+.THIS .slds-scrollable_y {
+	min-height 			: 150px;
+}
+.THIS .slds-card {  	
+    /* font-family: SalesforceSans; */
+    border 				: 0px;
+}
+.THIS .counts-left-heading {
+    text-align: left;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap
+}
+.THIS .red-light {
+    border-left-color: #da0000;
+    border-left-width: 2px;
+    border-left-style: solid;
+    padding-left: 3px;
+}
+
+.THIS .green-light {
+    border-left-color: #03d000;
+    border-left-width: 2px;
+    border-left-style: solid;
+    padding-left: 3px;
+}
+
+.THIS.blue_bar {
+    background-color: rgb(0, 112, 210);
+}
+
+.THIS .wide_grid {
+  width: 100%;
+}
+
+.THIS .red_flag {
+  border-left-color : #da0000;
+  border-left-width : 4px;
+  border-left-style : solid;
+  padding-left      : 6px;
+    
+}
+
+.THIS .green_flag {
+  border-left-color : #03d000;
+  border-left-width : 4px;
+  border-left-style : solid;
+  padding-left      : 6px;
+}
+
+.THIS .btn_fix:hover:not([disabled]), .THIS .btn_fix:focus:not([disabled]) {
+  background-color: #f4f6f9;
+}

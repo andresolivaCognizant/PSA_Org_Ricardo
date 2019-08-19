@@ -1,0 +1,6 @@
+<aura:event type="APPLICATION" description="Execute Pills" Access="global">
+
+	<aura:attribute name="runPillsAcc" type="String"/> 
+	<aura:attribute name="runPillsAss" type="String"/> 
+
+</aura:event>

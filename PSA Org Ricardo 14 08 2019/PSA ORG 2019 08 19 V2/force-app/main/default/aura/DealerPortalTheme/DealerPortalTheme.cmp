@@ -1,0 +1,71 @@
+<aura:component controller="DealerPortalThemeController" implements="forceCommunity:themeLayout" access="global" description="Dealer Portal Theme">
+    <aura:attribute name="search" type="Aura.Component[]" required="false" />
+    <aura:attribute name="profileMenu" type="Aura.Component[]" required="false" />
+    <aura:attribute name="navBar" type="Aura.Component[]" required="false" />
+    <aura:attribute name="newHeader" type="Aura.Component[]" required="false" />
+
+    <aura:attribute name="userRecord" type="User" />
+    <aura:attribute name="userPortalRole" type="String" />
+    <aura:attribute name="brandLogoSource" type="String" />
+
+    
+    <aura:registerEvent name="userControlEvent" type="c:LMAUserPortalControlEvent" />
+    <aura:handler event="c:LMAToggleFilterByUserEvent" action="{!c.handleToggleEvent}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div class="">
+        <div class="header-container">
+            <div class="header-inner-container slds-grid slds-grid_vertical-align-center">
+                <div class="slds-col slds-small-size--1-of-6 slds-large-size--1-of-12 slds-order_2 slds-large-order_1">
+                    <div class="logo-container" onclick="{! c.goToHomePage }">
+                        <a href="javascript:void(0);">
+                            <img alt="PSA Groupe" src="{! $Resource.PSA_Logo_white }" title="PSA Dealer" class="logo_psa_white" />
+                        </a>
+                    </div>
+                </div>
+                <aura:if isTrue="{! v.userRecord.Brand__c == 'DS' }">
+                    <div class="slds-col slds-large-size--1-of-12 slds-medium-size--1-of-6 slds-small-size--1-of-3">
+                        <img alt="DS" src="{! $Resource.DS_Logo }" title="DS" style="height:50px;margin-top:0"/>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{! v.userRecord.Brand__c == 'AP' }">
+                    <div class="slds-col slds-large-size--1-of-12 slds-medium-size--1-of-6 slds-small-size--1-of-3">
+                        <img alt="Peugeot" src="{! $Resource.Peugeot_Logo }" title="Peugeot" style="height:50px;margin-top:0"/>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{! v.userRecord.Brand__c == 'AC' }">
+                    <div class="slds-col slds-large-size--2-of-12 slds-medium-size--1-of-6 slds-small-size--1-of-3">
+                        <img alt="Citroen" src="{! $Resource.Citroen_Logo }" title="Citroen" style="height:55px;margin-top:0"/>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{! v.userRecord.Brand__c == 'All' }">
+                    <div class="slds-col slds-large-size--2-of-12 slds-medium-size--2-of-6 slds-small-size--2-of-3">
+                        <img alt="DS" src="{! $Resource.DS_Logo }" title="DS" style="height:46px;margin-top:0"/>
+                        <img alt="Peugeot" src="{! $Resource.Peugeot_Logo }" style="height:46px;margin-top:6px"/>
+                        <img alt="Citroen" src="{! $Resource.Citroen_Logo }" style="height:46px;margin-top:10px"/>
+                    </div>
+                </aura:if>
+
+                <div class="slds-col slds-large-size--1-of-12 slds-medium-size--1-of-6 slds-small-size--1-of-3">
+                    <c:ThemeNav />
+                </div>
+                <div class="global-search-bar slds-large-size--4-of-12 slds-medium-size--2-of-6 slds-small-size--1-of-3">
+                    {!v.search}
+                </div>
+                <div class="advanced-search-link slds-large-size--2-of-12 slds-medium-size--1-of-6 slds-small-size--1-of-3" onclick="{! c.goToSearchPage }">
+                    <a href="javascript:void(0);">{! $Label.c.LeadAssignmentAdvancedSearch }</a>
+                </div>
+
+                <div class="profile-container slds-large-size--3-of-12 slds-medium-size--2-of-6 slds-small-size--1-of-3">
+                    {!v.profileMenu}
+                </div>
+            </div>
+        </div>
+        <div class="main-content-container">
+
+            <div class="main-content-inner">
+                {! v.body }
+            </div>
+        </div>
+    </div>
+</aura:component>

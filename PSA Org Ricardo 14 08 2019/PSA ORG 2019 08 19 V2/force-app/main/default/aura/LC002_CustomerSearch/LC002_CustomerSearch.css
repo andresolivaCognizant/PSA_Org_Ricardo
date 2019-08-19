@@ -1,0 +1,11 @@
+.THIS .psaDarkBlue svg{
+    fill: white !important;
+}
+.THIS .psaDarkBlue {
+    background-color: #1e2336 !important;
+}
+.THIS.divCard {
+    background-color: #f7f9fb;
+}
+.THIS .slds-scrollable_y {min-height: 150px}
+/* ---for standard icon --- */

@@ -1,0 +1,635 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global" controller="AfterSalesHeaderAssetController">
+
+	<aura:attribute type="Asset" name="currentRecord"/>
+	<aura:attribute type="WorkshopAppointment__c" name="wa"/>
+	<aura:attribute type="AfterSalesHeaderAssetController.WrapperVehicleProperties" name="relatedRecordData"/>
+	<aura:attribute type="Object" name="serviceSelected"/>
+	<aura:attribute type="Object" name="fieldLabels"/>
+	<aura:attribute type="Object" name="opportunity"/>
+	<aura:attribute type="Object" name="oppFields"/>
+	
+	<aura:attribute type="String" name="recordError"/>
+	<aura:attribute type="String" name="recordError_wa"/>
+	<aura:attribute type="String" name="warrantyColor"/>
+	<aura:attribute type="String" name="maintenanceColor"/>
+	<aura:attribute type="String" name="assetId"/>
+	<aura:attribute type="String" name="carURL" default="{! $Label.c.AfterSalesVehicleImageServerUrl }"/>
+	<aura:attribute type="String" name="recordViewFormClass" default="slds-text-align_left slds-grid slds-grid_align-spread slds-grid_vertical-stretch slds-wrap x-large slds-truncate"/>
+	<aura:attribute type="String" name="oppError"/>
+
+	<aura:attribute type="Double" name="waOldRealMileage"/>
+	
+	<aura:attribute type="Boolean" name="reloadRecord" default="true"/>
+	<aura:attribute type="Boolean" name="showErrors" default="false"/>
+	<aura:attribute type="Boolean" name="hasRecordId" default="true"/>
+	<aura:attribute type="Boolean" name="closeToWarrantyEndDate" default="false"/>
+	<aura:attribute type="Boolean" name="createOpp" default="false"/>
+	<aura:attribute type="Boolean" name="oldVehicle" default="false"/>
+	<aura:attribute type="Boolean" name="hasOpp" default="false"/>
+	<aura:attribute type="Boolean" name="warrantyOpp" default="false"/>
+	<aura:attribute type="Boolean" name="maintOpp" default="false"/>
+	<aura:attribute type="Boolean" name="isReturn" default="false"/>
+	<aura:attribute type="Boolean" name="validateRealMileage" default="false"/>
+	<aura:attribute type="Boolean" name="validateRealMileagePopup" default="true"/>
+	<aura:attribute type="Boolean" name="showOwnerIdDMSIcon" default="false"/>
+	<aura:attribute type="Boolean" name="showKeeperIdDMSIcon" default="false"/>
+	
+	<aura:attribute type="Map" name="alerts" default=""/>
+	<aura:attribute type="List" name="contractLineItemsColumns" />
+	<aura:attribute type="String[]" name="fields" default="Country__c, 
+															Brand__c, 
+															WarrantyEndDate__c, 
+															NextTechnicalControlDate__c, 
+															AssetType__c, 
+															FirstRegistrationDate__c, 
+															LastAPVVisitDate__c, 
+															LCDV16__c, 
+															ExteriorTrimColorCode__c, 
+															Brand__c,
+															Model__c,
+															RealMileage__c, 
+															RealMileageDate__c,
+															RealMileageSource__c,
+															EstimatedCurrentMileage__c,
+															LastMaintenanceDate__c,
+															NextMaintenanceDate__c,
+															NextMaintenanceStep__c,
+															NextMaintenanceMileage__c,
+															Eurorepar__c,
+															ProductionDate__c,
+															PurchaseDate,
+															LastKnownRegistrationNumber__c,
+															OrderId__c"/>
+															
+	<aura:registerEvent name="reloadOpps" type="c:AfterSalesOpportunityEvent"/>
+	
+	<aura:handler name="init" value="{! this }" action="{! c.doInit}" />
+	<aura:handler event="force:showToast" action="{! c.handleToastEvent }"/>
+	
+	<force:recordData aura:id="forceWorkshopAppointment"
+		recordId="{! v.recordId }"
+		fields="Asset__c,Owner__c,CurrencyIsoCode,RealMileage__c,AppointmentRepeatRepair__c"
+		targetError="{! v.recordError_wa }"
+		layoutType="FULL"
+		targetRecord="{! v.wa }"
+		mode="EDIT"
+	/>
+	
+	<c:FieldLabels aura:id="fieldLabels"
+		fieldNames="Asset.FirstRegistrationNumber__c,Asset.FirstRegistrationDate__c,Asset.WarrantyEndDate__c,Asset.RealMileage__c,Asset.RealMileageDate__c,Asset.EstimatedCurrentMileage__c,Asset.LastMaintenanceDate__c,Asset.LastAPVVisitDate__c,Asset.NextMaintenanceDate__c,Asset.Eurorepar__c,ServiceContract.Name,ServiceContract.ContractType__c,ServiceContract.StartDate,ServiceContract.EndDate,ServiceContract.SubscribedMileage__c,ServiceContract.ContractStatus__c,Product2.Name,ContractLineItem.LineItemNumber,ContractLineItem.StartDate,ContractLineItem.EndDate,ContractLineItem.SubscribedDuration__c,ContractLineItem.SubscribedMileage__c,ContractLineItem.Quantity,ContractLineItem.Quantity__c"
+		fieldLabels="{! v.fieldLabels }"
+		runInit="false"
+	/>
+	
+	<aura:if isTrue="{! v.wa.fields.Asset__c.value ne null }">
+		<force:recordData aura:id="forceRecord"
+			recordId="{! v.wa.fields.Asset__c.value }"
+			fields="{! v.fields }"
+			targetError="{! v.recordError }"
+			layoutType="FULL"
+			targetRecord="{! v.currentRecord }"
+			mode="EDIT"
+			recordUpdated="{! c.recordUpdated }"
+		/>
+	</aura:if>
+	
+	<lightning:spinner aura:id="LoadingSpinner" class="{! if( and( not( empty( v.currentRecord ) ), not( empty( v.fieldLabels ) ), not( empty( v.relatedRecordData ) ) ),'slds-hide', 'slds-show' ) }" variant="brand" size="large" style="z-index: 10"/>
+	
+	<div class="card-container" >
+	
+		<article class="slds-card">
+		
+			<lightning:spinner aura:id="divSpinner" class="slds-hide" variant="brand" size="large" style="z-index: 10"/>
+		
+			<lightning:layout verticalAlign="spread" horizontalAlign="center" multipleRows="false" class="x-large">
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-text-align_left" size="12">
+						<c:AfterSalesSearchCardHeader aura:id="assetHeader"
+							headerLine1=""
+							headerLine2="{! v.currentRecord.fields.Brand__c.value + ' ' + v.currentRecord.fields.Model__c.value }"
+							buttonLabel1=""
+							buttonValue1=""
+							buttonVariant1=""
+							buttonLabel2=""
+							buttonValue2=""
+							buttonVariant2=""
+							buttonLabel3=""
+							buttonValue3=""
+							buttonVariant3=""
+							iconName="standard:dashboard"
+						/>
+				</lightning:layoutItem>
+				
+			</lightning:layout>
+	
+			<div class="c-container slds-p-right_large slds-p-left_large">
+			
+				<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large slds-p-bottom_xx-small">
+					
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-align_absolute-center" size="6">
+						<img src="{! v.carURL }" style="width:100%;"/>
+					</lightning:layoutItem>
+					
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-align_absolute-center slds-p-left_small" size="6">
+					
+						<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+							
+							<lightning:layoutItem flexibility="auto, grow" class="custom-box" size="12">
+							
+								<dl class="slds-list_horizontal">
+									<dt class="slds-item_label slds-text-color_weak" style="width: 55%" title="">
+										{! v.fieldLabels.Asset.FirstRegistrationDate__c }:
+									</dt>
+									<dd class="slds-item_detail slds-text-align_right" style="width: 45%" title="">
+										{! v.currentRecord.fields.FirstRegistrationDate__c.displayValue }
+									</dd>
+								</dl>
+								
+							</lightning:layoutItem>
+									
+							<lightning:layoutItem flexibility="auto, grow" class="custom-box" size="12">
+							
+								<dl class="slds-list_horizontal">
+									<aura:if isTrue="{! v.relatedRecordData.owner.Id != null }">
+										<dt class="slds-item_label slds-text-color_weak" style="width: 40%">
+											<span id="editOwner" class="edit_link" href="" title="{! $Label.c.AfterSalesEditTooltip }" onclick="{! c.editRecord }">{! $Label.c.AfterSalesHeaderVehicleOwner }:</span>
+										</dt>
+										<dd class="slds-item_detail slds-text-align_right" style="width: 60%">
+											<div style="width: min-content; float: right;">
+												<c:CustomPopover variant="base" placement="auto right" theme="default" withClose="false">
+													<aura:set attribute="popoverBody">
+														<c:RecordMiniLayout objId="{! v.relatedRecordData.owner.AccountId__r.Id }" fieldsToShow="OwnerId" sObjectName="Account" iconName="standard:account"/>
+													</aura:set>
+													<a id="miniPgLayoutOwner" href="">{! v.relatedRecordData.owner.AccountId__r.Name }</a>
+												</c:CustomPopover>
+											</div>
+										</dd>
+										<aura:if isTrue="{! v.showOwnerIdDMSIcon }">
+											<div id="showOwnerIdDMSIcon" style="line-height: 0px; margin-right: -1.5rem; padding-left: 4px; cursor: pointer;" title="{! $Label.c.AfterSalesMissingIDDMSMessage }" onclick="{! c.initDMSInterval }">
+												<c:HighlightedIcon iconName="utility:record" className="error"/>
+											</div>
+										</aura:if>
+									</aura:if>
+								</dl>
+								
+							</lightning:layoutItem>
+									
+							<lightning:layoutItem flexibility="auto, grow" class="custom-box" size="12">
+							
+								<dl class="slds-list_horizontal">
+									<aura:if isTrue="{! v.relatedRecordData.keeper.Id != null }">
+										<dt class="slds-item_label slds-text-color_weak" style="width: 40%">
+											<span id="editKepper" class="edit_link" href="" title="{! $Label.c.AfterSalesEditTooltip }" onclick="{! c.editRecord }">{! $Label.c.AfterSalesHeaderVehicleKeeper }:</span>
+										</dt>
+										<dd class="slds-item_detail slds-text-align_right" style="width: 60%">
+											<c:CustomPopover variant="base" placement="auto right" theme="default" withClose="false">
+												<aura:set attribute="popoverBody">
+													<c:RecordMiniLayout objId="{! v.relatedRecordData.keeper.AccountId__r.Id }" fieldsToShow="OwnerId" sObjectName="Account" iconName="standard:account"/>
+												</aura:set>
+												<a id="miniPgLayoutKeeper" href="">{! v.relatedRecordData.keeper.AccountId__r.Name }</a>
+											</c:CustomPopover>
+										</dd>
+										<aura:if isTrue="{! v.showKeeperIdDMSIcon }">
+											<div id="showKeeperIdDMSIcon" style="line-height: 0px; margin-right: -1.5rem; padding-left: 4px; cursor: pointer;" title="{! $Label.c.AfterSalesMissingIDDMSMessage }" onclick="{! c.initDMSInterval }">
+												<c:HighlightedIcon iconName="utility:record" className="error"/>
+											</div>
+										</aura:if>
+									</aura:if>
+								</dl>
+								
+							</lightning:layoutItem>
+							
+						</lightning:layout>
+						
+					</lightning:layoutItem>
+					
+				</lightning:layout>
+					
+			</div>
+			
+			<div class="c-container slds-p-right_small slds-p-left_small">
+				
+				<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large">
+			
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-align_absolute-center toolbar_alerts" size="12">
+					
+						<div class="alertIcon_container">
+							<aura:if isTrue="{! v.isReturn }">
+								<lightning:icon class="{! if( v.wa.fields.AppointmentRepeatRepair__c.value, 'alertIcon alertIcon_error', 'alertIcon' ) }" iconName="utility:back" size="small" title="{! if( v.wa.fields.AppointmentRepeatRepair__c.value, $Label.c.AfterSalesWorkshopReturnWarning, $Label.c.AfterSalesWorkshopReturnValidation ) }"/>
+							</aura:if>
+						
+							<aura:if isTrue="{! v.alerts.hasAlert3 }">
+								<lightning:icon class="alertIcon" iconName="utility:dayview" size="small" title="{! v.alerts.alert3Tooltip }"/>
+							</aura:if>
+						
+							<aura:if isTrue="{! v.alerts.hasAlert1 }">
+								<lightning:icon class="alertIcon" iconName="utility:sync" size="small" title="{! v.alerts.alert1Tooltip }"/>
+							</aura:if>
+							
+							<aura:if isTrue="{! v.alerts.hasAlert2 }">
+								<lightning:icon class="alertIcon" iconName="utility:deprecate" size="small"/>
+							</aura:if>
+							
+							<aura:if isTrue="{! or( v.oldVehicle, v.currentRecord.fields.Eurorepar__c.value ) }">
+								<img class="alertIcon" src="{! $Resource.AfterSalesEuroreparLogo }" style="width: 34px; height: 33px; margin-top: 3px; margin-bottom: 3px;" title="{! $Label.c.AfterSalesHeaderOldVehicleTooltip }"/>
+							</aura:if>
+						</div>
+						
+					</lightning:layoutItem>
+					
+				</lightning:layout>
+				
+			</div>
+				
+			<!-- C1STAGILE-360-->
+			<aura:if isTrue="{! and( v.currentRecord.fields.VIN__c != null, v.currentRecord.fields.Brand__c != null ) }">
+				<c:AfterSalesHeaderAssetWarnings vin="{! v.currentRecord.fields.VIN__c.value }" brand="{! v.currentRecord.fields.Brand__c.value }"/> 
+			</aura:if> 
+			<!-- C1STAGILE-360 -->
+			
+			<div class="c-container slds-p-left_large slds-p-right_large slds-p-bottom_large slds-p-top_small">
+			
+				<div class="c-container slds-border_bottom slds-p-bottom_medium">
+				
+					<div class="slds-text-title_caps slds-p-bottom_small"><p style="font-weight:bold; color: #00396b">{! $Label.c.AfterSalesGuaranteesSection }</p></div>
+			
+					<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+					
+						<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-right_small" size="6">
+						
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 60%">{! $Label.c.AfterSalesHeaderContracts }:</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 40%">
+									
+									<aura:if isTrue="{! v.relatedRecordData.lstServiceContracts.length gt 0 }">
+										<c:CustomPopover variant="base" placement="auto right" theme="default" withClose="false">
+											<aura:set attribute="popoverBody">
+										
+												<aura:iteration items="{! v.relatedRecordData.lstServiceContracts }" var="serviceContract" indexVar="i" start="0">
+												
+													<lightning:recordViewForm recordId="{! serviceContract.Id }" objectApiName="ServiceContract" class="{! v.recordViewFormClass + if( i != 0, ' slds-p-top_small slds-p-bottom_small', ' slds-p-bottom_small' ) + if( i lt ( v.relatedRecordData.lstServiceContracts.length - 1 ), ' slds-border_bottom', '' ) }">
+													
+														<lightning:layoutItem flexibility="auto" class="custom-box slds-p-right_small" size="6">
+															<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.Name }</span>
+															<div class="slds-form-element__control">
+																<div class="slds-form-element__static slds-truncate">
+																	<a id="{! 'service_' + serviceContract.Id + '_' + i }" href="" onclick="{! c.redirect }">{! serviceContract.Name }</a>
+																</div>
+															</div>
+														</lightning:layoutItem>
+														
+														<lightning:layoutItem flexibility="auto" class="custom-box slds-p-left_small" size="6">
+															<lightning:outputField fieldName="StartDate" class="slds-truncate"/>
+														</lightning:layoutItem>
+													
+													</lightning:recordViewForm>
+													
+												</aura:iteration>
+												
+											</aura:set>
+											<p style="cursor: pointer;">{! v.relatedRecordData.lstServiceContracts.length }</p>
+										</c:CustomPopover>
+										
+										<aura:set attribute="else">
+											{! v.relatedRecordData.lstServiceContracts.length }
+										</aura:set>
+										
+									</aura:if>
+									
+								</dd>
+							</dl>
+							
+						</lightning:layoutItem>
+						
+						<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-left_small" size="6">
+						
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 55%">
+									<aura:if isTrue="{! and( not( empty( v.warrantyColor ) ), v.warrantyColor eq 'error' ) }">
+										<p style="{! if( v.warrantyColor eq 'error', 'color: rgb(255, 75, 0);font-weight: 600;', 'color: #696969;' ) }">{!$Label.c.AfterSalesWarrantyFieldLabel}:</p>
+										
+										<aura:set attribute="else">
+											{! v.fieldLabels.Asset.WarrantyEndDate__c }:
+										</aura:set>
+									</aura:if>
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 45%">
+									{! v.currentRecord.fields.WarrantyEndDate__c.displayValue }
+								</dd>
+								<aura:if isTrue="{! and( not( empty( v.warrantyColor ) ), v.currentRecord.fields.WarrantyEndDate__c.value != null ) }">
+									<div style="line-height: 0px; margin-right: -1.5rem; padding-left: 4px;">
+										<c:HighlightedIcon iconName="utility:record" className="{! v.warrantyColor }"/>
+									</div>
+								</aura:if>
+							</dl>
+							
+							<aura:if isTrue="{! and( v.closeToWarrantyEndDate, or( and( v.warrantyOpp, not( v.maintOpp ) ), v.maintOpp ) ) }">
+								<dl class="slds-list_horizontal">
+									<dt class="slds-item_label slds-text-color_weak" style="width: 60%">
+										<aura:if isTrue="{! v.maintOpp }">
+											{!$Label.c.AfterSalesMaintenanceContractWarrantyExtension}:
+											
+											<aura:set attribute="else">
+												{!$Label.c.AfterSalesWarrantyExtension}:
+											</aura:set>
+										</aura:if>
+									</dt>
+									<dd class="slds-item_detail slds-text-align_right" style="width: 40%">
+										<div style="float: right;">
+											<label class="slds-checkbox_toggle slds-grid">
+												<ui:inputCheckbox value="{! v.createOpp }" change="{! c.createOpp }" disabled="{! v.hasOpp }"/>
+												<span id="toggle-desc" class="slds-checkbox_faux_container" aria-live="assertive">
+													<span class="slds-checkbox_faux"/>
+													<span class="slds-checkbox_on"/>
+													<span class="slds-checkbox_off"/>
+												</span>
+											</label>
+										</div>
+									</dd>
+								</dl>
+							</aura:if>
+							
+						</lightning:layoutItem>
+						
+					</lightning:layout>
+					
+				</div>
+				
+				<div class="c-container slds-border_bottom slds-p-bottom_medium slds-p-top_medium">
+				
+					<div class="slds-text-title_caps slds-p-bottom_small"><p style="font-weight:bold; color: #00396b">{! $Label.c.AfterSalesMileageSection }</p></div>
+			
+					<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+					
+						<lightning:layoutItem flexibility="auto, no-grow" class="custom-box slds-p-right_small" size="6">
+						
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 40%">
+									{! v.fieldLabels.Asset.RealMileage__c }:
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 60%" onmouseover="{! c.editOnMouseOver }" onmouseout="{! c.editOnMouseOut }">
+									<div aura:id="editButton" class="slds-show">
+										<button class="slds-button test-id__inline-edit-trigger slds-button_icon slds-button_icon-small slds-shrink-none inline-edit-trigger slds-button_icon-container" onclick="{! c.editModeOn }">
+											<lightning:icon aura:id="editRealMieage" iconName="utility:edit" size="xx-small" style="padding-right: 3pt;" class="lightningIconsClassName-light"/>
+										</button>
+										<lightning:formattedNumber value="{! v.wa.fields.RealMileage__c.value }"/> km
+									</div>
+									
+									<div aura:id="editField" class="slds-form-element__control slds-hide">
+										<div class="slds-form-element__static">
+											<ui:inputNumber aura:id="mileageInput" value="{! v.wa.fields.RealMileage__c.value }"/>
+										</div>
+									</div>
+								</dd>
+							</dl>
+							
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 55%">
+									{!v.fieldLabels.Asset.RealMileageDate__c}:
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 45%">
+									{!v.currentRecord.fields.RealMileageDate__c.displayValue}
+								</dd>
+							</dl>
+							
+						</lightning:layoutItem>
+						
+						<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-left_small" size="6">
+						
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 60%">
+									{! v.fieldLabels.Asset.EstimatedCurrentMileage__c }:
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 40%">
+									<lightning:formattedNumber value="{! v.currentRecord.fields.EstimatedCurrentMileage__c.value }"/> km
+								</dd>
+							</dl>
+							
+						</lightning:layoutItem>
+						
+					</lightning:layout>
+					
+					<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large slds-p-top_medium">
+					
+						<aura:if isTrue="{! and( not( empty( v.recordError ) ), v.showErrors ) }">
+							<lightning:layoutItem flexibility="auto, no-grow" class="custom-box slds-align_absolute-center" size="12">
+								<div class="slds-notify slds-notify_toast slds-theme_error" role="alert" style="min-width: 100%">
+									{! v.recordError }
+								</div>
+							</lightning:layoutItem>
+						</aura:if>
+						
+						<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-align_absolute-center" size="12">
+							<lightning:buttonGroup aura:id="kmEditButtons" class="slds-hide slds-p-top-medium">
+								<lightning:button label="Cancel" variant="neutral" onclick="{! c.editModeOff }"/>
+								
+								<aura:if isTrue="{! v.validateRealMileage }">
+									<lightning:button label="Confirm" variant="success" onclick="{! c.confirmRealMileage }"/>
+									
+									<aura:set attribute="else">
+										<lightning:button label="Save" variant="brand" onclick="{! c.handleSaveRecord }"/>
+									</aura:set>
+								</aura:if>
+							</lightning:buttonGroup>
+						</lightning:layoutItem>
+					
+					</lightning:layout>
+					
+				</div>
+				
+				<div class="c-container slds-border_bottom slds-p-bottom_medium slds-p-top_medium">
+				
+					<div class="slds-text-title_caps slds-p-bottom_small"><p style="font-weight:bold; color: #00396b">{! $Label.c.AfterSalesMaintenanceSection }</p></div>
+			
+					<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+					
+						<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-right_small" size="6">
+						
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 55%">
+									{! v.fieldLabels.Asset.LastMaintenanceDate__c }:
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 45%; line-height: 7pt;">
+									{! v.currentRecord.fields.LastMaintenanceDate__c.displayValue }
+									<br/>
+									<aura:if isTrue="{! v.currentRecord.fields.LastMaintenanceMileage__c.value != null }">
+										<sub>(<lightning:formattedNumber value="{'v.currentRecord.fields.LastMaintenanceMileage__c.value }"/> km)</sub>
+									</aura:if>
+								</dd>
+							</dl>
+							
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 55%">
+									{! v.fieldLabels.Asset.LastAPVVisitDate__c }:
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 45%">
+									{! v.currentRecord.fields.LastAPVVisitDate__c.displayValue }
+								</dd>
+							</dl>
+							
+						</lightning:layoutItem>
+						
+						<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-left_small" size="6">
+						
+							<dl class="slds-list_horizontal">
+								<dt class="slds-item_label slds-text-color_weak" style="width: 55%">
+									{! v.fieldLabels.Asset.NextMaintenanceDate__c }:
+								</dt>
+								<dd class="slds-item_detail slds-text-align_right" style="width: 45%; line-height: 7pt;">
+									<sup>{! v.currentRecord.fields.NextMaintenanceStep__c.value }</sup>
+									<br/>
+									{! v.currentRecord.fields.NextMaintenanceDate__c.displayValue }
+									<br/>
+									<aura:if isTrue="{! v.currentRecord.fields.NextMaintenanceMileage__c.value != null }">
+										<sub>(<lightning:formattedNumber value="{! v.currentRecord.fields.NextMaintenanceMileage__c.value }"/> km)</sub>
+									</aura:if>
+								</dd>
+								<aura:if isTrue="{! and( not( empty( v.maintenanceColor ) ), v.currentRecord.fields.NextMaintenanceDate__c.value != null ) }">
+									<div style="line-height: 0px; margin-right: -1.5rem; padding-left: 4px;">
+										<c:HighlightedIcon iconName="utility:record" className="{! v.maintenanceColor }"/>
+									</div>
+								</aura:if>
+							</dl>
+							
+						</lightning:layoutItem>
+						
+					</lightning:layout>
+			
+				</div>
+			
+			</div>
+			
+		</article>
+
+	</div>
+	
+	<!-- BEGIN - MODALS -->
+	
+	<aura:if isTrue="{! not( empty( v.serviceSelected ) ) }">
+		<c:Modal aura:id="serviceContractModal" title="{! v.serviceSelected.Name }" isDirectional="true" isLarge="false" hasCloseIcon="false">
+	
+			<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large">
+	
+				<lightning:recordViewForm recordId="{! v.serviceSelected.Id }" objectApiName="ServiceContract" class="{! v.recordViewFormClass + ' slds-modal_mainLayout' }">
+														
+					<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-right_small slds-p-top_xx-small" size="6">
+						<aura:if isTrue="{! not( empty( v.serviceSelected.ContractType__c ) ) }">
+							<lightning:outputField fieldName="ContractType__c"/>
+							
+							<aura:set attribute="else">
+								<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.ContractType__c }</span>
+								<div class="slds-form-element__control">
+									<div class="slds-form-element__static">
+		                               &nbsp;
+									</div>
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+					
+					<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-left_small slds-p-top_xx-small" size="6">
+						<aura:if isTrue="{! not( empty( v.serviceSelected.Name ) ) }">
+							<lightning:outputField fieldName="Name"/>
+							
+							<aura:set attribute="else">
+								<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.StartDate }</span>
+								<div class="slds-form-element__control">
+									<div class="slds-form-element__static">
+		                               &nbsp;
+									</div>
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+				
+					<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-right_small slds-p-top_xx-small" size="6">
+						<aura:if isTrue="{! not( empty( v.serviceSelected.StartDate ) ) }">
+							<lightning:outputField fieldName="StartDate"/>
+							
+							<aura:set attribute="else">
+								<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.Name }</span>
+								<div class="slds-form-element__control">
+									<div class="slds-form-element__static">
+		                               &nbsp;
+									</div>
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+					
+					<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-left_small slds-p-top_xx-small" size="6">
+						<aura:if isTrue="{! not( empty( v.serviceSelected.EndDate ) ) }">
+							<lightning:outputField fieldName="EndDate"/>
+							
+							<aura:set attribute="else">
+								<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.EndDate }</span>
+								<div class="slds-form-element__control">
+									<div class="slds-form-element__static">
+		                               &nbsp;
+									</div>
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+					
+					<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-right_small slds-p-top_xx-small" size="6">
+						<aura:if isTrue="{! not( empty( v.serviceSelected.SubscribedMileage__c ) ) }">
+							<lightning:outputField fieldName="SubscribedMileage__c"/>
+							
+							<aura:set attribute="else">
+								<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.SubscribedMileage__c }</span>
+								<div class="slds-form-element__control">
+									<div class="slds-form-element__static">
+		                               &nbsp;
+									</div>
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+					
+					<lightning:layoutItem flexibility="auto" class="custom-box item slds-p-left_small slds-p-top_xx-small" size="6">
+						<aura:if isTrue="{! not( empty( v.serviceSelected.ContractStatus__c ) ) }">
+							<lightning:outputField fieldName="ContractStatus__c"/>
+							
+							<aura:set attribute="else">
+								<span class="slds-form-element__label">{! v.fieldLabels.ServiceContract.ContractStatus__c }</span>
+								<div class="slds-form-element__control">
+									<div class="slds-form-element__static">
+		                               &nbsp;
+									</div>
+								</div>
+							</aura:set>
+						</aura:if>
+					</lightning:layoutItem>
+					
+				</lightning:recordViewForm>
+				
+			</lightning:layout>
+			
+			<lightning:layout verticalAlign="stretch" horizontalAlign="spread" multipleRows="true" class="x-large slds-p-top_large">
+						
+				<lightning:layoutItem flexibility="auto, grow" class="custom-box" size="12">
+		
+					<lightning:datatable
+						columns="{! v.contractLineItemsColumns }"
+						data="{! v.serviceSelected.ContractLineItems }"
+						keyField="Id"
+						hideCheckboxColumn="true"
+						showRowNumberColumn="false"
+					/>
+					
+				</lightning:layoutItem>
+					
+			</lightning:layout>
+			
+			<aura:set attribute="footer">
+				<div class="slds-align_absolute-center">
+					<lightning:button label="Close" onclick="{!c.onClose}"/>
+				</div>
+			</aura:set>
+		
+		</c:Modal>
+	</aura:if>
+	
+	<!-- END - MODALS -->
+
+</aura:component>

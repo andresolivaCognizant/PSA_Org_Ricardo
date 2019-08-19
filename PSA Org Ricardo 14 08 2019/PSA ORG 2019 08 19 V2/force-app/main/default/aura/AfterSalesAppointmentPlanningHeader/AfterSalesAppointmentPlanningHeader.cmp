@@ -1,0 +1,220 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="AfterSalesAppointmentPlanningController">
+
+	<aura:attribute type="List" name="data"/>
+	<aura:attribute type="List" name="columns"/>
+	<aura:attribute type="List" name="status"/>
+	<aura:attribute type="List" name="receptionists"/>
+	
+	<aura:attribute type="String" name="statusSelected" default="[1,2,3,4,5,6,7,8]"/>
+	<aura:attribute type="String" name="receptionistSelected"/>
+	
+	<aura:attribute type="Date" name="startDate"/>
+	<aura:attribute type="Date" name="endDate"/>
+	<aura:attribute type="Date" name="endDate_tmp"/>
+
+	<aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+	
+	<aura:html tag="style">
+		@media print{
+			.noprint, body * {
+				visibility: hidden !important;
+			}
+
+			.divToPrint, #divToPrint *, .divToPrint * {
+				visibility: visible !important;
+			}
+
+			.slds-media__figure {
+				visibility: visible !important;
+				background-color: #ef6e64 !important;
+			}
+
+			.banner-background, .header-container, .slds-button{
+				display: none !important;
+			}
+
+			.main-body{
+				top: 0px;
+			}
+			
+			a[href]:after{
+				content: none !important;
+			}
+
+			a{
+				text-decoration: none !important;
+			}
+			
+			img[src]:after{
+				content: none !important;
+			}
+
+			body{
+				margin: 0px;
+			}
+
+			thead{
+				display: table-header-group;
+			}
+
+			tfoot{
+				display: table-row-group;
+			}
+
+			tr{
+				page-break-inside: avoid;
+			}
+		}
+
+		@page {
+			size: A4 landscape;
+			margin: 10mm 10mm 10mm 10mm;
+		}
+	</aura:html>
+	
+	<div id="divToPrint" style="width: 100%;">
+		
+		<c:AfterSalesSearchCardHeader aura:id="headerCard"
+			headerLine1="{! $Label.c.AfterSalesPlanningHeader1 }"
+			headerLine2="{! $Label.c.AfterSalesPlanningHeader2 }"
+			buttonLabel1=""
+			buttonValue1=""
+			buttonVariant1=""
+			buttonLabel2=""
+			buttonValue2=""
+			buttonVariant2=""
+			buttonLabel3=""
+			buttonValue3=""
+			buttonVariant3=""
+			iconName="standard:dashboard"
+		/>
+		
+	</div>
+	
+	<div id="divToPrint" style="width: 100%;">
+
+		<lightning:layout verticalAlign="spread" horizontalAlign="center" multipleRows="true" class="x-large">
+
+			<lightning:spinner aura:id="LoadingSpinner" class="slds-show" variant="brand" size="large" style="z-index: 10"/>
+			
+			<lightning:layoutItem flexibility="auto, grow" class="custom-box" size="12">
+			
+				<lightning:layout verticalAlign="spread" horizontalAlign="center" multipleRows="true" class="x-large">
+				
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-right_medium" size="3">
+			
+						<ui:inputDate label="{! $Label.c.AfterSalesPlanningFilter1 }" value="{! v.startDate }" displayDatePicker="true" format="{! $Locale.shortDateFormat }" change="{! c.onChange }"/>
+						
+					</lightning:layoutItem>
+					
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-right_medium" size="3">
+			
+						<ui:inputDate label="{! $Label.c.AfterSalesPlanningFilter2 }" value="{! v.endDate }" displayDatePicker="true" format="{! $Locale.shortDateFormat }" change="{! c.onChange }"/>
+						
+					</lightning:layoutItem>
+				
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box slds-p-right_medium" size="3">
+			
+						<lightning:Select aura:id="sl_receptionist" name="select" label="{! $Label.c.AfterSalesPlanningFilter3 }" value="{! v.receptionistSelected }" onchange="{! c.onChange }">
+							<aura:iteration items="{! v.receptionists }" var="r">
+								<option value="{! r.Id }">{! r.Name }</option>
+							</aura:iteration>
+						</lightning:Select>
+						
+					</lightning:layoutItem>
+				
+					<lightning:layoutItem flexibility="auto, grow" class="custom-box" size="3">
+			
+						<lightning:Select aura:id="sl_status" name="select" label="{! $Label.c.AfterSalesPlanningFilter4 }" value="{! v.statusSelected }" onchange="{! c.onChange }">
+							<aura:iteration items="{! v.status }" var="s">
+								<option value="{! s.value }">{! s.label }</option>
+							</aura:iteration>
+						</lightning:Select>
+						
+					</lightning:layoutItem>
+				
+				</lightning:layout>
+				
+			</lightning:layoutItem>
+			
+			<lightning:layoutItem flexibility="no-flex, no-grow" class="custom-box slds-p-top_medium" size="12">
+	
+				<div id="dvTable">
+
+					<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+
+						<thead>
+							<tr class="slds-line-height_reset">
+								<aura:iteration items="{! v.columns }" var="h">
+									<th class="slds-text-title_caps" scope="col">
+										<div class="slds-truncate" title="{! h.label }">{! h.label }</div>
+									</th>
+								</aura:iteration>
+							</tr>
+						</thead>
+
+						<tbody>
+							<aura:iteration items="{! v.data }" var="r">
+								<tr class="slds-hint-parent">
+									<th scope="row">
+										<div class="slds-truncate" title="">
+											<a href="{! r.id }" tabindex="-1">{! r.receptionDateTime }</a>
+										</div>
+									</th>
+									<td>
+										<div class="slds-truncate text_wrap" title="">{! r.receptionist }</div>
+									</td>
+									<td>
+										<div class="slds-truncate" title="">{! r.restitutionDatetime }</div>
+									</td>
+									<td>
+										<div class="slds-truncate" title="">{! r.status }</div>
+									</td>
+									<td>
+										<div class="slds-truncate text_wrap" title="">{! r.brand + ' ' + r.model }</div>
+									</td>
+									<td>
+										<div class="slds-truncate" title="">{! r.registrationNumber }</div>
+									</td>
+									<td>
+										<lightning:formattedNumber value="{! r.mileage }"/>
+									</td>
+									<td>
+										<div class="slds-truncate text_wrap" title="">{! r.type }</div>
+									</td>
+									<td>
+										<div class="slds-truncate text_wrap" title="">
+											<a href="{! r.accountId }" tabindex="-1">{! r.accountName }</a>
+										</div>
+									</td>
+									<td>
+										<aura:unescapedHtml value="{! r.dossier }"/>
+									</td>
+									<td>
+										<aura:unescapedHtml value="{! r.nextBestActions }"/>
+									</td>
+								</tr>
+							</aura:iteration>
+						</tbody>
+						
+						<aura:if isTrue="{! v.data.length > 0 }">
+							<tfoot>
+								<tr>
+									<td colspan="11">
+										<div class="slds-truncate" style="text-align: right;" title="">{! v.data.length + ' ' + $Label.c.AfterSalesPlanningTableFooter }</div>
+									</td>
+								</tr>
+							</tfoot>
+						</aura:if>
+
+					</table>
+
+				</div>
+				
+			</lightning:layoutItem>
+				
+		</lightning:layout>
+
+	</div>
+
+</aura:component>

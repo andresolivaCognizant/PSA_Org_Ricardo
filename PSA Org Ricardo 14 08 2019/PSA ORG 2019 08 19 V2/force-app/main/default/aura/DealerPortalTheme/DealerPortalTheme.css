@@ -1,0 +1,98 @@
+.THIS .home {
+  background-color: #f6f6f6;
+}
+
+.THIS .header-container {
+  margin:auto;
+  height: 90px;
+  object-fit: contain;
+  background-color: #1b1b2b;
+  /* background-image: linear-gradient(to left, rgba(0, 0, 0, 0), #000000), linear-gradient(#1b1b2b, #1b1b2b); */
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.28);
+}
+
+.THIS .header-inner-container {
+  margin:auto;
+  height: 90px;
+  width: 1440px; 
+  object-fit: contain;
+  background-color: #1b1b2b;
+  /* background-image: linear-gradient(to left, rgba(0, 0, 0, 0), #000000), linear-gradient(#1b1b2b, #1b1b2b); */
+}
+
+.THIS .logo-container {
+  margin-left: 34px; 
+}
+
+.THIS .logo_psa_white {
+  width: 77px;
+  height: 44px;
+}
+
+.THIS .global-search-bar {
+  /* width: 612px; */
+  height: 40px;
+  border-radius: 25px;
+  background-color: #2a314a;
+}
+
+.THIS .global-search-bar input {
+  /* width: 600px; */
+  height: 18px;
+  /* font-family: SalesforceSans; */
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #919cc7;
+}
+
+/* remove the border around the statndard global search bar */
+.THIS .global-search-bar .slds-box--border {
+    border-width: 0px;
+}
+
+.THIS .advanced-search-link {
+  margin-left: 20px;
+  width: 157px;
+  height: 15px;
+  /* font-family: SalesforceSans; */
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+.THIS .advanced-search-link a {
+  text-decoration: none;
+  color: #A5B2E4;
+}
+
+.THIS .profile-container {
+  margin-left: 40px;
+}
+
+.THIS .main-content-container {
+  background-color: #f6f6f6;
+}
+
+.THIS .main-content-inner {
+  margin:auto;
+  width: 1440px; 
+  background-color: #f6f6f6;
+}
+
+.THIS .left-2-container {
+	margin-bottom: 5px;
+}
+
+.THIS div.slds-page-header {
+	position: sticky;
+	z-index:1; 
+}

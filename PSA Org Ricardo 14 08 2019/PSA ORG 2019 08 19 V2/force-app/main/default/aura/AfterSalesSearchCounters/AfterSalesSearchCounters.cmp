@@ -1,0 +1,69 @@
+<aura:component controller="AfterSalesSearchCountersController" implements="force:appHostable,forceCommunity:layout,forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+	<aura:attribute type="Map" name="metricsData" default="{'toReceive':'0','received':'0','received_upd':'0','received_nupd':'0','delivered':'0','delivered_upd':'0','delivered_nupd':'0'}" />
+	<aura:attribute type="Boolean" name="runInit" description="" default="true"/>
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	
+	<aura:method name="reloadCounters" action="{! c.reloadCounters }" description="Allow reload counters from parent components.">
+		<aura:attribute type="Function" name="callback" description="Result"/>
+	</aura:method>
+	
+	<lightning:layout verticalAlign="center" horizontalAlign="center" multipleRows="true" class="x-large slds-p-top_medium">
+	
+		<lightning:layoutItem flexibility="auto" class="custom-box slds-border_left" size="4">
+		
+			<c:AfterSalesCounter
+				leftCounter="{! v.metricsData.toReceive }"
+				rightTopCounter=""
+				rightBottomCounter=""
+				leftCounterText="{!$Label.c.AfterSalesLeftCounterText1}"
+				rightTopCounterText=""
+				rightBottomCounterText=""
+				showRightCounters="false"
+				enableRightTopAction="false"
+				rightTopNavigateToURL=""
+				enableRightBottomAction="false"
+				rightBottomNavigateToURL=""
+			/>
+			
+		</lightning:layoutItem>
+		
+		<lightning:layoutItem flexibility="auto" class="custom-box" size="4">
+			
+			<c:AfterSalesCounter
+				leftCounter="{! v.metricsData.received }"
+				rightTopCounter="{! v.metricsData.received_upd }"
+				rightBottomCounter="{! v.metricsData.received_nupd }"
+				leftCounterText="{!$Label.c.AfterSalesLeftCounterText2}"
+				rightTopCounterText="{!$Label.c.AfterSalesRightTopCounterText}"
+				rightBottomCounterText="{!$Label.c.AfterSalesRightBottomCounterText}"
+				showRightCounters="true"
+				enableRightTopAction="false"
+				rightTopNavigateToURL=""
+				enableRightBottomAction="{! v.metricsData.received_nupd != '0' }"
+				rightBottomNavigateToURL="/outdatedConsents"
+			/>
+			
+		</lightning:layoutItem>
+		
+		<lightning:layoutItem flexibility="auto" class="custom-box" size="4">
+			<c:AfterSalesCounter
+				leftCounter="{! v.metricsData.delivered }"
+				rightTopCounter="{! v.metricsData.delivered_upd }"
+				rightBottomCounter="{! v.metricsData.delivered_nupd }"
+				leftCounterText="{!$Label.c.AfterSalesLeftCounterText3}"
+				rightTopCounterText="{!$Label.c.AfterSalesRightTopCounterText}"
+				rightBottomCounterText="{!$Label.c.AfterSalesRightBottomCounterText}"
+				showRightCounters="true"
+				enableRightTopAction="false"
+				rightTopNavigateToURL=""
+				enableRightBottomAction="{! v.metricsData.delivered_nupd != '0' }"
+				rightBottomNavigateToURL="/outdatedConsents"
+			/>
+			
+		</lightning:layoutItem>
+		
+	</lightning:layout>
+	
+</aura:component>

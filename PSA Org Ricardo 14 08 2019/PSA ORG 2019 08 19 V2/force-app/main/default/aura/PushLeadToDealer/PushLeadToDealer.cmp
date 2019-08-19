@@ -1,0 +1,60 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId"
+                controller="PushLeadToDealer">
+
+  <aura:html tag="style">
+    .modal-body {
+      height      : unset !important;
+      max-height  : 900px !important;
+    }
+
+    .cuf-content {
+      padding     :0 !important;
+    }
+
+    .slds-p-around--medium {
+      padding     :0 !important;
+    }
+    
+    .slds-modal__container {
+      width       : 40% !important;
+      max-width   : 90% !important;
+    }
+
+    .slds-modal__content {
+      position    : relative !important;
+      overflow-y  : scroll !important;
+      overflow-x  : hidden !important;
+      max-height  : unset !important;
+    }
+  </aura:html>
+
+  <aura:attribute type="Lead" name="lds_record"/>
+  <aura:attribute type="Map" name="ui_obj" default="{'isLoading': true}"/>
+
+  <force:recordData aura:id="lds_cmp"
+                    recordId="{!v.recordId}"
+                    fields="OwnerId"
+                    targetRecord="{!v.lds_record}"
+                    mode="VIEW"
+                    recordUpdated="{!c.handleRecordUpdate}"/>
+
+  <header class="slds-modal__header">
+    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+      Push to Dealer
+    </h2>
+  </header>
+
+  <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+    <aura:if isTrue="{!v.ui_obj.isLoading}">
+      <div class="slds-is-relative" style="height: 20vh;">
+        <lightning:spinner alternativeText="Loading" size="medium" variant="brand"/>
+      </div>
+      <aura:set attribute="else">
+        <div class="slds-align_absolute-center" style="height: 20vh;">
+          <lightning:formattedText value="{!v.ui_obj.msg}"/>
+        </div>
+      </aura:set>
+    </aura:if>
+  </div>
+
+</aura:component>

@@ -48,8 +48,7 @@ public with sharing class OrderTriggerHandler {
             // Call single methods only
             OrderUtils.callBUSingleOrderMethods(lNewOrders[0], null);
         }
-        OrderUtils.updateOrderFormToActiveStatus(  lNewOrders,  null );//Andrés Oliva JIRA C1STDEPLOY-231  19/08/2019
-
+      
     }
 
     /*
@@ -65,8 +64,7 @@ public with sharing class OrderTriggerHandler {
             // Call single methods only
             OrderUtils.callBUSingleOrderMethods(lNewOrders[0], mapOldOrders.get(lNewOrders[0].Id));
         }
-        OrderUtils.updateOrderFormToActiveStatus(  lNewOrders,  mapOldOrders );//Andrés Oliva JIRA C1STDEPLOY-231  18/08/2019
-
+       
     }
 
     /*
@@ -105,6 +103,8 @@ public with sharing class OrderTriggerHandler {
         //Change the XXAccountStatus__c field in Account
         ChangeAccountStatus.mainFunction(trigger.new);
         OrderUtils.createAutomaticContactTask(mapNewOrders.keySet());
+        List< SBQQ__Quote__c >   lstQuote =  OrderUtils.updateOrderFormToActiveStatus(  lNewOrders,  null );//Andrés Oliva JIRA C1STDEPLOY-231  19/08/2019
+        system.debug( '\n lst quotes  handler @@@' + lstQuote );
     }
 
     /*
@@ -135,5 +135,7 @@ public with sharing class OrderTriggerHandler {
         if(!setOrdersToCreateTask.isEmpty()){
             OrderUtils.createAutomaticContactTask(setOrdersToCreateTask);
         }
+        list< SBQQ__Quote__c > lstQuote = OrderUtils.updateOrderFormToActiveStatus(  lNewOrders,  mapOldOrders );//Andrés Oliva JIRA C1STDEPLOY-231  18/08/2019
+        system.debug( '\n lst quotes update handler  @@@' + lstQuote );
     }
 }

@@ -22,38 +22,45 @@ public with sharing class OrderUtils{
      * @Description     :   This method make apex solution for JIRA C1STDEPLOY-231. If order is canceled, the related list Order Form must be update status to active.  
      * @Params          :   List<Order > records after the changes, Map<Id, Order > record before the changes    
      */		
-    public static void updateOrderFormToActiveStatus( List<Order > listNewOrder, Map<Id, Order > mapOldOrder )
+    public static  List< SBQQ__Quote__c >  updateOrderFormToActiveStatus( List<Order > listNewOrder, Map<Id, Order > mapOldOrder )
     {
+        List< SBQQ__Quote__c >  lstUpdateQuote;
         try 
-        {
+        {             
             set< id > setIdCancellQuotes = new set< id >();
             for( Order  varOrder: listNewOrder  ) 
             {
                 if(         varOrder.OrderFormId__c != null && 
                     (       varOrder.Status.equalsIgnoreCase ( system.label.SBQQ_cancellStatus_lbl ) 
-                        &&  ( !mapOldOrder.get( varOrder.id ).Status.equalsIgnoreCase( system.label.SBQQ_cancellStatus_lbl ) ||
-                              mapOldOrder == null   )
+                        &&  ( mapOldOrder == null  || !mapOldOrder.get( varOrder.id ).Status.equalsIgnoreCase( system.label.SBQQ_cancellStatus_lbl ) 
+                            )
                     ) 
                   )
                 {
                     setIdCancellQuotes.add( varOrder.OrderFormId__c );
                 }
             }
+            system.debug('\n set id quotes @@@'+ setIdCancellQuotes );
             list< SBQQ__Quote__c > lstOrderForm = [SELECT id,SBQQ__Status__c FROM SBQQ__Quote__c WHERE  id IN: setIdCancellQuotes ];
             if( !lstOrderForm.isEmpty())
             {
+                lstUpdateQuote = new list< SBQQ__Quote__c >();
                 for( SBQQ__Quote__c varForm: lstOrderForm  )
                 {
                     varForm.SBQQ__Status__c  =   system.label.SBQQ_activeStatus_lbl;
-                }
-                update lstOrderForm ;
+                    lstUpdateQuote.add( varForm );
+                }                
+                update lstUpdateQuote ;
+                system.debug('\n list quotes to update @@@ ' + lstUpdateQuote );
             }
+
         } 
         catch (Exception e ) 
         {
             system.debug('\n error with C1STDEPLOY-231 @@@' + e.getMessage() );
             throw e;
-        }        
+        } 
+        return     lstUpdateQuote;   
     }      
     /*
 * @Method          :   callBUSingleOrderMethods

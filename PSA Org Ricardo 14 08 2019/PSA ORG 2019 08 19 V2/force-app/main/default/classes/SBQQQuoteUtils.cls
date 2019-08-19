@@ -232,8 +232,10 @@ public class SBQQQuoteUtils {
 		}
 
 		extId += '_';
-		extId += oForm.SBQQ__Account__c != null? oForm.SBQQ__Account__c: '';
-		
+		if( oForm.SBQQ__Account__c != null )
+		{  
+			extId += oForm.SBQQ__Account__c ;
+		}
 		return extId;
 	}
 

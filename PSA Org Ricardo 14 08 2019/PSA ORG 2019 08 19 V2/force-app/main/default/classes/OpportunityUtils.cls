@@ -217,7 +217,9 @@ public class OpportunityUtils {
 					insert lstOrder;
 
 					lstOrdForm[0].SBQQ__Status__c = '4';
+					
 					update lstOrdForm;
+					system.debug('\n order form opporrtunity trigger @@@'+ lstOrdForm);
 				}
 			}
 		}

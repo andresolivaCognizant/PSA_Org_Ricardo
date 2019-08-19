@@ -247,7 +247,7 @@ public with sharing class SBQQQuoteTriggerHandler {
         
         // End Change C1STAGILE-4950.
         runtrigger = false;
-        
+        system.debug( '\n  quote status ==> quote  trigger Handler  @@@ ' + lNewQuotes );
     }
     /*
      * @Method          :   callDMS

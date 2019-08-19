@@ -3,11 +3,11 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
-            "c/cometd": [
-                "../staticresources/cometd/cometd.js"
-            ],
             "c/olbAppointment": [
                 "olbAppointment/olbAppointment.js"
+            ],
+            "c/cometd": [
+                "../staticresources/cometd/cometd.js"
             ]
         }
     },

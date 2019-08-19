@@ -111,5 +111,44 @@ private class OrderTriggerHandlerTest {
         		System.assertEquals(false, bDontRun);
         	Test.stopTest();
      	}
-    }
+	}
+	/*
+     * @Method          :   beforeupdateOrderFormToActiveStatusInsert
+     * @Author          :   Andres Oliva <andres.oliva@cognizant.com>
+     * @Created         :   19/08/2019
+     * @Description     :   This method verify JIRA user story C1STDEPLOY-231 in the before insert proccess. So when an order records have cancell status, the related QUOTE status must be update to Active. 
+     */		
+  
+    static testMethod void updateOrderFormToActiveStatus() {
+        // Test data setup
+
+        List<Account>       lstAccts    =   TestDataFactoryUtil.createAccount(2,'Dealer');
+        List<Opportunity>   lstOpps     =   TestDataFactoryUtil.createOpportunities(1, null ,lstAccts[0], 1000.0 ,'9', 75);
+        recordType objRecortypeQuote =   [  SELECT DeveloperName,
+                                                    Id 
+                                            FROM    RecordType 
+                                            WHERE   SobjectType = 'SBQQ__Quote__C' 
+                                                    AND DeveloperName = 'CPQ_Order_Form'];
+		SBQQ__Quote__C objQuote =   new SBQQ__Quote__C();
+        objQuote.SBQQ__Opportunity2__c  =   lstOpps[0].id;            
+        objQuote.SBQQ__Account__c       =   lstAccts[0].id;
+        objQuote.recordtypeId           =   objRecortypeQuote.Id;
+        objQuote.SBQQ__Status__c        =   '4'; //  'Whith order'
+        insert objQuote;
+
+        Test.startTest();
+          	order objOrder =   new order();
+            objOrder.OpportunityId  	=   lstOpps[0].id;            
+            objOrder.AccountId       	=   lstAccts[0].id; 
+			objOrder.EffectiveDate 		=	system.Today();
+			objOrder.OrderId__c      	=	'TestId';     
+            objOrder.OrderFormId__c		=	objQuote.Id;
+			objOrder.status        		=   '0'; // 'Cancelled Order'
+            insert objOrder;        
+        Test.stopTest();
+
+        system.debug('\n order after before trigger @@@@@ ' +  objOrder );       
+        system.assertEquals( '2',objQuote.SBQQ__Status__c); // 'Active'
+    
+    }	
 }
